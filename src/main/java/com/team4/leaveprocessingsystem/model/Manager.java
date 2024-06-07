@@ -1,6 +1,5 @@
 package com.team4.leaveprocessingsystem.model;
 
-import com.team4.leaveprocessingsystem.model.enums.AccessLevelEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
