@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.seeder;
 
 import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.model.enums.AccessLevelEnum;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
@@ -45,7 +45,7 @@ public class EmployeeSeeder {
         LeaveBalance managerLeaveBalance = new LeaveBalance(managementJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(managerLeaveBalance);
 
-        User managerUser = new User(AccessLevelEnum.ROLE_MANAGER,
+        User managerUser = new User(RoleEnum.ROLE_MANAGER,
                 "manager",
                 passwordEncoder.encode("manager"),
                 "manager@example.com");
@@ -62,7 +62,7 @@ public class EmployeeSeeder {
         LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance);
 
-        User adminUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
+        User adminUser = new User(RoleEnum.ROLE_EMPLOYEE,
                 "employee",
                 passwordEncoder.encode("employee"),
                 "employee@example.com");
@@ -82,7 +82,7 @@ public class EmployeeSeeder {
         LeaveBalance internLeaveBalance = new LeaveBalance(internJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(internLeaveBalance);
 
-        User internUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
+        User internUser = new User(RoleEnum.ROLE_EMPLOYEE,
                 "intern",
                 passwordEncoder.encode("intern"),
                 "intern@example.com");
@@ -102,7 +102,7 @@ public class EmployeeSeeder {
         LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(parttimeLeaveBalance);
 
-        User parttimeUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
+        User parttimeUser = new User(RoleEnum.ROLE_EMPLOYEE,
                 "parttime",
                 passwordEncoder.encode("parttime"),
                 "parttime@example.com");
@@ -122,7 +122,7 @@ public class EmployeeSeeder {
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
-        User cleaningUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
+        User cleaningUser = new User(RoleEnum.ROLE_EMPLOYEE,
                 "cleaning",
                 passwordEncoder.encode("cleaning"),
                 "cleaning@example.com");
