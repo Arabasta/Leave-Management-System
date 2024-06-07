@@ -42,6 +42,11 @@ public class Employee {
     }
 
     public void setManager(Manager manager) {
+        // remove from old manager
+        if (this.manager != null) {
+            this.manager.removeSubordinate(this);
+        }
+
         this.manager = manager;
         if (manager != null) {
             manager.addSubordinate(this);

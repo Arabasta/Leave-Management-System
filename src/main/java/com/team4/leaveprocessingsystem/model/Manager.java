@@ -27,4 +27,9 @@ public class Manager extends Employee {
             employee.setManager(this);
         }
     }
+
+    public void removeSubordinate(Employee employee) {
+        subordinates.remove(employee);
+        employee.setManager(null);
+    }
 }
