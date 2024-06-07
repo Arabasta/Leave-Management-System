@@ -33,7 +33,6 @@ public class EmployeeSeeder {
     public void seed() {
         if (employeeService.count() == 0) {
             seedManagement();
-            seedAdmin();
             seedEmployee();
             seedIntern();
             seedPartTime();
@@ -57,43 +56,23 @@ public class EmployeeSeeder {
         employeeService.save(manager);
     }
 
-    private void seedAdmin() {
-        JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
-        Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
-        leaveBalanceService.save(adminLeaveBalance);
-
-        User adminUser = new User(RoleEnum.ROLE_ADMIN,
-                "admin",
-                passwordEncoder.encode("admin"),
-                "admin@example.com");
-        userService.save(adminUser);
-
-        Employee administrativeEmployee = new Employee("Admin",
-                administrativeJobDesignation,
-                manager,
-                adminLeaveBalance);
-        administrativeEmployee.setUser(adminUser);
-        employeeService.save(administrativeEmployee);
-    }
-
     private void seedEmployee() {
         JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
         Manager manager = employeeService.findManagerByName("Manager");
         LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance);
 
-        User adminUser = new User(RoleEnum.ROLE_EMPLOYEE,
+        User employeeUser = new User(RoleEnum.ROLE_EMPLOYEE,
                 "employee",
                 passwordEncoder.encode("employee"),
                 "employee@example.com");
-        userService.save(adminUser);
+        userService.save(employeeUser);
 
         Employee administrativeEmployee = new Employee("Employee",
                 administrativeJobDesignation,
                 manager,
                 adminLeaveBalance);
-        administrativeEmployee.setUser(adminUser);
+        administrativeEmployee.setUser(employeeUser);
         employeeService.save(administrativeEmployee);
     }
 

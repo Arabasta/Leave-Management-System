@@ -17,8 +17,8 @@ public class Employee {
     @ManyToOne(optional = false)
     private JobDesignation jobDesignation;
 
-    @OneToOne(orphanRemoval = true)
-    private User user;
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
+    private List<User> users;
 
     @ManyToOne
     private Manager manager;
@@ -46,5 +46,9 @@ public class Employee {
         if (manager != null) {
             manager.addSubordinate(this);
         }
+    }
+
+    public void setUser(User user) {
+        users.add(user);
     }
 }

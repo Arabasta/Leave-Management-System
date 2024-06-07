@@ -21,8 +21,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
     private Employee employee;
+
 
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
