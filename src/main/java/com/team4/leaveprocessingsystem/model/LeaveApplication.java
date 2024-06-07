@@ -20,7 +20,7 @@ public class LeaveApplication {
     private Employee submittingEmployee;
 
     @ManyToOne
-    private Employee reviewingManager;
+    private Manager reviewingManager;
 
     @Enumerated(EnumType.STRING)
 

@@ -14,6 +14,9 @@ public class Manager extends Employee {
     @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
     private List<Employee> subordinates;
 
+    @OneToMany(mappedBy = "reviewingManager")
+    private List<LeaveApplication> leaveApplications;
+
     public Manager() {}
 
     public Manager(String name, JobDesignation jobDesignation, Manager manager, LeaveBalance leaveBalance) {
