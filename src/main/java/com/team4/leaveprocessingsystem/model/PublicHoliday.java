@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class PublicHoliday {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private LocalDate date;

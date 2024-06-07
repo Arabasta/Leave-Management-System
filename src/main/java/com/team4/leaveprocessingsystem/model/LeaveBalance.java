@@ -20,4 +20,9 @@ public class LeaveBalance {
     private static final int MEDICAL_LEAVE = 60;
 
     public LeaveBalance() {}
+
+    public LeaveBalance(int annualLeave) {
+
+        this.annualLeave = annualLeave;
+    }
 }

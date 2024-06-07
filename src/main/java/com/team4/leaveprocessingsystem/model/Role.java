@@ -15,5 +15,14 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private int annualLeaves;
+
     public Role() {}
+
+    public Role(String name, int annualLeaves) {
+        this.name = name;
+        this.annualLeaves = annualLeaves;
+    }
+
 }

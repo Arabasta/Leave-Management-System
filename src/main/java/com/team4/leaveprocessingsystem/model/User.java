@@ -19,7 +19,10 @@ import java.util.Collections;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
+
+    @OneToOne(mappedBy = "user")
+    private Employee employee;
 
     @Enumerated(EnumType.STRING)
     private AccessLevelEnum accessLevel;
@@ -30,7 +33,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     private LocalDateTime createDateTime;
