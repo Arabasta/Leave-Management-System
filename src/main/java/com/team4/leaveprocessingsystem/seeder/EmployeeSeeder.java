@@ -14,18 +14,18 @@ public class EmployeeSeeder {
 
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
-    private final JobDesignationService roleService;
+    private final JobDesignationService jobDesignationService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public EmployeeSeeder(EmployeeService employeeService,
                           LeaveBalanceService leaveBalanceService,
-                          JobDesignationService roleService,
+                          JobDesignationService jobDesignationService,
                           UserService userService,
                           PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
-        this.roleService = roleService;
+        this.jobDesignationService = jobDesignationService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -33,7 +33,8 @@ public class EmployeeSeeder {
     public void seed() {
         if (employeeService.count() == 0) {
             seedManagement();
-            seedAdministrative();
+            seedAdmin();
+            seedEmployee();
             seedIntern();
             seedPartTime();
             seedCleaning();
@@ -41,7 +42,7 @@ public class EmployeeSeeder {
     }
 
     private void seedManagement() {
-        JobDesignation managementJobDesignation = roleService.findByName("management");
+        JobDesignation managementJobDesignation = jobDesignationService.findByName("management");
         LeaveBalance managerLeaveBalance = new LeaveBalance(managementJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(managerLeaveBalance);
 
@@ -56,8 +57,28 @@ public class EmployeeSeeder {
         employeeService.save(manager);
     }
 
-    private void seedAdministrative() {
-        JobDesignation administrativeJobDesignation = roleService.findByName("administrative");
+    private void seedAdmin() {
+        JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
+        Manager manager = employeeService.findManagerByName("Manager");
+        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
+        leaveBalanceService.save(adminLeaveBalance);
+
+        User adminUser = new User(RoleEnum.ROLE_ADMIN,
+                "admin",
+                passwordEncoder.encode("admin"),
+                "admin@example.com");
+        userService.save(adminUser);
+
+        Employee administrativeEmployee = new Employee("Admin",
+                administrativeJobDesignation,
+                manager,
+                adminLeaveBalance);
+        administrativeEmployee.setUser(adminUser);
+        employeeService.save(administrativeEmployee);
+    }
+
+    private void seedEmployee() {
+        JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
         Manager manager = employeeService.findManagerByName("Manager");
         LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance);
@@ -68,7 +89,7 @@ public class EmployeeSeeder {
                 "employee@example.com");
         userService.save(adminUser);
 
-        Employee administrativeEmployee = new Employee("Administrative Employee",
+        Employee administrativeEmployee = new Employee("Employee",
                 administrativeJobDesignation,
                 manager,
                 adminLeaveBalance);
@@ -77,7 +98,7 @@ public class EmployeeSeeder {
     }
 
     private void seedIntern() {
-        JobDesignation internJobDesignation = roleService.findByName("intern");
+        JobDesignation internJobDesignation = jobDesignationService.findByName("intern");
         Manager manager = employeeService.findManagerByName("Manager");
         LeaveBalance internLeaveBalance = new LeaveBalance(internJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(internLeaveBalance);
@@ -97,7 +118,7 @@ public class EmployeeSeeder {
     }
 
     private void seedPartTime() {
-        JobDesignation parttimeJobDesignation = roleService.findByName("parttime");
+        JobDesignation parttimeJobDesignation = jobDesignationService.findByName("parttime");
         Manager manager = employeeService.findManagerByName("Manager");
         LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(parttimeLeaveBalance);
@@ -117,7 +138,7 @@ public class EmployeeSeeder {
     }
 
     private void seedCleaning() {
-        JobDesignation cleaningJobDesignation = roleService.findByName("cleaning");
+        JobDesignation cleaningJobDesignation = jobDesignationService.findByName("cleaning");
         Manager manager = employeeService.findManagerByName("Manager");
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
@@ -128,7 +149,7 @@ public class EmployeeSeeder {
                 "cleaning@example.com");
         userService.save(cleaningUser);
 
-        Employee cleaningEmployee = new Employee("Cleaning Staff",
+        Employee cleaningEmployee = new Employee("Andrew",
                 cleaningJobDesignation,
                 manager,
                 cleaningLeaveBalance);
