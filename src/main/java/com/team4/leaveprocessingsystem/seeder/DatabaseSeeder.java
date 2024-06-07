@@ -24,9 +24,8 @@ public class DatabaseSeeder {
         return args -> {
             jobDesignationSeeder.seed();
             publicHolidaySeeder.seed();
-
             employeeSeeder.seed();
-           // leaveApplicationSeeder.seed(); // broken
+            leaveApplicationSeeder.seed();
         };
     }
 }
