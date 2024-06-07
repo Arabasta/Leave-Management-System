@@ -5,7 +5,6 @@ import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +14,15 @@ public class EmployeeSeeder {
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
     private final JobDesignationService jobDesignationService;
-    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public EmployeeSeeder(EmployeeService employeeService,
                           LeaveBalanceService leaveBalanceService,
                           JobDesignationService jobDesignationService,
-                          UserService userService,
                           PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
         this.jobDesignationService = jobDesignationService;
-        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -49,10 +45,15 @@ public class EmployeeSeeder {
                 "manager",
                 passwordEncoder.encode("manager"),
                 "manager@example.com");
-        userService.save(managerUser);
 
-        Manager manager = new Manager("Manager", managementJobDesignation, null, managerLeaveBalance);
+        Manager manager = new Manager("Manager",
+                managementJobDesignation,
+                null,
+                managerLeaveBalance);
         manager.setUser(managerUser);
+
+        managerUser.setEmployee(manager);
+
         employeeService.save(manager);
     }
 
@@ -66,13 +67,22 @@ public class EmployeeSeeder {
                 "employee",
                 passwordEncoder.encode("employee"),
                 "employee@example.com");
-        userService.save(employeeUser);
+
+        User employeeAdminUser = new User(RoleEnum.ROLE_ADMIN,
+                "admin",
+                passwordEncoder.encode("admin"),
+                "employee@example.com");
 
         Employee administrativeEmployee = new Employee("Employee",
                 administrativeJobDesignation,
                 manager,
                 adminLeaveBalance);
         administrativeEmployee.setUser(employeeUser);
+        administrativeEmployee.setUser(employeeAdminUser);
+
+        employeeUser.setEmployee(administrativeEmployee);
+        employeeAdminUser.setEmployee(administrativeEmployee);
+
         employeeService.save(administrativeEmployee);
     }
 
@@ -86,13 +96,15 @@ public class EmployeeSeeder {
                 "intern",
                 passwordEncoder.encode("intern"),
                 "intern@example.com");
-        userService.save(internUser);
 
         Employee intern = new Employee("Intern",
                 internJobDesignation,
                 manager,
                 internLeaveBalance);
         intern.setUser(internUser);
+
+        internUser.setEmployee(intern);
+
         employeeService.save(intern);
     }
 
@@ -106,13 +118,15 @@ public class EmployeeSeeder {
                 "parttime",
                 passwordEncoder.encode("parttime"),
                 "parttime@example.com");
-        userService.save(parttimeUser);
 
         Employee parttimeEmployee = new Employee("Part-time Employee",
                 parttimeJobDesignation,
                 manager,
                 parttimeLeaveBalance);
         parttimeEmployee.setUser(parttimeUser);
+
+        parttimeUser.setEmployee(parttimeEmployee);
+
         employeeService.save(parttimeEmployee);
     }
 
@@ -126,13 +140,15 @@ public class EmployeeSeeder {
                 "cleaning",
                 passwordEncoder.encode("cleaning"),
                 "cleaning@example.com");
-        userService.save(cleaningUser);
 
         Employee cleaningEmployee = new Employee("Andrew",
                 cleaningJobDesignation,
                 manager,
                 cleaningLeaveBalance);
         cleaningEmployee.setUser(cleaningUser);
+
+        cleaningUser.setEmployee(cleaningEmployee);
+
         employeeService.save(cleaningEmployee);
     }
 }

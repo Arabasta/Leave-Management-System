@@ -11,14 +11,12 @@ public class DatabaseSeeder {
     public CommandLineRunner commandLineRunner(EmployeeSeeder employeeSeeder,
                                                PublicHolidaySeeder publicHolidaySeeder,
                                                JobDesignationSeeder jobDesignationSeeder,
-                                               LeaveApplicationSeeder leaveApplicationSeeder,
-                                               UserSeeder userSeeder) {
+                                               LeaveApplicationSeeder leaveApplicationSeeder) {
         return args -> {
             jobDesignationSeeder.seed();
             publicHolidaySeeder.seed();
             employeeSeeder.seed();
             leaveApplicationSeeder.seed();
-            userSeeder.seed();
         };
     }
 }
