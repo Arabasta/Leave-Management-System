@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ public class Employee {
     private JobDesignation jobDesignation;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true)
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
     @ManyToOne
     private Manager manager;
@@ -39,6 +40,7 @@ public class Employee {
         this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
+        this.users = new ArrayList<>();
     }
 
     public void setManager(Manager manager) {
