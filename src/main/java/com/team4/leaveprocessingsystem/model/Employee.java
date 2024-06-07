@@ -14,11 +14,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
-    private Role role;
+    @OneToOne(optional = false)
+    private JobDesignation jobDesignation;
 
-    @OneToOne(orphanRemoval = true)
-    private User user;
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
+    private List<User> users;
 
     @ManyToOne
     private Manager manager;
@@ -33,18 +33,27 @@ public class Employee {
 
     public Employee() {}
 
-    public Employee(String name, Role role,
+    public Employee(String name, JobDesignation jobDesignation,
                     Manager manager, LeaveBalance leaveBalance) {
         this.name = name;
-        this.role = role;
+        this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
     }
 
     public void setManager(Manager manager) {
+        // remove from old manager
+        if (this.manager != null) {
+            this.manager.removeSubordinate(this);
+        }
+
         this.manager = manager;
         if (manager != null) {
             manager.addSubordinate(this);
         }
+    }
+
+    public void setUser(User user) {
+        users.add(user);
     }
 }

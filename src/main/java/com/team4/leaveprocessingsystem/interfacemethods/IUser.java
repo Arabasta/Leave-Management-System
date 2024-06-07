@@ -6,4 +6,5 @@ public interface IUser {
     boolean save(User user);
     User findByUsername(String username);
     User findByEmail(String email);
+    long count();
 }
