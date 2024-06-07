@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.seeder;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
@@ -26,7 +27,7 @@ public class LeaveApplicationSeeder {
         if (leaveApplicationService.count() == 0) {
             // todo : add a lot more and modularise
             Employee employee = employeeService.findByName("Employee");
-            Employee manager = employeeService.findManagerByName("Manager");
+            Manager manager = employeeService.findManagerByName("Manager");
 
             LeaveApplication leaveApplication1 = new LeaveApplication();
             leaveApplication1.setSubmittingEmployee(employee);
