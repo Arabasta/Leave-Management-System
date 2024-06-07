@@ -49,11 +49,16 @@ public class EmployeeSeeder {
                 "manager",
                 passwordEncoder.encode("manager"),
                 "manager@example.com");
-        userService.save(managerUser);
 
-        Manager manager = new Manager("Manager", managementJobDesignation, null, managerLeaveBalance);
+        Manager manager = new Manager("Manager",
+                managementJobDesignation,
+                null,
+                managerLeaveBalance);
         manager.setUser(managerUser);
         employeeService.save(manager);
+
+        managerUser.setEmployee(manager);
+        userService.save(managerUser);
     }
 
     private void seedEmployee() {
@@ -66,7 +71,11 @@ public class EmployeeSeeder {
                 "employee",
                 passwordEncoder.encode("employee"),
                 "employee@example.com");
-        userService.save(employeeUser);
+
+        User employeeAdminUser = new User(RoleEnum.ROLE_ADMIN,
+                "admin",
+                passwordEncoder.encode("admin"),
+                "employee@example.com");
 
         Employee administrativeEmployee = new Employee("Employee",
                 administrativeJobDesignation,
@@ -74,6 +83,12 @@ public class EmployeeSeeder {
                 adminLeaveBalance);
         administrativeEmployee.setUser(employeeUser);
         employeeService.save(administrativeEmployee);
+
+        employeeUser.setEmployee(administrativeEmployee);
+        userService.save(employeeUser);
+
+        employeeAdminUser.setEmployee(administrativeEmployee);
+        userService.save(employeeAdminUser);
     }
 
     private void seedIntern() {
@@ -94,6 +109,9 @@ public class EmployeeSeeder {
                 internLeaveBalance);
         intern.setUser(internUser);
         employeeService.save(intern);
+
+        internUser.setEmployee(intern);
+        userService.save(internUser);
     }
 
     private void seedPartTime() {
@@ -114,6 +132,9 @@ public class EmployeeSeeder {
                 parttimeLeaveBalance);
         parttimeEmployee.setUser(parttimeUser);
         employeeService.save(parttimeEmployee);
+
+        parttimeUser.setEmployee(parttimeEmployee);
+        userService.save(parttimeUser);
     }
 
     private void seedCleaning() {
@@ -134,5 +155,8 @@ public class EmployeeSeeder {
                 cleaningLeaveBalance);
         cleaningEmployee.setUser(cleaningUser);
         employeeService.save(cleaningEmployee);
+
+        cleaningUser.setEmployee(cleaningEmployee);
+        userService.save(cleaningUser);
     }
 }
