@@ -15,7 +15,7 @@ public class Employee {
     private Integer id;
 
     @ManyToOne(optional = false)
-    private Role role;
+    private JobDesignation jobDesignation;
 
     @OneToOne(orphanRemoval = true)
     private User user;
@@ -33,10 +33,10 @@ public class Employee {
 
     public Employee() {}
 
-    public Employee(String name, Role role,
+    public Employee(String name, JobDesignation jobDesignation,
                     Manager manager, LeaveBalance leaveBalance) {
         this.name = name;
-        this.role = role;
+        this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
     }

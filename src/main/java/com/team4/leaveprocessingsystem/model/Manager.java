@@ -16,8 +16,8 @@ public class Manager extends Employee {
 
     public Manager() {}
 
-    public Manager(String name, Role role, Manager manager, LeaveBalance leaveBalance) {
-        super(name, role, manager, leaveBalance);
+    public Manager(String name, JobDesignation jobDesignation, Manager manager, LeaveBalance leaveBalance) {
+        super(name, jobDesignation, manager, leaveBalance);
         this.subordinates = new ArrayList<>();
     }
 

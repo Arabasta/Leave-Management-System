@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatabaseSeeder {
     @Autowired
-    private RoleSeeder roleSeeder;
+    private JobDesignationSeeder jobDesignationSeeder;
     @Autowired
     private EmployeeSeeder employeeSeeder;
     @Autowired
@@ -19,10 +19,10 @@ public class DatabaseSeeder {
     @Bean
     public CommandLineRunner commandLineRunner(EmployeeSeeder employeeSeeder,
                                                PublicHolidaySeeder publicHolidaySeeder,
-                                               RoleSeeder roleSeeder,
+                                               JobDesignationSeeder jobDesignationSeeder,
                                                LeaveApplicationSeeder leaveApplicationSeeder) {
         return args -> {
-            roleSeeder.seed();
+            jobDesignationSeeder.seed();
             publicHolidaySeeder.seed();
 
             employeeSeeder.seed();

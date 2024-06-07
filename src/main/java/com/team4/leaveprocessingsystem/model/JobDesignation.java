@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Role {
+public class JobDesignation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,9 +18,9 @@ public class Role {
     @Column(nullable = false)
     private int annualLeaves;
 
-    public Role() {}
+    public JobDesignation() {}
 
-    public Role(String name, int annualLeaves) {
+    public JobDesignation(String name, int annualLeaves) {
         this.name = name;
         this.annualLeaves = annualLeaves;
     }

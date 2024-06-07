@@ -4,7 +4,7 @@ import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.AccessLevelEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.RoleService;
+import com.team4.leaveprocessingsystem.service.JobDesignationService;
 import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,13 @@ public class EmployeeSeeder {
 
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
-    private final RoleService roleService;
+    private final JobDesignationService roleService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public EmployeeSeeder(EmployeeService employeeService,
                           LeaveBalanceService leaveBalanceService,
-                          RoleService roleService,
+                          JobDesignationService roleService,
                           UserService userService,
                           PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
@@ -41,8 +41,8 @@ public class EmployeeSeeder {
     }
 
     private void seedManagement() {
-        Role managementRole = roleService.findByName("management");
-        LeaveBalance managerLeaveBalance = new LeaveBalance(managementRole.getAnnualLeaves());
+        JobDesignation managementJobDesignation = roleService.findByName("management");
+        LeaveBalance managerLeaveBalance = new LeaveBalance(managementJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(managerLeaveBalance);
 
         User managerUser = new User(AccessLevelEnum.ROLE_MANAGER,
@@ -51,15 +51,15 @@ public class EmployeeSeeder {
                 "manager@example.com");
         userService.save(managerUser);
 
-        Manager manager = new Manager("Manager", managementRole, null, managerLeaveBalance);
+        Manager manager = new Manager("Manager", managementJobDesignation, null, managerLeaveBalance);
         manager.setUser(managerUser);
         employeeService.save(manager);
     }
 
     private void seedAdministrative() {
-        Role administrativeRole = roleService.findByName("administrative");
+        JobDesignation administrativeJobDesignation = roleService.findByName("administrative");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeRole.getAnnualLeaves());
+        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance);
 
         User adminUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
@@ -69,7 +69,7 @@ public class EmployeeSeeder {
         userService.save(adminUser);
 
         Employee administrativeEmployee = new Employee("Administrative Employee",
-                administrativeRole,
+                administrativeJobDesignation,
                 manager,
                 adminLeaveBalance);
         administrativeEmployee.setUser(adminUser);
@@ -77,9 +77,9 @@ public class EmployeeSeeder {
     }
 
     private void seedIntern() {
-        Role internRole = roleService.findByName("intern");
+        JobDesignation internJobDesignation = roleService.findByName("intern");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance internLeaveBalance = new LeaveBalance(internRole.getAnnualLeaves());
+        LeaveBalance internLeaveBalance = new LeaveBalance(internJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(internLeaveBalance);
 
         User internUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
@@ -89,7 +89,7 @@ public class EmployeeSeeder {
         userService.save(internUser);
 
         Employee intern = new Employee("Intern",
-                internRole,
+                internJobDesignation,
                 manager,
                 internLeaveBalance);
         intern.setUser(internUser);
@@ -97,9 +97,9 @@ public class EmployeeSeeder {
     }
 
     private void seedPartTime() {
-        Role parttimeRole = roleService.findByName("parttime");
+        JobDesignation parttimeJobDesignation = roleService.findByName("parttime");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeRole.getAnnualLeaves());
+        LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(parttimeLeaveBalance);
 
         User parttimeUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
@@ -109,7 +109,7 @@ public class EmployeeSeeder {
         userService.save(parttimeUser);
 
         Employee parttimeEmployee = new Employee("Part-time Employee",
-                parttimeRole,
+                parttimeJobDesignation,
                 manager,
                 parttimeLeaveBalance);
         parttimeEmployee.setUser(parttimeUser);
@@ -117,9 +117,9 @@ public class EmployeeSeeder {
     }
 
     private void seedCleaning() {
-        Role cleaningRole = roleService.findByName("cleaning");
+        JobDesignation cleaningJobDesignation = roleService.findByName("cleaning");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningRole.getAnnualLeaves());
+        LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
         User cleaningUser = new User(AccessLevelEnum.ROLE_EMPLOYEE,
@@ -129,7 +129,7 @@ public class EmployeeSeeder {
         userService.save(cleaningUser);
 
         Employee cleaningEmployee = new Employee("Cleaning Staff",
-                cleaningRole,
+                cleaningJobDesignation,
                 manager,
                 cleaningLeaveBalance);
         cleaningEmployee.setUser(cleaningUser);
