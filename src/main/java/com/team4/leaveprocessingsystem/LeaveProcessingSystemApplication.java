@@ -16,17 +16,17 @@ public class LeaveProcessingSystemApplication {
         SpringApplication.run(LeaveProcessingSystemApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner commandLineRunner(UserRepository ur, PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (ur.count() == 0) {
-                ur.save(
-                        new User(AccessLevelEnum.ROLE_ADMIN,
-                                "root",
-                                passwordEncoder.encode("root"),
-                                "root@gmail.com"));
-            }
-        };
-    }
+//    @Bean
+//    public CommandLineRunner commandLineRunner(UserRepository ur, PasswordEncoder passwordEncoder) {
+//        return args -> {
+//            if (ur.count() == 0) {
+//                ur.save(
+//                        new User(AccessLevelEnum.ROLE_ADMIN,
+//                                "root",
+//                                passwordEncoder.encode("root"),
+//                                "root@gmail.com"));
+//            }
+//        };
+//    }
 }
 
