@@ -48,4 +48,10 @@ public class UserService implements UserDetailsService, IUser {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
     }
+
+    @Override
+    @Transactional
+    public long count() {
+        return userRepository.count();
+    }
 }

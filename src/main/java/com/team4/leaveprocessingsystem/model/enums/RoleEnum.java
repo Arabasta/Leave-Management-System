@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.model.enums;
 
-public enum AccessLevelEnum {
+public enum RoleEnum {
     ROLE_EMPLOYEE,
     ROLE_MANAGER,
     ROLE_ADMIN,

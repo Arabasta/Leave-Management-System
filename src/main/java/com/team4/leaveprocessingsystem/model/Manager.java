@@ -14,10 +14,13 @@ public class Manager extends Employee {
     @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
     private List<Employee> subordinates;
 
+    @OneToMany(mappedBy = "reviewingManager")
+    private List<LeaveApplication> leaveApplications;
+
     public Manager() {}
 
-    public Manager(String name, Role role, Manager manager, LeaveBalance leaveBalance) {
-        super(name, role, manager, leaveBalance);
+    public Manager(String name, JobDesignation jobDesignation, Manager manager, LeaveBalance leaveBalance) {
+        super(name, jobDesignation, manager, leaveBalance);
         this.subordinates = new ArrayList<>();
     }
 
@@ -26,5 +29,10 @@ public class Manager extends Employee {
             subordinates.add(employee);
             employee.setManager(this);
         }
+    }
+
+    public void removeSubordinate(Employee employee) {
+        subordinates.remove(employee);
+        employee.setManager(null);
     }
 }

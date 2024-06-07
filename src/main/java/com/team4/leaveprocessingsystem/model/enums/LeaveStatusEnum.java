@@ -6,6 +6,5 @@ public enum LeaveStatusEnum {
     DELETED,
     CANCELLED,
     APPROVED,
-    REJECTED,
-    COMPLETED
+    REJECTED
 }

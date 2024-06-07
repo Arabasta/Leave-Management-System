@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.model;
 
-import com.team4.leaveprocessingsystem.model.enums.AccessLevelEnum;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +21,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
+
     @Enumerated(EnumType.STRING)
-    private AccessLevelEnum accessLevel;
+    private RoleEnum role;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -41,8 +43,8 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(AccessLevelEnum accessLevel, String username, String password, String email) {
-        this.accessLevel = accessLevel;
+    public User(RoleEnum role, String username, String password, String email) {
+        this.role = role;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -60,26 +62,26 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(accessLevel.name()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return accessLevel != AccessLevelEnum.ROLE_EXPIRED;
+        return role != RoleEnum.ROLE_EXPIRED;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accessLevel != AccessLevelEnum.ROLE_LOCKED;
+        return role != RoleEnum.ROLE_LOCKED;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return accessLevel != AccessLevelEnum.ROLE_EXPIRED;
+        return role != RoleEnum.ROLE_EXPIRED;
     }
 
     @Override
     public boolean isEnabled() {
-        return accessLevel != AccessLevelEnum.ROLE_LOCKED && accessLevel != AccessLevelEnum.ROLE_EXPIRED;
+        return role != RoleEnum.ROLE_LOCKED && role != RoleEnum.ROLE_EXPIRED;
     }
 }
