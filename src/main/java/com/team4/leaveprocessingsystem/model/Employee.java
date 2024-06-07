@@ -14,7 +14,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true)
