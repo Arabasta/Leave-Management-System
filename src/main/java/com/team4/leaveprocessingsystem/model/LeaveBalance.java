@@ -17,7 +17,7 @@ public class LeaveBalance {
     private int annualLeave;
 
     @Column(nullable = false)
-    private static final int MEDICAL_LEAVE = 60;
+    private int medicalLeave = 60;
 
     public LeaveBalance() {}
 
