@@ -5,7 +5,6 @@ import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +14,15 @@ public class EmployeeSeeder {
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
     private final JobDesignationService jobDesignationService;
-    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public EmployeeSeeder(EmployeeService employeeService,
                           LeaveBalanceService leaveBalanceService,
                           JobDesignationService jobDesignationService,
-                          UserService userService,
                           PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
         this.jobDesignationService = jobDesignationService;
-        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -55,10 +51,10 @@ public class EmployeeSeeder {
                 null,
                 managerLeaveBalance);
         manager.setUser(managerUser);
-        employeeService.save(manager);
 
         managerUser.setEmployee(manager);
-        userService.save(managerUser);
+
+        employeeService.save(manager);
     }
 
     private void seedEmployee() {
@@ -82,13 +78,12 @@ public class EmployeeSeeder {
                 manager,
                 adminLeaveBalance);
         administrativeEmployee.setUser(employeeUser);
-        employeeService.save(administrativeEmployee);
+        administrativeEmployee.setUser(employeeAdminUser);
 
         employeeUser.setEmployee(administrativeEmployee);
-        userService.save(employeeUser);
-
         employeeAdminUser.setEmployee(administrativeEmployee);
-        userService.save(employeeAdminUser);
+
+        employeeService.save(administrativeEmployee);
     }
 
     private void seedIntern() {
@@ -101,17 +96,16 @@ public class EmployeeSeeder {
                 "intern",
                 passwordEncoder.encode("intern"),
                 "intern@example.com");
-        userService.save(internUser);
 
         Employee intern = new Employee("Intern",
                 internJobDesignation,
                 manager,
                 internLeaveBalance);
         intern.setUser(internUser);
-        employeeService.save(intern);
 
         internUser.setEmployee(intern);
-        userService.save(internUser);
+
+        employeeService.save(intern);
     }
 
     private void seedPartTime() {
@@ -124,17 +118,16 @@ public class EmployeeSeeder {
                 "parttime",
                 passwordEncoder.encode("parttime"),
                 "parttime@example.com");
-        userService.save(parttimeUser);
 
         Employee parttimeEmployee = new Employee("Part-time Employee",
                 parttimeJobDesignation,
                 manager,
                 parttimeLeaveBalance);
         parttimeEmployee.setUser(parttimeUser);
-        employeeService.save(parttimeEmployee);
 
         parttimeUser.setEmployee(parttimeEmployee);
-        userService.save(parttimeUser);
+
+        employeeService.save(parttimeEmployee);
     }
 
     private void seedCleaning() {
@@ -147,16 +140,15 @@ public class EmployeeSeeder {
                 "cleaning",
                 passwordEncoder.encode("cleaning"),
                 "cleaning@example.com");
-        userService.save(cleaningUser);
 
         Employee cleaningEmployee = new Employee("Andrew",
                 cleaningJobDesignation,
                 manager,
                 cleaningLeaveBalance);
         cleaningEmployee.setUser(cleaningUser);
-        employeeService.save(cleaningEmployee);
 
         cleaningUser.setEmployee(cleaningEmployee);
-        userService.save(cleaningUser);
+
+        employeeService.save(cleaningEmployee);
     }
 }
