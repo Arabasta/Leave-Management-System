@@ -7,14 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DatabaseSeeder {
-    @Autowired
-    private JobDesignationSeeder jobDesignationSeeder;
-    @Autowired
-    private EmployeeSeeder employeeSeeder;
-    @Autowired
-    private PublicHolidaySeeder publicHolidaySeeder;
-    @Autowired
-    private LeaveApplicationSeeder leaveApplicationSeeder;
 
     @Bean
     public CommandLineRunner commandLineRunner(EmployeeSeeder employeeSeeder,
