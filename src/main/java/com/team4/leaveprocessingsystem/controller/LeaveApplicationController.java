@@ -7,8 +7,10 @@ import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("leave")
 @Controller
 public class LeaveApplicationController {
     @Autowired
@@ -19,7 +21,7 @@ public class LeaveApplicationController {
         this.leaveService = leaveService;
     }
 
-    @GetMapping("/leave/create")
+    @GetMapping("create")
     public String createLeave(Model model){
         LeaveApplication leaveApplication = new LeaveApplication();
         model.addAttribute(("leave"), leaveApplication);
@@ -29,45 +31,57 @@ public class LeaveApplicationController {
         return "leaveApplication/createLeave";
     }
 
-    @PostMapping("/leave/create/save")
-    public String saveCreatedLeave(@ModelAttribute("leave") LeaveApplication leaveApplication){
-//        if (bindingResult.hasErrors()) { //to implement validation
-//            return "leaveApplication/createLeave";
-//        }
+    @PostMapping("create")
+    public String saveCreatedLeave(@ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return "leaveApplication/createLeave";
+        }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
         leaveService.save(leaveApplication);
         return "leaveApplication/viewLeaveHistory";
     }
 
-    @GetMapping("/leave/edit/{id}")
+    @GetMapping("edit/{id}")
     public String editLeave(@PathVariable int id, Model model){
         model.addAttribute("leave", leaveService.findLeaveApplicationById(id));
+
+        //TODO: Get all applied/updated/approved leave to prevent overlap
+
         return "leaveApplication/editLeave";
     }
 
-    @GetMapping("/leave/edit/save")
-    public String saveEditedLeave(@ModelAttribute("leave") LeaveApplication leaveApplication){
-//        if (bindingResult.hasErrors()) { //to implement validation
-//            return "leaveApplication/editLeave";
-//        }
+    @PostMapping("edit/{id}")
+    public String saveEditedLeave(@ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return "leaveApplication/editLeave";
+        }
+
+        //TODO: Applied/Updated leave can be updated
+
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
         leaveService.save(leaveApplication);
         return "leaveApplication/viewLeaveHistory";
     }
 
-    @GetMapping("leave/delete/{id}")
-    public String deleteLeave(@PathVariable int id, Model model){
-        model.addAttribute("leave", leaveService.findLeaveApplicationById(id));
-        return "leaveApplication/deleteLeave";
-    }
-
-    @GetMapping("leave/delete/confirm")
-    public String deleteConfirmLeave(@ModelAttribute("leave") LeaveApplication leaveApplication){
+    @GetMapping("delete/{id}")
+    public String deleteLeave(@PathVariable int id){
+        LeaveApplication leaveApplication = leaveService.findLeaveApplicationById(id);
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveService.save(leaveApplication);
+
+        //TODO: Applied/updated leave can be deleted
+
         return "leaveApplication/viewLeaveHistory";
     }
 
-    //TODO: Change status from APPROVED to CANCELLED
+    @GetMapping("cancel/{id}")
+    public String cancelLeave(@PathVariable int id){
+        LeaveApplication leaveApplication = leaveService.findLeaveApplicationById(id);
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
+        leaveService.save(leaveApplication);
 
+        //TODO: Applied/updated/approved leave can be cancelled
+
+        return "leaveApplication/viewLeaveHistory";
+    }
 }
