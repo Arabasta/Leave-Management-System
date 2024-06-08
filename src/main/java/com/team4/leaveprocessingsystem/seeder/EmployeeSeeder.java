@@ -3,8 +3,8 @@ package com.team4.leaveprocessingsystem.seeder;
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
+import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class EmployeeSeeder {
 
     private void seedManagement() {
         JobDesignation managementJobDesignation = jobDesignationService.findByName("management");
-        LeaveBalance managerLeaveBalance = new LeaveBalance(managementJobDesignation.getAnnualLeaves());
+        LeaveBalance managerLeaveBalance = new LeaveBalance(managementJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(managerLeaveBalance);
 
         User managerUser = new User(RoleEnum.ROLE_MANAGER,
@@ -60,7 +60,7 @@ public class EmployeeSeeder {
     private void seedEmployee() {
         JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getAnnualLeaves());
+        LeaveBalance adminLeaveBalance = new LeaveBalance(administrativeJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance);
 
         User employeeUser = new User(RoleEnum.ROLE_EMPLOYEE,
@@ -89,7 +89,7 @@ public class EmployeeSeeder {
     private void seedIntern() {
         JobDesignation internJobDesignation = jobDesignationService.findByName("intern");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance internLeaveBalance = new LeaveBalance(internJobDesignation.getAnnualLeaves());
+        LeaveBalance internLeaveBalance = new LeaveBalance(internJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(internLeaveBalance);
 
         User internUser = new User(RoleEnum.ROLE_EMPLOYEE,
@@ -111,7 +111,7 @@ public class EmployeeSeeder {
     private void seedPartTime() {
         JobDesignation parttimeJobDesignation = jobDesignationService.findByName("parttime");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getAnnualLeaves());
+        LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(parttimeLeaveBalance);
 
         User parttimeUser = new User(RoleEnum.ROLE_EMPLOYEE,
@@ -133,7 +133,7 @@ public class EmployeeSeeder {
     private void seedCleaning() {
         JobDesignation cleaningJobDesignation = jobDesignationService.findByName("cleaning");
         Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getAnnualLeaves());
+        LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
         User cleaningUser = new User(RoleEnum.ROLE_EMPLOYEE,
