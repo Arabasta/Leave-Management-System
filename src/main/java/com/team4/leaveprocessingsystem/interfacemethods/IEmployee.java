@@ -17,4 +17,5 @@ public interface IEmployee {
     // TODO: fix query strings
     List<Employee> findEmployeeByJobDesignation(String jobDesignation);
     List<Employee> findUserByRoleType(String roleType);
+    Employee findEmployeeById(int id);
 }

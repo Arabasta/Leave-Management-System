@@ -3,6 +3,7 @@ package com.team4.leaveprocessingsystem.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +33,9 @@ public class Employee {
 
     @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
     private List<LeaveApplication> leaveApplications;
+
+    @OneToMany(mappedBy = "claimingEmployee", orphanRemoval = true)
+    private List<CompensationClaim> compensationClaims;
 
     @NotBlank(message = "Name cannot be blank")
     private String name;

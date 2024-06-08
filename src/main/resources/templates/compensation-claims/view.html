@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Compensation Claims</title>
+</head>
+<body>
+    <h1>View Compensation Claims</h1>
+    <table>
+        <tr>
+            <td>Employee: </td>
+            <td th:text="${employee.name}"></td>
+        </tr>
+
+        <tr>
+            <td>Total Eligible Compensation Leave: </td>
+            <td th:text="${leaveBalanceService.findByEmployee(employee.id).getCompensationLeave()}"></td>
+        </tr>
+
+        <tr>
+            <!-- TODO: to link to Create Compensation Claim-->
+            <td><button>New Compensation Claim</button></td>
+            <!-- TODO: to link to LeaveApplication page-->
+            <td><button>Apply Leave</button></td>
+            <!-- TODO: to implement save as CSV function-->
+            <td><button>Save as CSV</button></td>
+        </tr>
+
+        <tr>
+            <td>Status</td>
+            <td>Overtime Start</td>
+            <td>Overtime End</td>
+            <td>Overtime Hours</td>
+            <td>Eligible Compensation Leave</td>
+            <td>Details</td>
+        </tr>
+        <tr th:each="claim:${compensationClaims}">
+            <td th:text="${claim.compensationClaimStatus}"></td>
+            <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+            <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+            <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
+            <td th:text="${claim.compensationLeaveRequested}"></td>
+            <!-- TODO: to implement additional details-->
+            <td><button>Details</button></td>
+        </tr>
+
+    </table>
+
+    <h3 th:if="${#lists.isEmpty(compensationClaims)}">You do not have any Compensation Claims!</h3>
+
+</body>
+</html>

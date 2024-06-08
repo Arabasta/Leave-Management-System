@@ -94,4 +94,9 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findUserByRoleType(roleType);
     }
 
+
+    public Employee findEmployeeById(int id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
+    }
 }
