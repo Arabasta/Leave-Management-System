@@ -14,7 +14,7 @@
 
         <tr>
             <td>Total Eligible Compensation Leave: </td>
-<!--            <td>-TODO: to implement Compensation Leave in model-</td>-->
+            <td th:text="${leaveBalanceService.findByEmployee(employee.id).getCompensationLeave()}"></td>
         </tr>
 
         <tr>
