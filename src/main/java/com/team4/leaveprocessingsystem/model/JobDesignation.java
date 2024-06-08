@@ -1,6 +1,8 @@
 package com.team4.leaveprocessingsystem.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,9 +14,11 @@ public class JobDesignation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Name cannot be blank")
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Min(value = 0, message = "Number of leave(s) must be more than or equal to 0")
     @Column(nullable = false)
     private int defaultAnnualLeaves;
 

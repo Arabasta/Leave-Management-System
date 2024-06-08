@@ -1,6 +1,8 @@
 package com.team4.leaveprocessingsystem.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +17,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull(message = "Job Designation cannot be blank")
     @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
@@ -30,6 +33,7 @@ public class Employee {
     @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
     private List<LeaveApplication> leaveApplications;
 
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     public Employee() {}
