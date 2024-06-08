@@ -31,7 +31,7 @@ public class WebSecurityConfig {
     private UserService userService;
 
     @Autowired
-    private RedirectService redirectService;
+    private RedirectService redirectService
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
