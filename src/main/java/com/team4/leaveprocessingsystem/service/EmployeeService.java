@@ -10,6 +10,7 @@ import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -73,4 +74,27 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findByName(name)
                 .orElseThrow(() -> new EntityNotFoundException("Employee " + name + " not found"));
     }
+
+    @Override
+    @Transactional
+    public List<Employee> SearchEmployeeByName(@Param("k") String keyword) {
+        return employeeRepository.SearchEmployeeByName(keyword);
+    }
+
+    // TODO: fix query string
+    /*
+    @Override
+    @Transactional
+    public List<Employee> findEmployeeByJobDesignation(String jobDesignation) {
+        return employeeRepository.findEmployeeByJobDesignation(jobDesignation);
+    }
+     */
+
+    // TODO: fix query string
+    /*@Override
+    @Transactional
+    public List<Employee> findUserByRoleType(String roleType) {
+        return employeeRepository.findUserByRoleType(roleType);
+    }
+    */
 }
