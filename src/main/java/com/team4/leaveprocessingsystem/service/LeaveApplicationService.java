@@ -27,6 +27,12 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
+    public LeaveApplication findLeaveApplicationById(Integer id){
+        return leaveApplicationRepository.findById(id).get();
+    }
+
+    @Override
+    @Transactional
     public long count() {
         return leaveApplicationRepository.count();
     }
