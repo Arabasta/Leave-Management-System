@@ -1,10 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <body>
 
+<h3>New Leave Application Page</h3>
+<form action="#" th:action="@{/leave/create}" method="post">
+    <table>
+        <tbody>
+        <tr>
+            <td th:text="${employee.name}"></td>
+        </tr>
+        <tr>
+            <td>Leave Type</td>
+            <td>
+                <select th:field="*{leave.leaveType}">
+                    <option th:each="leaveType : ${leaveTypes}" th:value="${leaveType}" th:text="${leaveType}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Entitlement (days)</td>
+            <td>
+                <!-- NEED TO FIX LEAVE getters after PR merge----------------------------------------------------------->
+                <!-- Need to add JS for selected option -->
+                <span th:if="${leave.leaveType == 'MEDICAL'}" th:text="${employee.getLeaveBalance().getCurrentMedicalLeave()}"></span>
+                <span th:if="${leave.leaveType == 'ANNUAL'}" th:text="${employee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                <span th:if="${leave.leaveType == 'COMPASSIONATE'}" th:text="${employee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                <span th:if="${leave.leaveType == 'COMPENSATION'}" th:text="${employee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                <span th:if="${leave.leaveType == 'UNPAID'}" th:text=""></span>
+            </td>
+        </tr>
+        <tr>
+            <td>Start Date</td>
+            <td><input type="date" th:value="${leave.startDateTime}" th:field="${leave.startDateTime}"  /></td>
+            <td th:if="${#fields.hasErrors('leave.startDateTime')}" th:errors="${leave.startDateTime}"></td>
+        </tr>
+        <tr>
+            <td>End Date</td>
+            <td><input type="date" th:value="${leave.endDateTime}" th:field="${leave.endDateTime}" /></td>
+            <td th:if="${#fields.hasErrors('leave.endDateTime')}" th:errors="${leave.endDateTime}"></td>
+        </tr>
+        <tr>
+            <td>Approving Manager</td>
+            <td th:text="${employee.manager.name}"></td>
+        </tr>
+        <tr>
+            <td>Reason:</td>
+            <td colspan="3"><textarea th:field="${leave.submissionReason}"
+                                      th:rows="${leave.submissionReason}" cols="40"></textarea></td>
+            <td th:if="${#fields.hasErrors('leave.submissionReason')}" th:errors="${leave.submissionReason}"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Create" class="blcass" />
+                <input type="reset" value="Reset" class="blcass" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>
 </body>
 </html>
