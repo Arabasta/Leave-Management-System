@@ -29,7 +29,10 @@
         <td></td>
         <td th:text="${staff.name}">Name</td>
         <td th:text="${staff.jobDesignation.name}">Job Designation</td>
-        <td th:text="${staff.getUsers().getFirst().getRole()}">Role</td>
+        <td>
+            <span th:each="user : ${staff.users}" th:text="${user.role}">Role</span>
+        </td>
+
     </tr>
 </table>
 
