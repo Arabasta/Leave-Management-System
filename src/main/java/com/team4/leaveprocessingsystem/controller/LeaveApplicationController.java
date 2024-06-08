@@ -3,6 +3,7 @@ package com.team4.leaveprocessingsystem.controller;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
@@ -39,9 +40,9 @@ public class LeaveApplicationController {
     @GetMapping("create")
     public String createLeave(Model model){
         LeaveApplication leaveApplication = new LeaveApplication();
-
         Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
-        model.addAttribute("employee", employee);
+        leaveApplication.setSubmittingEmployee(employee);
+
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
         //TODO: Get all applied/updated/approved leave to prevent overlap
@@ -54,10 +55,14 @@ public class LeaveApplicationController {
         if (bindingResult.hasErrors()) {
             return "leaveApplication/leaveForm";
         }
-        leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
+        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
+        Manager manager = employee.getManager();
 
-        //get employee and manager
+        leaveApplication.setSubmittingEmployee(employee);
+        leaveApplication.setReviewingManager(manager);
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
         leaveService.save(leaveApplication);
+
         return "leaveApplication/viewLeaveHistory";
     }
 

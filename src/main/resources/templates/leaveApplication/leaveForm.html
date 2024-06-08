@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
+<head>
+    <title>Leave Application</title>
+</head>
 <body>
 
 <h3>New Leave Application Page</h3>
-<form action="#" th:action="@{/leave/create}" method="post">
+<form th:action="@{/leave/create}" method="post">
     <table>
         <tbody>
         <tr>
-            <td th:text="${employee.name}"></td>
+            <td th:text="${leave.submittingEmployee.name}"></td>
         </tr>
         <tr>
             <td>Leave Type</td>
@@ -32,17 +34,17 @@
         </tr>
         <tr>
             <td>Start Date</td>
-            <td><input type="date" th:value="${leave.startDateTime}" th:field="${leave.startDateTime}"  /></td>
-            <td th:if="${#fields.hasErrors('leave.startDateTime')}" th:errors="${leave.startDateTime}"></td>
+            <td><input type="date" th:value="${leave.startDate}" th:field="${leave.startDate}"  /></td>
+            <td th:if="${#fields.hasErrors('leave.startDate')}" th:errors="${leave.startDate}"></td>
         </tr>
         <tr>
             <td>End Date</td>
-            <td><input type="date" th:value="${leave.endDateTime}" th:field="${leave.endDateTime}" /></td>
-            <td th:if="${#fields.hasErrors('leave.endDateTime')}" th:errors="${leave.endDateTime}"></td>
+            <td><input type="date" th:value="${leave.endDate}" th:field="${leave.endDate}" /></td>
+            <td th:if="${#fields.hasErrors('leave.endDate')}" th:errors="${leave.endDate}"></td>
         </tr>
         <tr>
             <td>Approving Manager</td>
-            <td th:text="${employee.manager.name}"></td>
+            <td th:text="${leave.submittingEmployee.manager.name}"></td>
         </tr>
         <tr>
             <td>Reason:</td>

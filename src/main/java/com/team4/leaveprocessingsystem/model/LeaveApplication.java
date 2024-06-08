@@ -8,8 +8,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -26,10 +27,10 @@ public class LeaveApplication {
     private Manager reviewingManager;
 
     @Enumerated(EnumType.STRING)
-
     @Column(nullable = false)
     private LeaveStatusEnum leaveStatus;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Leave type cannot be blank")
     @Column(nullable = false)
     private LeaveTypeEnum leaveType;
@@ -37,11 +38,13 @@ public class LeaveApplication {
     @NotNull(message = "Start date cannot be blank")
     @FutureOrPresent(message = "Start date must be today or in the future")
     @Column(nullable = false)
-    private LocalDateTime startDateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
     @NotNull(message = "End date cannot be blank")
     @Column(nullable = false)
-    private LocalDateTime endDateTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
     @NotBlank(message = "Reason cannot be blank")
     @Column(nullable = false)
