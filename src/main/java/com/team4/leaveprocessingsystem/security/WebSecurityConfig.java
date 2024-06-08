@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.security;
 
+import com.team4.leaveprocessingsystem.service.RedirectService;
 import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 // source: https://docs.spring.io/spring-security/reference/servlet/getting-started.html
 // source: https://spring.io/guides/gs/securing-web
@@ -26,32 +30,62 @@ public class WebSecurityConfig {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedirectService redirectService;
 
-    // defines which URL paths should be secured
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // allows users to access requestMatchers without authentication
                 .authorizeHttpRequests((authorize) -> authorize
-                        // allow unauthenticated to visit login
-                        .requestMatchers("/login").permitAll()
+                        // allow all roles and unauthenticated to visit login
+                        .requestMatchers("/auth/login").permitAll()
 
-                        .requestMatchers("/", "/home").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
-                        //.requestMatchers("/admin home").hasRole("ADMIN")
+                         // employee
+                        .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
+
+                        // manager
+                        .requestMatchers("/", "/home/manager").hasRole("MANAGER")
+
+                        // admin
+                        .requestMatchers("/", "/home/admin").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
 
                 )
                 // successful login redirection path
                 .formLogin((form) -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .loginPage("/login") // do not touch this
+                        .successHandler(authenticationSuccessHandler())
+                        .failureHandler(authenticationFailureHandler())
                         .permitAll()
                 )
                 // allows everyone to access logout
-                .logout(LogoutConfigurer::permitAll);
+                .logout(LogoutConfigurer::permitAll)
+                .exceptionHandling((exceptions) -> exceptions
+                        .accessDeniedHandler(accessDeniedHandler())
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        // redirects to respective home pages after logging in
+        return (request, response, authentication) -> {
+            String redirectUrl = redirectService.getAuthSuccessRedirectUrl();
+            response.sendRedirect(redirectUrl);
+        };
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return (request, response, exception) -> response.sendRedirect("/auth/failure");
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        // redirects to 403-forbidden when accessDeniedException thrown
+        return (request, response, accessDeniedException) -> response.sendRedirect("/error/403-forbidden");
     }
 
     @Bean
