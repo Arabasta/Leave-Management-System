@@ -2,8 +2,11 @@ package com.team4.leaveprocessingsystem.model;
 
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,16 +28,19 @@ public class User implements UserDetails {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
+    @Length(min=3, max=20, message = "Username must be 3-20 characters")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Length(min=6, message = "Password must at least 6 characters")
     @Column(nullable = false)
     private String password;
 
+    @Email(message = "Please input a valid Email")
+    @NotBlank(message = "Email cannot be blank")
     @Column(nullable = false)
     private String email;
 

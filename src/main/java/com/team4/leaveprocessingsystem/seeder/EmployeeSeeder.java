@@ -70,7 +70,7 @@ public class EmployeeSeeder {
 
         User employeeAdminUser = new User(RoleEnum.ROLE_ADMIN,
                 "admin",
-                passwordEncoder.encode("admin"),
+                passwordEncoder.encode("adminadmin"),
                 "employee@example.com");
 
         Employee administrativeEmployee = new Employee("Employee",
