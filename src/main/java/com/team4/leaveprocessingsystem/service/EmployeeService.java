@@ -81,14 +81,11 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.SearchEmployeeByName(keyword);
     }
 
-    // TODO: fix query string
-    /*
     @Override
     @Transactional
     public List<Employee> findEmployeeByJobDesignation(String jobDesignation) {
         return employeeRepository.findEmployeeByJobDesignation(jobDesignation);
     }
-     */
 
     // TODO: fix query string
     /*@Override

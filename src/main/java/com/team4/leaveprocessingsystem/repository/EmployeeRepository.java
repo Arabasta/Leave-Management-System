@@ -14,18 +14,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByManager(Manager manager);
 
     @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
-    public List<Employee> SearchEmployeeByName(@Param("k") String keyword);
+    List<Employee> SearchEmployeeByName(@Param("k") String keyword);
 
-    // TODO: fix query string
-    /*
-    @Query(nativeQuery = true,
-            value = "Select e.*, JD.name from Employee E " +
-                    "join JobDesignation JD " +
-                    "on e.id = JD.id " +
-                    "where JD.name like CONCAT('%', :k, '%') ")
+
+    @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
     List<Employee> findEmployeeByJobDesignation(@Param("k") String keyword);
-
-     */
 
     // TODO: fix query string
     /*
