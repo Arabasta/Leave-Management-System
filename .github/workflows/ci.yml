@@ -34,6 +34,6 @@ jobs:
       - name: Run tests
         run: mvn test
         env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/leave_processing_system?useSSL=false&serverTimezone=Asia/Singapore
           SPRING_DATASOURCE_USERNAME: ${{ secrets.MYSQL_ROOT_USERNAME }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
