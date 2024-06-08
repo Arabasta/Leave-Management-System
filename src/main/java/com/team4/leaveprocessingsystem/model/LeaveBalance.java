@@ -14,15 +14,20 @@ public class LeaveBalance {
     private Integer id;
 
     @Column(nullable = false)
-    private int annualLeave;
+    private float annualLeave;
 
     @Column(nullable = false)
-    private int medicalLeave = 60;
+    private float currentAnnualLeave = annualLeave;
+
+    @Column(nullable = false)
+    private float medicalLeave = 60;
+
+    @Column(nullable = false)
+    private float currentMedicalLeave = medicalLeave;
 
     public LeaveBalance() {}
 
     public LeaveBalance(int annualLeave) {
-
         this.annualLeave = annualLeave;
     }
 }
