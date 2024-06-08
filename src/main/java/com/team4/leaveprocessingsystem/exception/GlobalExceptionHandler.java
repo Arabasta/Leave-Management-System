@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.Exceptions;
+package com.team4.leaveprocessingsystem.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
