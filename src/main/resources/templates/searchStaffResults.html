@@ -28,7 +28,7 @@
         <td th:text="${staff.id}">Id</td>
         <td></td>
         <td th:text="${staff.name}">Name</td>
-        <td Designation Job th:text="${staff.jobDesignation.name}"></td>
+        <td th:text="${staff.jobDesignation.name}">Job Designation</td>
         <td th:text="${staff.getUsers().getFirst().getRole()}">Role</td>
     </tr>
 </table>
