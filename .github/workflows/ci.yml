@@ -31,6 +31,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -D skipTests
 
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysqladmin ping -h "127.0.0.1" --silent; do
+            echo "Waiting for database connection..."
+            sleep 5
+          done
+
       - name: Run tests
         run: mvn test
         env:
