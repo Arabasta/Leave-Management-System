@@ -24,9 +24,6 @@ public class JobDesignationSeeder {
             JobDesignation cleaning = new JobDesignation("cleaning", 3);
             jobDesignationRepository.save(cleaning);
 
-            JobDesignation partTime = new JobDesignation("partTime", 0);
-            jobDesignationRepository.save(partTime);
-
             JobDesignation intern = new JobDesignation("intern", 10);
             jobDesignationRepository.save(intern);
         }
