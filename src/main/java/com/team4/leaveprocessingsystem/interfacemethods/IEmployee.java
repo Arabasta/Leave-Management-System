@@ -11,4 +11,10 @@ public interface IEmployee {
     List<Employee> findEmployeesByManager(Manager manager);
     Employee findByName(String name);
     long count();
+
+    List<Employee> SearchEmployeeByName(String keyword);
+
+    // TODO: fix query strings
+    List<Employee> findEmployeeByJobDesignation(String jobDesignation);
+    List<Employee> findUserByRoleType(String roleType);
 }
