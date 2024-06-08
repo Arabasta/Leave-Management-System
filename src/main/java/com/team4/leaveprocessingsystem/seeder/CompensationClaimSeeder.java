@@ -42,6 +42,7 @@ public class CompensationClaimSeeder {
             compensationClaim1.setApprovingManager(manager);
             employeeLeaveBalance.setCompensationLeave(0.5f);
             compensationClaimService.save(compensationClaim1);
+            leaveBalanceService.save(employeeLeaveBalance);
 
             CompensationClaim compensationClaim2 = new CompensationClaim();
             compensationClaim2.setClaimingEmployee(employee);
@@ -52,6 +53,7 @@ public class CompensationClaimSeeder {
             compensationClaim2.setCompensationClaimStatus(CompensationClaimStatusEnum.REJECTED);
             compensationClaim2.setComments("You went for 3 hours lunch. Your Overtime work was only 2 hours.");
             compensationClaimService.save(compensationClaim2);
+            leaveBalanceService.save(employeeLeaveBalance);
 
             CompensationClaim compensationClaim3 = new CompensationClaim();
             compensationClaim3.setClaimingEmployee(employee);
@@ -62,6 +64,7 @@ public class CompensationClaimSeeder {
             compensationClaim3.setApprovingManager(manager);
             employeeLeaveBalance.setCompensationLeave(1.0f);
             compensationClaimService.save(compensationClaim3);
+            leaveBalanceService.save(employeeLeaveBalance);
         }
     }
 }
