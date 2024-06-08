@@ -16,13 +16,13 @@ public class JobDesignation {
     private String name;
 
     @Column(nullable = false)
-    private int annualLeaves;
+    private int defaultAnnualLeaves;
 
     public JobDesignation() {}
 
-    public JobDesignation(String name, int annualLeaves) {
+    public JobDesignation(String name, int defaultAnnualLeaves) {
         this.name = name;
-        this.annualLeaves = annualLeaves;
+        this.defaultAnnualLeaves = defaultAnnualLeaves;
     }
 
 }
