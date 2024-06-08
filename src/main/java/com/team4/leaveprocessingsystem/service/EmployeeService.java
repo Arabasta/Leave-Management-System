@@ -88,10 +88,10 @@ public class EmployeeService implements IEmployee {
     }
 
     // TODO: fix query string
-    /*@Override
+    @Override
     @Transactional
     public List<Employee> findUserByRoleType(String roleType) {
         return employeeRepository.findUserByRoleType(roleType);
     }
-    */
+
 }
