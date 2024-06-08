@@ -28,11 +28,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             "where CAST(u.role as String) like CONCAT('%', :k, '%')")
     List<Employee> findUserByRoleType(@Param("k") String keyword);
 
-    /*
-    @Query("Select u " +
-            "from User U " +
-            "where cast(u.role as STRING) like concat('%', :k, '%') ")
-    List<Employee> findUserByRoleType(@Param("k") String keyword);
-     */
-
 }
