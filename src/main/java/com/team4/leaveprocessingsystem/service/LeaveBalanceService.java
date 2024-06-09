@@ -4,10 +4,8 @@ import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveBalance;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 @Service
