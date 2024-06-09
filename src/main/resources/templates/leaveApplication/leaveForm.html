@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Leave Application</title>
+    <script src="/js/leaveForm.js"></script>
 </head>
 <body>
 
@@ -29,15 +30,13 @@
                 </td>
             </tr>
             <tr>
-                <td>Entitlement (days)</td>
+                <td>Available days</td>
                 <td>
-                    <!-- NEED TO FIX LEAVE getters after PR merge----------------------------------------------------------->
-                    <!-- Need to add JS for selected option -->
-                    <span th:if="${leave.leaveType == 'MEDICAL'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentMedicalLeave()}"></span>
-                    <span th:if="${leave.leaveType == 'ANNUAL'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
-                    <span th:if="${leave.leaveType == 'COMPASSIONATE'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
-                    <span th:if="${leave.leaveType == 'COMPENSATION'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
-                    <span th:if="${leave.leaveType == 'UNPAID'}" th:text=""></span>
+                    <input type="hidden" id="medicalDays" th:value="${leave.submittingEmployee.getLeaveBalance().getCurrentMedicalLeave()}"/>
+                    <input type="hidden" id="annualDays" th:value="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"/>
+                    <input type="hidden" id="compensationDays" th:value="${leave.submittingEmployee.getLeaveBalance().getCurrentCompensationLeave()}"/>
+                    <input type="hidden" id="compassionateDays" th:value="${leave.submittingEmployee.getLeaveBalance().COMPASSIONATE_LEAVE}"/>
+                    <span id="availableDays"></span>
                 </td>
             </tr>
             <tr>
