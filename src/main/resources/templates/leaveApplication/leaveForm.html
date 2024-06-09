@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Leave Application</title>
+</head>
+<body>
+
+    <h3>
+        <span th:if="${applicationType == 'create'}" th:text="'New Leave Application'"></span>
+        <span th:if="${applicationType == 'update'}" th:text="'Edit Leave Application'"></span>
+<!--        Leave Application-->
+    </h3>
+
+    <form th:action="@{/leave/save}" method="post">
+        <input type="hidden" name="applicationType" th:value="${applicationType}" />
+        <input type="hidden" name="applicationId" th:field="${leave.id}" />
+        <table>
+            <tbody>
+            <tr>
+                <td th:text="${leave.submittingEmployee.name}"></td>
+            </tr>
+            <tr>
+                <td><label for="leaveType">Leave Type</label></td>
+                <td>
+
+                    <select id="leaveType" th:field="*{leave.leaveType}">
+                        <option th:each="leaveType : ${leaveTypes}" th:value="${leaveType}" th:text="${leaveType}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Entitlement (days)</td>
+                <td>
+                    <!-- NEED TO FIX LEAVE getters after PR merge----------------------------------------------------------->
+                    <!-- Need to add JS for selected option -->
+                    <span th:if="${leave.leaveType == 'MEDICAL'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentMedicalLeave()}"></span>
+                    <span th:if="${leave.leaveType == 'ANNUAL'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                    <span th:if="${leave.leaveType == 'COMPASSIONATE'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                    <span th:if="${leave.leaveType == 'COMPENSATION'}" th:text="${leave.submittingEmployee.getLeaveBalance().getCurrentAnnualLeave()}"></span>
+                    <span th:if="${leave.leaveType == 'UNPAID'}" th:text=""></span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="startDate">Start Date</label></td>
+                <td><input type="date" id="startDate" th:value="${leave.startDate}" th:field="${leave.startDate}"  /></td>
+                <td th:if="${#fields.hasErrors('leave.startDate')}" th:errors="${leave.startDate}"></td>
+            </tr>
+            <tr>
+                <td><label for="endDate">End Date</label></td>
+                <td><input type="date" id="endDate" th:value="${leave.endDate}" th:field="${leave.endDate}" /></td>
+                <td th:if="${#fields.hasErrors('leave.endDate')}" th:errors="${leave.endDate}"></td>
+            </tr>
+            <tr>
+                <td>Approving Manager</td>
+                <td th:text="${leave.submittingEmployee.manager.name}"></td>
+            </tr>
+            <tr>
+                <td><label for="reason">Reason</label></td>
+                <td colspan="3"><textarea id="reason" th:field="${leave.submissionReason}"
+                                          th:rows="${leave.submissionReason}" cols="40"></textarea></td>
+                <td th:if="${#fields.hasErrors('leave.submissionReason')}" th:errors="${leave.submissionReason}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Submit" class="blcass" />
+                    <input type="reset" value="Reset" class="blcass" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+</body>
+</html>

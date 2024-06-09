@@ -9,7 +9,7 @@ import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Service
 public class LeaveApplicationSeeder {
@@ -34,8 +34,8 @@ public class LeaveApplicationSeeder {
             leaveApplication1.setReviewingManager(manager);
             leaveApplication1.setLeaveStatus(LeaveStatusEnum.APPLIED);
             leaveApplication1.setLeaveType(LeaveTypeEnum.ANNUAL);
-            leaveApplication1.setStartDateTime(LocalDateTime.now().plusDays(1));
-            leaveApplication1.setEndDateTime(LocalDateTime.now().plusDays(15));
+            leaveApplication1.setStartDate(LocalDate.now().plusDays(1));
+            leaveApplication1.setEndDate(LocalDate.now().plusDays(15));
             leaveApplication1.setSubmissionReason("Japan trip");
             leaveApplicationService.save(leaveApplication1);
 
@@ -44,8 +44,8 @@ public class LeaveApplicationSeeder {
             leaveApplication2.setReviewingManager(manager);
             leaveApplication2.setLeaveStatus(LeaveStatusEnum.APPLIED);
             leaveApplication2.setLeaveType(LeaveTypeEnum.MEDICAL);
-            leaveApplication2.setStartDateTime(LocalDateTime.now().plusDays(10));
-            leaveApplication2.setEndDateTime(LocalDateTime.now().plusDays(12));
+            leaveApplication2.setStartDate(LocalDate.now().plusDays(10));
+            leaveApplication2.setEndDate(LocalDate.now().plusDays(12));
             leaveApplication2.setSubmissionReason("broke leg");
             leaveApplicationService.save(leaveApplication2);
         }

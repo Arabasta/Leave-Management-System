@@ -15,8 +15,8 @@ public class LeaveApplicationValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         LeaveApplication application = (LeaveApplication) target;
-        if ((application.getStartDateTime() != null) && (application.getEndDateTime() != null) &&
-                (application.getStartDateTime().isAfter(application.getEndDateTime()))) {
+        if ((application.getStartDate() != null) && (application.getEndDate() != null) &&
+                (application.getStartDate().isAfter(application.getEndDate()))) {
             errors.rejectValue("endDate", "error.dates",
                     "End Date must be later than Start Date");
         }

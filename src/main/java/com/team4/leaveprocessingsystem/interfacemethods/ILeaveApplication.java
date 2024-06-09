@@ -4,5 +4,6 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 
 public interface ILeaveApplication {
     boolean save(LeaveApplication leaveApplication);
+    LeaveApplication findLeaveApplicationById(Integer id);
     long count();
 }
