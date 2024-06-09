@@ -1,7 +1,6 @@
 package com.team4.leaveprocessingsystem.repository;
 
 import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,8 +19,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
     List<Employee> findEmployeeByJobDesignation(@Param("k") String keyword);
-
-    // TODO: fix query string
 
     @Query("Select e from Employee e " +
             "join e.users u " +

@@ -87,7 +87,6 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findEmployeeByJobDesignation(jobDesignation);
     }
 
-    // TODO: fix query string
     @Override
     @Transactional
     public List<Employee> findUserByRoleType(String roleType) {

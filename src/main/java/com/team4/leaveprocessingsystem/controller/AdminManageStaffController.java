@@ -28,8 +28,8 @@ public class AdminManageStaffController {
         String roleType = "roleType";
 
         if (t.equals(name)) model.addAttribute("staffs", employeeService.SearchEmployeeByName(k));
-            // TODO: fix query strings
-            else if (t.equals(jobDesignation)) model.addAttribute("staffs", employeeService.findEmployeeByJobDesignation(k));
+        else if (t.equals(jobDesignation))
+            model.addAttribute("staffs", employeeService.findEmployeeByJobDesignation(k));
         else if (t.equals(roleType)) model.addAttribute("staffs", employeeService.findUserByRoleType(k));
 
         else return "errorStaffNotFound";
