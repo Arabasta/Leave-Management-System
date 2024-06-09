@@ -2,7 +2,11 @@ package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
+import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
