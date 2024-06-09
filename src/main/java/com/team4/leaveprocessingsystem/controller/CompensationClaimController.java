@@ -66,6 +66,31 @@ public class CompensationClaimController {
         return "redirect:/compensation-claims/history";
     }
 
+    @GetMapping("compensation-claims/edit/{id}")
+    public String editCompensationClaim(@PathVariable Integer id, Model model) {
+        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
+        model.addAttribute("compensationClaim", compensationClaim);
+
+        return "compensation-claims/edit";
+    }
+
+//    @PostMapping("/course/edit/{id}")
+//    public String editCourse(@ModelAttribute @Valid CompensationClaim course, BindingResult result, @PathVariable Integer id,
+//                             HttpSession session) throws CourseNotFound {
+//        if (result.hasErrors())
+//            return "course-edit";
+//
+//        System.out.println("DATES****" + course.getFromDate() + course.getToDate());
+//
+//        UserSession usession = (UserSession) session.getAttribute("usession");
+//        course.setEmployeeId(usession.getEmployee().getEmployeeId());
+//        course.setStatus(CourseEventEnum.UPDATED);
+//
+//        courseService.changeCourse(course);
+//
+//        return "redirect:/staff/course/history";
+//    }
+
     @ModelAttribute
     @GetMapping("compensation-claims/create")
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
