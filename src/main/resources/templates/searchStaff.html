@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2 style="text-align: center;">Search Staff </h2>
+<table style="margin-right:auto; margin-left:auto; width:50%">
+    <tr></tr>
+    <tr>
+        <td>
+            <form action="#" method="post" th:action="@{/all/staff/searching}">
+                <div style="font-weight:bold">Search By:</div>
+
+                <select name="searchtype">
+                    <option value="name">Name</option>
+                    <option value="jobDesignation">Job Designation</option>
+                    <option value="roleType">Role Type</option>
+                </select>
+
+                <div style="font-weight:bold">Enter keyword: <input name="keyword" type="text"></div>
+
+                <div></div>
+
+                <br><br>
+                <input type="submit" value="Search">
+
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

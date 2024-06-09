@@ -31,7 +31,6 @@ public class EmployeeSeeder {
             seedManagement();
             seedEmployee();
             seedIntern();
-            seedPartTime();
             seedCleaning();
         }
     }
@@ -70,7 +69,7 @@ public class EmployeeSeeder {
 
         User employeeAdminUser = new User(RoleEnum.ROLE_ADMIN,
                 "admin",
-                passwordEncoder.encode("admin"),
+                passwordEncoder.encode("adminadmin"),
                 "employee@example.com");
 
         Employee administrativeEmployee = new Employee("Employee",
@@ -106,28 +105,6 @@ public class EmployeeSeeder {
         internUser.setEmployee(intern);
 
         employeeService.save(intern);
-    }
-
-    private void seedPartTime() {
-        JobDesignation parttimeJobDesignation = jobDesignationService.findByName("parttime");
-        Manager manager = employeeService.findManagerByName("Manager");
-        LeaveBalance parttimeLeaveBalance = new LeaveBalance(parttimeJobDesignation.getDefaultAnnualLeaves());
-        leaveBalanceService.save(parttimeLeaveBalance);
-
-        User parttimeUser = new User(RoleEnum.ROLE_EMPLOYEE,
-                "parttime",
-                passwordEncoder.encode("parttime"),
-                "parttime@example.com");
-
-        Employee parttimeEmployee = new Employee("Part-time Employee",
-                parttimeJobDesignation,
-                manager,
-                parttimeLeaveBalance);
-        parttimeEmployee.setUser(parttimeUser);
-
-        parttimeUser.setEmployee(parttimeEmployee);
-
-        employeeService.save(parttimeEmployee);
     }
 
     private void seedCleaning() {

@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.Exceptions;
+package com.team4.leaveprocessingsystem.exception;
 
 public class ServiceSaveException extends RuntimeException {
     public ServiceSaveException(String message) {
