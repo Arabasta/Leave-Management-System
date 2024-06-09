@@ -1,47 +1,126 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link href="https://cdn-icons-png.flaticon.com/512/470/470199.png" rel="shortcut icon">
+    <meta charset="UTF-8">
     <title>Manage Staff</title>
 </head>
 
 <style>
-    th, td {
-        border: 1px solid black
+    body {
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+    }
+
+    .table-responsive {
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    }
+
+    th {
+        text-align: center;
+        font-size: 18px;
+    }
+
+    td {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    h2, h3 {
+        text-align: center;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .container > form {
+        display: flex;
+        justify-content: center;
+        height: 40%;
+        gap: 5px;
     }
 </style>
 
+<script type="text/javascript">
+    function clearSearch() {
+        window.location = "[[@{/search-staff}]]";
+    }
+</script>
+
 <body>
-<br>
-<h2 style="text-align: center;">Search Staff Result</h2>
+<nav class="navbar navbar-expand-sm navbar-light mb-5">
 
-<h3 style="text-align: center;" th:if="${#lists.isEmpty(staffs)}">No Results.</h3>
+</nav>
+<main>
+    <br>
+    <div class="items_table mt-5 mb-4">
+        <div class="table-responsive p-2">
+            <h2>Staff Management System</h2>
+            <div class="container">
+                <form method="get" th:action="@{/search-staff}">
+                    <div style="font-weight:bold">
+                        Search By:
+                        <select name="searchtype">
+                            <option th:value="name" th:selected="${searchtype == 'name'}">Name</option>
+                            <option th:value="jobDesignation" th:selected="${searchtype == 'jobDesignation'}">Job Designation</option>
+                            <option th:value="roleType" th:selected="${searchtype == 'roleType'}">Role Type</option>
+                        </select>
 
-<table style="width:50%; margin-left:auto; margin-right:auto;" th:if="${not #lists.isEmpty(staffs)}">
-    <tr style="">
-        <th>Id
-        <th>
-        <th>Name</th>
-        <th>Job Designation</th>
-        <th>Role</th>
-    </tr>
-    <tr th:each="staff:${staffs}">
-        <td th:text="${staff.id}">Id</td>
-        <td></td>
-        <td th:text="${staff.name}">Name</td>
-        <td th:text="${staff.jobDesignation.name}">Job Designation</td>
-        <td>
-            <span th:each="user : ${staff.users}" th:text="${user.role}">Role</span>
-        </td>
+                    </div>
 
-    </tr>
-</table>
+                    <div style="font-weight:bold">
+                        Enter keyword:
+                        <input name="keyword" th:value="${keyword}" type="text">
+                    </div>
 
-<table>
-    <tr>
-        <td style="text-align:center; font-weight:bold;">
-            <a href="#" onclick="history.go(-1); return false;">Return to Search Staff</a>
-        </td>
-    </tr>
-</table>
+                    <div class="btn-group">
+                        <button class="btn btn-info" type="submit">Search</button>
+                        <button class="btn btn-info" onclick="clearSearch()" type="submit">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <h3 th:if="${#lists.isEmpty(staffs)}">No Results.</h3>
+
+            <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(staffs)}">
+                <thead class="bg-primary">
+                <th>Id</th>
+                <th>Name</th>
+                <th>Job Designation</th>
+                <th>Role</th>
+                </thead>
+                <tbody>
+                <tr th:each="staff:${staffs}">
+                    <td th:text="${staff.id}">Id</td>
+                    <td th:text="${staff.name}">Name</td>
+                    <td th:text="${staff.jobDesignation.name}">Job Designation</td>
+                    <td>
+                        <span th:each="user : ${staff.users}" th:text=" ${user.role}">Role</span>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <table>
+        <tr>
+            <td style="text-align:center; font-weight:bold;">
+                <a href="#" onclick="history.go(-1); return false;">Return to previous page</a>
+            </td>
+        </tr>
+    </table>
+
+</main>
+
 </body>
 </html>

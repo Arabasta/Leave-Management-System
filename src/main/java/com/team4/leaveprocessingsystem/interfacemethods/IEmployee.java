@@ -12,9 +12,8 @@ public interface IEmployee {
     Employee findByName(String name);
     long count();
 
+    List<Employee> listAllEmployees();
     List<Employee> SearchEmployeeByName(String keyword);
-
-    // TODO: fix query strings
     List<Employee> findEmployeeByJobDesignation(String jobDesignation);
     List<Employee> findUserByRoleType(String roleType);
     Employee findEmployeeById(int id);

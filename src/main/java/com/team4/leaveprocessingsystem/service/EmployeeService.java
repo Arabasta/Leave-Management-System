@@ -77,7 +77,13 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> SearchEmployeeByName(@Param("k") String keyword) {
+    public List<Employee> listAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public List<Employee> SearchEmployeeByName(String keyword) {
         return employeeRepository.SearchEmployeeByName(keyword);
     }
 
@@ -87,7 +93,6 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findEmployeeByJobDesignation(jobDesignation);
     }
 
-    // TODO: fix query string
     @Override
     @Transactional
     public List<Employee> findUserByRoleType(String roleType) {
