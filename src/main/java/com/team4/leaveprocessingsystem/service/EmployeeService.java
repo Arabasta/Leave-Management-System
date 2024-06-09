@@ -99,4 +99,8 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
     }
+
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 }
