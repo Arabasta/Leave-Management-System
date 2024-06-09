@@ -63,7 +63,7 @@ public class CompensationClaimController {
         String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
         model.addAttribute("withdrawn_message",message);
 
-        return "redirect:compensation-claims/history";
+        return "redirect:/compensation-claims/history";
     }
 
     @ModelAttribute

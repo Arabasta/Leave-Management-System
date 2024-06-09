@@ -65,6 +65,17 @@ public class CompensationClaimSeeder {
             compensationClaim3.setApprovingManager(manager);
             employeeLeaveBalance.setCompensationLeave(1.0f);
             compensationClaimService.save(compensationClaim3);
+
+            CompensationClaim compensationClaim4 = new CompensationClaim();
+            compensationClaim4.setClaimingEmployee(employee);
+            compensationClaim4.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
+            compensationClaim4.setCompensationLeaveRequested(1.0f);
+            compensationClaim4.setOvertimeStartDateTime(LocalDateTime.now().minusDays(13).minusHours(8));
+            compensationClaim4.setOvertimeEndDateTime(LocalDateTime.now().minusDays(13));
+            compensationClaim4.setApprovingManager(manager);
+            employeeLeaveBalance.setCompensationLeave(1.0f);
+            compensationClaimService.save(compensationClaim4);
+            System.out.println("Seeded DB with Compensation Claim Seeder");
         }
     }
 }
