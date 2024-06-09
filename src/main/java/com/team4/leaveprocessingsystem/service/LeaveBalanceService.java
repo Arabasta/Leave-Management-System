@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.service;
 
-import com.team4.leaveprocessingsystem.Exceptions.ServiceSaveException;
+import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveBalance;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
