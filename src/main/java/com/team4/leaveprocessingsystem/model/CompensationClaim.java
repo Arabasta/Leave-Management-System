@@ -29,6 +29,9 @@ public class CompensationClaim {
     @Column(nullable = false)
     private LocalDateTime overtimeEndDateTime;
 
+    @Column(nullable = false)
+    private float overtimeHours;
+
     @ManyToOne(optional = false)
     private Manager approvingManager;
 

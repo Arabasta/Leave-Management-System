@@ -4,11 +4,13 @@ import com.team4.leaveprocessingsystem.exception.CompensationClaimInvalidExcepti
 import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundException;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.UserService;
+import com.team4.leaveprocessingsystem.utility.DateTimeCounterUtils;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Controller
 public class CompensationClaimController {
@@ -97,7 +101,7 @@ public class CompensationClaimController {
     @GetMapping("compensation-claims/create")
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
     // TODO: refactor using Sessions after it is implemented
-    public String createCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
+    public String newCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
         User currentUser = userService.findByUsername(currentUserDetails.getUsername());
         Employee currentEmployee = currentUser.getEmployee();
         model.addAttribute("isAdmin", currentUser.getRole()==RoleEnum.ROLE_ADMIN);
@@ -107,14 +111,32 @@ public class CompensationClaimController {
         return "compensation-claims/create";
     }
 
-//    TODO: to implement POST compensation-claims/submit.
-//    @ModelAttribute
-//    @PostMapping("compensation-claims/submit")
-//    // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
-//    // TODO: refactor using Sessions after it is implemented
-//    public String submitCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
-//        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
-//        Employee currentEmployee = currentUser.getEmployee();
-//        return "redirect:/compensation-claims/history";
-//    }
+    @PostMapping("compensation-claims/create-submit")
+    // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
+    // TODO: refactor using Sessions after it is implemented
+    public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
+                                          @AuthenticationPrincipal UserDetails currentUserDetails,
+                                          BindingResult result) {
+        if (result.hasErrors()) {
+            return "compensation-claims/create";
+        }
+
+        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
+        Employee currentEmployee = currentUser.getEmployee();
+        compensationClaim.setClaimingEmployee(currentEmployee);
+        compensationClaim.setApprovingManager(currentEmployee.getManager());
+        // TODO: ensure validation is working
+        float overtimeHours = (float)DateTimeCounterUtils.countCalendarHours(
+                compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
+        compensationClaim.setOvertimeHours(overtimeHours);
+        // TODO: ensure validation is working
+        int eligibleOvertimeHours = (int) overtimeHours / 4;
+        compensationClaim.setCompensationLeaveRequested(eligibleOvertimeHours * 0.5f);
+        compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        compensationClaimService.save(compensationClaim);
+
+        String message = "New Compensation Claim " + compensationClaim.getId() + " was successfully created.";
+        System.out.println(message);
+        return "redirect:/compensation-claims/history";
+    }
 }
