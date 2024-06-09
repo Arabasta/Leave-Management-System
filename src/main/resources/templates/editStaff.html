@@ -5,15 +5,11 @@
 </head>
 
 <style>
-    table {
-        border: 0;
-        padding: 10px;
-    }
 </style>
 
 <body>
 <div>
-    <h1>Edit Staff</h1>
+    <h1>Edit Current Staff</h1>
     <br/>
     <form action="#" method="post" th:action="@{/save}" th:object="${employee}">
         <table>
@@ -28,33 +24,44 @@
 
             <!-- drop down list for manager?  -->
             <tr>
-                <td>Manager Assigned to Staff</td>
+                <td>Staff's Manager:</td>
                 <td><input th:field="*{manager}" type="text"/></td>
             </tr>
 
-            <!-- todo: work on job designation drop down list -->
-
+            <!-- todo: work on job designation drop down list, fix bug at this loc 'th:each="jd: ${jobDesignations}}"-->
+            <!--
             <tr>
                 <label>Staff Job Designation:</label>
                 <select th:field="*{jobDesignation}">
-                    <option value="">Select Option</option>
-                    <span th:each="staff: ${staffs}">
-                        <option + th:text="${staff.jobDesignation}" value=" ">
-                            Select
-                            <span th:text="${staff.jobDesignation}"></span>
-                        </option>
-                    </span>
+                    <option th:each="jd : ${jobdesignations}"
+                            th:value="jd" th:text="jd"
+                            th:selected="jd == ${jobDesignation}"></option>
                 </select>
             </tr>
-
-            <!-- todo: drop down list for role -->
-
-            <tr>
-                <td colspan="2">
-                    <button type="submit">Save</button>
-                </td>
-            </tr>
+            -->
         </table>
+
+        <br>
+
+        <!-- todo: checkboxes for role, to find a way to check if the role == that users' role(s) -->
+        <div>
+            <label>Staff Roles:
+                <input name="roles" th:checked="${flag ? true : false}"
+                       th:each="role: ${roles}"
+                       th:text="${role}"
+                       th:value="${role}"
+                       type="checkbox"
+                >
+            </label>
+
+
+        </div>
+        <br>
+        <div>
+            <td colspan="2">
+                <button type="submit">Save</button>
+            </td>
+        </div>
     </form>
 </div>
 </body>
