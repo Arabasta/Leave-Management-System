@@ -52,5 +52,9 @@ public class LeaveApplication {
 
     private String rejectionReason;
 
+    private String workDissemination;
+
+    private String contactDetails;
+
     public LeaveApplication() {}
 }
