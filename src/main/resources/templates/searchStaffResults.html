@@ -66,10 +66,11 @@
                     <div style="font-weight:bold">
                         Search By:
                         <select name="searchtype">
-                            <option value="name">Name</option>
-                            <option value="jobDesignation">Job Designation</option>
-                            <option value="roleType">Role Type</option>
+                            <option th:value="name" th:selected="${searchtype == 'name'}">Name</option>
+                            <option th:value="jobDesignation" th:selected="${searchtype == 'jobDesignation'}">Job Designation</option>
+                            <option th:value="roleType" th:selected="${searchtype == 'roleType'}">Role Type</option>
                         </select>
+
                     </div>
 
                     <div style="font-weight:bold">
