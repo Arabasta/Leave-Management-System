@@ -5,9 +5,15 @@
 </head>
 <body>
 
-    <h3>Leave Application</h3>
+    <h3>
+        <span th:if="${applicationType == 'create'}" th:text="'New Leave Application'"></span>
+        <span th:if="${applicationType == 'update'}" th:text="'Edit Leave Application'"></span>
+<!--        Leave Application-->
+    </h3>
 
-    <form th:action="${formAction}" method="post">
+    <form th:action="@{/leave/save}" method="post">
+        <input type="hidden" name="applicationType" th:value="${applicationType}" />
+        <input type="hidden" name="applicationId" th:field="${leave.id}" />
         <table>
             <tbody>
             <tr>
