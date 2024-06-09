@@ -3,10 +3,12 @@ package com.team4.leaveprocessingsystem.utility;
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class DaysCounterUtils {
+public class DateTimeCounterUtils {
 
     public static Long countWorkingDays(LocalDate startDate, LocalDate endDate, PublicHolidayService publicHolidayService){
         // If start and end date is on the same day, leave day is 1
@@ -24,6 +26,10 @@ public class DaysCounterUtils {
             currentDate = currentDate.plusDays(1);
         }
         return countWorkingDays;
+    }
+
+    public static Long countCalendarHours(LocalDateTime startDateTime, LocalDateTime endDateTime){
+        return Duration.between(startDateTime, endDateTime).toHours();
     }
 
     public static Long countCalendarDays(LocalDate startDate, LocalDate endDate, PublicHolidayService publicHolidayService){
