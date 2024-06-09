@@ -20,9 +20,10 @@
                 <td th:text="${leave.submittingEmployee.name}"></td>
             </tr>
             <tr>
-                <td>Leave Type</td>
+                <td><label for="leaveType">Leave Type</label></td>
                 <td>
-                    <select th:field="*{leave.leaveType}">
+
+                    <select id="leaveType" th:field="*{leave.leaveType}">
                         <option th:each="leaveType : ${leaveTypes}" th:value="${leaveType}" th:text="${leaveType}"></option>
                     </select>
                 </td>
@@ -40,13 +41,13 @@
                 </td>
             </tr>
             <tr>
-                <td>Start Date</td>
-                <td><input type="date" th:value="${leave.startDate}" th:field="${leave.startDate}"  /></td>
+                <td><label for="startDate">Start Date</label></td>
+                <td><input type="date" id="startDate" th:value="${leave.startDate}" th:field="${leave.startDate}"  /></td>
                 <td th:if="${#fields.hasErrors('leave.startDate')}" th:errors="${leave.startDate}"></td>
             </tr>
             <tr>
-                <td>End Date</td>
-                <td><input type="date" th:value="${leave.endDate}" th:field="${leave.endDate}" /></td>
+                <td><label for="endDate">End Date</label></td>
+                <td><input type="date" id="endDate" th:value="${leave.endDate}" th:field="${leave.endDate}" /></td>
                 <td th:if="${#fields.hasErrors('leave.endDate')}" th:errors="${leave.endDate}"></td>
             </tr>
             <tr>
@@ -54,8 +55,8 @@
                 <td th:text="${leave.submittingEmployee.manager.name}"></td>
             </tr>
             <tr>
-                <td>Reason:</td>
-                <td colspan="3"><textarea th:field="${leave.submissionReason}"
+                <td><label for="reason">Reason</label></td>
+                <td colspan="3"><textarea id="reason" th:field="${leave.submissionReason}"
                                           th:rows="${leave.submissionReason}" cols="40"></textarea></td>
                 <td th:if="${#fields.hasErrors('leave.submissionReason')}" th:errors="${leave.submissionReason}"></td>
             </tr>
