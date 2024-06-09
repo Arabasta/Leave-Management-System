@@ -61,6 +61,16 @@
                 <td th:if="${#fields.hasErrors('leave.submissionReason')}" th:errors="${leave.submissionReason}"></td>
             </tr>
             <tr>
+                <td><label for="dissemination">Work Dissemination (if any)</label></td>
+                <td colspan="3"><textarea id="dissemination" th:field="${leave.workDissemination}"
+                                          th:rows="${leave.workDissemination}" cols="40"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="contact">Contact Details (if on an overseas trip)</label></td>
+                <td colspan="3"><textarea id="contact" th:field="${leave.contactDetails}"
+                                          th:rows="${leave.contactDetails}" cols="40"></textarea></td>
+            </tr>
+            <tr>
                 <td></td>
                 <td>
                     <input type="submit" value="Submit" class="blcass" />
