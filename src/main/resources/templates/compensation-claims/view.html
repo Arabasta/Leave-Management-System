@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Compensation Claims</title>
+    <!--TODO: to refactor into app-wide / useCase-wide centralised stylesheet later-->
+    <style>
+        table, tr, td {border: 1px solid; border-collapse: collapse}
+    </style>
+</head>
+<body>
+    <h1>View Compensation Claims</h1>
+
+    <h3 th:if="${isAdmin}">Note: You are currently viewing this page as an Admin.
+        <br>Please <a href="/login">log in</a> with your Employee account to view this page.</h3>
+
+    <th:block th:if="${!isAdmin}">
+
+        <table>
+            <tr>
+                <td>Name: </td>
+                <td th:text="${employee.name}"></td>
+            </tr>
+
+            <tr>
+                <td>Approved Compensation Leave: </td>
+                <td th:text="${leaveBalanceService.findByEmployee(employee.id).getCompensationLeave()}+' Days'"></td>
+            </tr>
+        </table>
+        <br>
+
+        <table>
+            <tr>
+                <!-- TODO: to link to Create Compensation Claim-->
+                <td><button>New Compensation Claim</button></td>
+                <!-- TODO: to link to LeaveApplication page-->
+                <td><button>Apply Leave</button></td>
+                <!-- TODO: to implement save as CSV function-->
+                <td><button>Save as CSV</button></td>
+            </tr>
+        </table>
+        <br>
+
+        <table>
+            <tr>
+                <td>Claim Id</td>
+                <td>Overtime Start</td>
+                <td>Overtime End</td>
+                <td>Overtime Hours</td>
+                <td>Eligible Compensation Leave</td>
+                <td>Details</td>
+            </tr>
+            <th:block th:each="claim:${compensationClaims}">
+                <tr>
+                    <td th:text="${claim.id}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
+                    <td th:text="${claim.compensationLeaveRequested}"></td>
+                    <!-- TODO: to implement button for accordion/collapsible rows with BootStrap -->
+                    <td><button th:attr="data-target='accordion_'+${claim.id}" data-toggle="collapse">Details</button></td>
+                </tr>
+                <!-- TODO: to implement thymeleaf implementation for accordion/collapsible rows with BootStrap -->
+                <th:block th:if="${claim.compensationClaimStatus.name()=='APPROVED'|| claim.compensationClaimStatus.name()=='REJECTED'}">
+                    <tr>
+                        <td colspan="6" class="hiddenRow">
+                            <div class="accordion-body collapse" th:id="'accordion_'+${claim.id}"
+                                 th:text="
+                                    ${claim.compensationClaimStatus}
+                                    +' by: '+${claim.approvingManager.name}
+                                    +' on '+${#temporals.format(claim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}
+                                 ">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${claim.comments != null}">
+                        <td colspan="6" class="hiddenRow">
+                            <div class="accordion-body collapse"
+                                 th:id="'accordion_'+${claim.id}"
+                                 th:text="'Comments: '+${claim.comments}">
+                            </div>
+                        </td>
+                    </tr>
+                </th:block>
+            </th:block>
+        </table>
+
+    </th:block>
+
+    <h3 th:if="${#lists.isEmpty(compensationClaims)}">You do not have any Compensation Claims!</h3>
+
+</body>
+</html>

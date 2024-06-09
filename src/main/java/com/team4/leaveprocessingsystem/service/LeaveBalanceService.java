@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.service;
 
-import com.team4.leaveprocessingsystem.Exceptions.ServiceSaveException;
+import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveBalance;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
@@ -13,6 +13,9 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Autowired
     LeaveBalanceRepository leaveBalanceRepository;
 
+    @Autowired
+    EmployeeService employeeService;
+
     @Override
     @Transactional
     public boolean save(LeaveBalance leaveBalance) {
@@ -24,4 +27,7 @@ public class LeaveBalanceService implements ILeaveBalance {
         }
     }
 
+    public LeaveBalance findByEmployee(int employee_id) {
+        return employeeService.findEmployeeById(employee_id).getLeaveBalance();
+    }
 }

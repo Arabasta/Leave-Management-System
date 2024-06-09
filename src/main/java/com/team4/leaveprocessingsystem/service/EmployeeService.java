@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.service;
 
-import com.team4.leaveprocessingsystem.Exceptions.ServiceSaveException;
+import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IEmployee;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
@@ -94,4 +94,9 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findUserByRoleType(roleType);
     }
 
+
+    public Employee findEmployeeById(int id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
+    }
 }
