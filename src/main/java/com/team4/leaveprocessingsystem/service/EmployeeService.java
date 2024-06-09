@@ -99,4 +99,10 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findUserByRoleType(roleType);
     }
 
+    @Override
+    @Transactional
+    public Employee findEmployeeById(int id) {
+        return employeeRepository.findById(id).get();
+    }
+
 }

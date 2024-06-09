@@ -113,11 +113,11 @@
                     <td th:text="${staff.name}">Name</td>
                     <td th:text="${staff.jobDesignation.name}">Job Designation</td>
                     <td>
-                        <span th:each="user : ${staff.users}" th:text=" ${user.role}">Role</span>
+                        <span th:each="user : ${staff.users}" th:text="${user.role} + ' '">Role</span>
                     </td>
                     <td>
-                        <a th:href="@{'' + ${staff.id}}">Edit</a>
-                        <a th:href="@{'' + ${staff.id}}">Delete</a>
+                        <a th:href="@{'/edit/' + ${staff.id}}">Edit</a>
+                        <a th:href="@{'/delete/' + ${staff.id}}">Delete</a>
                     </td>
 
                 </tr>
@@ -138,7 +138,7 @@
             <td></td>
 
             <td class="addModalBtn">
-                <a data-bs-toggle="modal" href="#exampleModalToggle1" role="button"
+                <a data-bs-toggle="modal" href="#addEmployeeModal" role="button"
                    style="text-decoration: none; color: white;">
                     <div class="card bg-primary">
                         <div class="card-body">

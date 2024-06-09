@@ -16,4 +16,6 @@ public interface IEmployee {
     List<Employee> SearchEmployeeByName(String keyword);
     List<Employee> findEmployeeByJobDesignation(String jobDesignation);
     List<Employee> findUserByRoleType(String roleType);
+
+    Employee findEmployeeById(int id);
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Staff</title>
+</head>
+
+<style>
+    table {
+        border: 0;
+        padding: 10px;
+    }
+</style>
+
+<body>
+<div>
+    <h1>Edit Staff</h1>
+    <br/>
+    <form action="#" method="post" th:action="@{/save}" th:object="${employee}">
+        <table>
+            <tr>
+                <td>Staff ID:</td>
+                <td><input readonly="readonly" th:field="*{id}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Staff Name:</td>
+                <td><input th:field="*{name}" type="text"/></td>
+            </tr>
+
+            <!-- drop down list for manager?  -->
+            <tr>
+                <td>Manager Assigned to Staff</td>
+                <td><input th:field="*{manager}" type="text"/></td>
+            </tr>
+
+            <!-- todo: work on job designation drop down list -->
+
+            <tr>
+                <label>Staff Job Designation:</label>
+                <select th:field="*{jobDesignation}">
+                    <option value="">Select Option</option>
+                    <span th:each="staff: ${staffs}">
+                        <option + th:text="${staff.jobDesignation}" value=" ">
+                            Select
+                            <span th:text="${staff.jobDesignation}"></span>
+                        </option>
+                    </span>
+                </select>
+            </tr>
+
+            <!-- todo: drop down list for role -->
+
+            <tr>
+                <td colspan="2">
+                    <button type="submit">Save</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
