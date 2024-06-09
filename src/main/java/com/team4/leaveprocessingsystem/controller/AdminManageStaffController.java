@@ -38,7 +38,6 @@ public class AdminManageStaffController {
         model.addAttribute("keyword", k);
         return "searchStaffResults";
 
-
     }
 
 
