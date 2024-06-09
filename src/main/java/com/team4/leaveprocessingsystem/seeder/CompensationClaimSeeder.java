@@ -40,6 +40,7 @@ public class CompensationClaimSeeder {
             compensationClaim1.setOvertimeStartDateTime(LocalDateTime.now().minusDays(20).minusHours(4));
             compensationClaim1.setOvertimeEndDateTime(LocalDateTime.now().minusDays(20));
             compensationClaim1.setApprovingManager(manager);
+            compensationClaim1.setReviewedDateTime(LocalDateTime.now().minusDays(19).minusHours(3));
             employeeLeaveBalance.setCompensationLeave(0.5f);
             compensationClaimService.save(compensationClaim1);
             leaveBalanceService.save(employeeLeaveBalance);
@@ -52,6 +53,7 @@ public class CompensationClaimSeeder {
             compensationClaim2.setOvertimeEndDateTime(LocalDateTime.now().minusDays(18));
             compensationClaim2.setCompensationClaimStatus(CompensationClaimStatusEnum.REJECTED);
             compensationClaim2.setComments("You went for 3 hours lunch. Your Overtime work was only 2 hours.");
+            compensationClaim2.setReviewedDateTime(LocalDateTime.now().minusDays(17).minusHours(1));
             compensationClaimService.save(compensationClaim2);
 
             CompensationClaim compensationClaim3 = new CompensationClaim();

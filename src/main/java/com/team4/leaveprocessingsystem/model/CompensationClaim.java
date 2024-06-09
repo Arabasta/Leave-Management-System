@@ -4,6 +4,7 @@ import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +32,8 @@ public class CompensationClaim {
 
     @ManyToOne(optional = false)
     private Manager approvingManager;
+
+    private LocalDateTime reviewedDateTime;
 
     @ManyToOne(optional = false)
     private Employee claimingEmployee;
