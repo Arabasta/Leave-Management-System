@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PublicHolidayService implements IPublicHoliday {
@@ -29,5 +31,11 @@ public class PublicHolidayService implements IPublicHoliday {
 
     public Optional<PublicHoliday> findByDateAndHoliday(LocalDate date, String holiday) {
         return publicHolidayRepository.findByDateAndHoliday(date, holiday);
+    }
+
+    @Override
+    public List<LocalDate> publicHolidayDateList() {
+        List<PublicHoliday> publicHolidayList =  publicHolidayRepository.findAll();
+        return publicHolidayList.stream().map(PublicHoliday::getDate).collect(Collectors.toList());
     }
 }
