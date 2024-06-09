@@ -23,6 +23,7 @@ public class AdminManageStaffController {
         String jobDesignation = "jobDesignation";
         String roleType = "roleType";
 
+        // Todo: fix bug - no display of specific staff when filtered by name, job designation, and role
         if (t == null) {
             model.addAttribute("staffs", employeeService.listAllEmployees());
         } else if (t.equals(name)) {
