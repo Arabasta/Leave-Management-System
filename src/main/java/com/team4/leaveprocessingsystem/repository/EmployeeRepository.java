@@ -13,9 +13,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Optional<Employee> findByName(String name);
     List<Employee> findByManager(Manager manager);
 
-    @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
+    @Query("Select e from Employee e where e.name like %?1%")
+        //@Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
     List<Employee> SearchEmployeeByName(@Param("k") String keyword);
-
 
     @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
     List<Employee> findEmployeeByJobDesignation(@Param("k") String keyword);

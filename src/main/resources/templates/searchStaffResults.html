@@ -19,7 +19,6 @@
     }
 
     th {
-        border: 1px solid black;
         text-align: center;
         font-size: 18px;
     }
@@ -34,21 +33,61 @@
         text-align: center;
     }
 
+    .btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .container > form {
+        display: flex;
+        justify-content: center;
+        height: 40%;
+        gap: 5px;
+    }
 </style>
 
-<body>
+<script type="text/javascript">
+    function clearSearch() {
+        window.location = "[[@{/search-staff}]]";
+    }
+</script>
 
-<br>
+<body>
+<nav class="navbar navbar-expand-sm navbar-light mb-5">
+
+</nav>
 <main>
     <br>
     <div class="items_table mt-5 mb-4">
         <div class="table-responsive p-2">
             <h2>Staff Management System</h2>
+            <div class="container">
+                <form method="get" th:action="@{/search-staff}">
+                    <div style="font-weight:bold">
+                        Search By:
+                        <select name="searchtype">
+                            <option value="name">Name</option>
+                            <option value="jobDesignation">Job Designation</option>
+                            <option value="roleType">Role Type</option>
+                        </select>
+                    </div>
+
+                    <div style="font-weight:bold">
+                        Enter keyword:
+                        <input name="keyword" th:value="${keyword}" type="text">
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-info" type="submit">Search</button>
+                        <button class="btn btn-info" onclick="clearSearch()" type="submit">Reset</button>
+                    </div>
+                </form>
+            </div>
 
             <h3 th:if="${#lists.isEmpty(staffs)}">No Results.</h3>
 
             <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(staffs)}">
-                <thead class="bg-warning">
+                <thead class="bg-primary">
                 <th>Id</th>
                 <th>Name</th>
                 <th>Job Designation</th>
@@ -75,7 +114,7 @@
     <table>
         <tr>
             <td style="text-align:center; font-weight:bold;">
-                <a href="#" onclick="history.go(-1); return false;">Return to Search Staff</a>
+                <a href="#" onclick="history.go(-1); return false;">Return to previous page</a>
             </td>
         </tr>
     </table>
