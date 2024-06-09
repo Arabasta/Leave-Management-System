@@ -6,7 +6,11 @@
 </head>
 <body>
     <h1>View Compensation Claims</h1>
-    <table>
+
+    <h3 th:if="${isAdmin}">Note: You are currently viewing this page as an Admin.
+        <br>Please <a href="/login">log in</a> with your Employee account to view this page.</h3>
+
+    <table th:if="${!isAdmin}">
         <tr>
             <td>Employee: </td>
             <td th:text="${employee.name}"></td>
