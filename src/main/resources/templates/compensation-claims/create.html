@@ -16,7 +16,7 @@
         <br>Please <a href="/login">log in</a> with your Employee account to view this page.</h3>
 
     <th:block th:if="${!isAdmin}">
-        <form action="#" th:action="@{/compensation-claims/create}" th:object="${compensationClaim}" method="post">
+        <form action="#" th:action="@{/compensation-claims/create-submit}" th:object="${compensationClaim}" method="post">
             <table>
                 <tbody>
                     <tr>
@@ -39,8 +39,8 @@
                         <td><input id="overtimeStartDateTime" type="datetime-local"
                                    th:value="${compensationClaim.overtimeStartDateTime}"
                                    th:field="${compensationClaim.overtimeStartDateTime}"/></td>
-<!--                        <td th:if="${#fields.hasErrors('overtimeStartDateTime')}"-->
-<!--                            th:errors="*{compensationClaim.overtimeStartDateTime}"></td>-->
+    <!--                        <td th:if="${#fields.hasErrors('overtimeStartDateTime')}"-->
+    <!--                            th:errors="*{compensationClaim.overtimeStartDateTime}"></td>-->
                     </tr>
 
                     <tr>
@@ -48,19 +48,27 @@
                         <td><input id="overtimeEndDateTime" type="datetime-local"
                                    th:value="${compensationClaim.overtimeEndDateTime}"
                                    th:field="${compensationClaim.overtimeEndDateTime}"/></td>
-<!--                        <td th:if="${#fields.hasErrors('overtimeEndDateTime')}"-->
-<!--                            th:errors="*{compensationClaim.overtimeEndDateTime}"></td>-->
+    <!--                        <td th:if="${#fields.hasErrors('overtimeEndDateTime')}"-->
+    <!--                            th:errors="*{compensationClaim.overtimeEndDateTime}"></td>-->
                     </tr>
 
                     <tr>
                         <td><label for="overtimeHours">Overtime Hours</label></td>
-<!--                        <td><input type="text" id="overtimeHours" name="overtimeHours" th:value="${compensationClaimService.overtimeHours(compensationClaim)}" disabled/></td>-->
+    <!--                        <td><input type="text" id="overtimeHours" name="overtimeHours" th:value="${compensationClaimService.overtimeHours(compensationClaim)}" disabled/></td>-->
                         <td><input type="text" id="overtimeHours" name="overtimeHours" value="0" disabled/></td>-->
                     </tr>
 
                     <tr>
                         <td><label for="compensationLeaveRequested">Eligible Compensation Leave</label></td>
                         <td><input type="text" id="compensationLeaveRequested" name="compensationLeaveRequested" value="0" disabled/></td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" value="Create" />
+                            <input type="reset" value="Reset" />
+                        </td>
                     </tr>
                 </tbody>
             </table>

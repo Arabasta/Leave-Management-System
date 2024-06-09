@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.controller;
 
+import com.team4.leaveprocessingsystem.exception.CompensationClaimInvalidException;
 import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundException;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
@@ -9,12 +10,15 @@ import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.UserService;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.ui.Model;
 import com.team4.leaveprocessingsystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +43,7 @@ public class CompensationClaimController {
     }
 
     @ModelAttribute
-    @RequestMapping("compensation-claims/history")
+    @GetMapping("compensation-claims/history")
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
     // TODO: refactor using Sessions after it is implemented
     public String viewCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
@@ -66,29 +70,27 @@ public class CompensationClaimController {
         return "redirect:/compensation-claims/history";
     }
 
-    @GetMapping("compensation-claims/edit/{id}")
-    public String editCompensationClaim(@PathVariable Integer id, Model model) {
+    @GetMapping("compensation-claims/update/{id}")
+    public String updateCompensationClaim(@PathVariable Integer id, Model model,
+                                          @AuthenticationPrincipal UserDetails currentUserDetails) {
+        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
+        Employee currentEmployee = currentUser.getEmployee();
+        model.addAttribute("isAdmin", currentUser.getRole()==RoleEnum.ROLE_ADMIN);
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         model.addAttribute("compensationClaim", compensationClaim);
 
-        return "compensation-claims/edit";
+        return "compensation-claims/update";
     }
 
-//    @PostMapping("/course/edit/{id}")
-//    public String editCourse(@ModelAttribute @Valid CompensationClaim course, BindingResult result, @PathVariable Integer id,
-//                             HttpSession session) throws CourseNotFound {
-//        if (result.hasErrors())
-//            return "course-edit";
+//    @PostMapping("compensation-claims/update/{id}")
+//    public String editCompensationClaim(Model model, @ModelAttribute @Valid CompensationClaim compensationClaim,
+//                                        BindingResult result, @PathVariable Integer id,
+//                                        HttpSession session) throws CompensationClaimInvalidException {
+//        compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
+//        compensationClaimService.changeCompensationClaim(compensationClaim);
 //
-//        System.out.println("DATES****" + course.getFromDate() + course.getToDate());
-//
-//        UserSession usession = (UserSession) session.getAttribute("usession");
-//        course.setEmployeeId(usession.getEmployee().getEmployeeId());
-//        course.setStatus(CourseEventEnum.UPDATED);
-//
-//        courseService.changeCourse(course);
-//
-//        return "redirect:/staff/course/history";
+//        model.addAttribute("compensationClaim", compensationClaim);
+//        return "compensation-claims/update";
 //    }
 
     @ModelAttribute
@@ -105,25 +107,6 @@ public class CompensationClaimController {
         return "compensation-claims/create";
     }
 
-//    ref: https://www.thymeleaf.org/doc/tutorials/2.1/thymeleafspring.html#integrating-thymeleaf-with-spring
-//    TODO: to implement POST compensation-claims/create - dynamic field - addRow.
-//    @RequestMapping(value="compensation-claims/create", params={"addRow"})
-//    public String addRow(final CompensationClaim compensationClaim, final BindingResult bindingResult) {
-//        compensationClaim.getRows().add(new Row());
-//        return "seedstartermng";
-//    }
-
-//    ref: https://www.thymeleaf.org/doc/tutorials/2.1/thymeleafspring.html#integrating-thymeleaf-with-spring
-//    TODO: to implement POST compensation-claims/create - dynamic field - removeRow.
-//    @RequestMapping(value="/seedstartermng", params={"removeRow"})
-//    public String removeRow(
-//            final SeedStarter seedStarter, final BindingResult bindingResult,
-//            final HttpServletRequest req) {
-//        final Integer rowId = Integer.valueOf(req.getParameter("removeRow"));
-//        seedStarter.getRows().remove(rowId.intValue());
-//        return "seedstartermng";
-//    }
-
 //    TODO: to implement POST compensation-claims/submit.
 //    @ModelAttribute
 //    @PostMapping("compensation-claims/submit")
@@ -132,6 +115,6 @@ public class CompensationClaimController {
 //    public String submitCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
 //        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
 //        Employee currentEmployee = currentUser.getEmployee();
-//        return "redirect:/compensation-claims/view";
+//        return "redirect:/compensation-claims/history";
 //    }
 }
