@@ -4,7 +4,7 @@ public enum CompensationClaimStatusEnum {
     APPLIED,
     UPDATED,
     DELETED,
-    CANCELLED,
+    WITHDRAWN,
     APPROVED,
     REJECTED
 }

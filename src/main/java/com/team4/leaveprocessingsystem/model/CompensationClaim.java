@@ -34,7 +34,7 @@ public class CompensationClaim {
     private Manager approvingManager;
 
     private LocalDateTime reviewedDateTime;
-
+    
     @ManyToOne(optional = false)
     private Employee claimingEmployee;
 

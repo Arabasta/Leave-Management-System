@@ -10,4 +10,7 @@ public interface ICompensationClaim {
     List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee);
     long count();
     float overtimeHours(CompensationClaim compensationClaim);
+    CompensationClaim findCompensationClaim(Integer id);
+    CompensationClaim changeCompensationClaim(CompensationClaim compensationClaim);
+
 }

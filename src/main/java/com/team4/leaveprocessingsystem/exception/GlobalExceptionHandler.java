@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     // add custom exceptions here
 
+    @ExceptionHandler(CompensationClaimInvalidException.class)
+    public ResponseEntity<Object> handleCompensationClaimInvalidException(CompensationClaimInvalidException e) {
+        return ResponseEntity.status(500).body(e.getMessage());
+    }
+
     @ExceptionHandler(ServiceSaveException.class)
     public ResponseEntity<Object> handleServiceSaveException(ServiceSaveException e) {
         return ResponseEntity.status(500).body(e.getMessage());
