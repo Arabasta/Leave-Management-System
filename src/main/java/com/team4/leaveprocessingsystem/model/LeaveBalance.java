@@ -26,10 +26,7 @@ public class LeaveBalance {
     private float currentMedicalLeave = medicalLeave;
 
     @Column(nullable = false)
-    private float compassionateLeave = 4;
-
-    @Column(nullable = false)
-    private float currentCompassionateLeave = compassionateLeave;
+    private float compassionateLeaveConsumed = 0;
 
     @Column(nullable = false)
     private float compensationLeave = 0;
