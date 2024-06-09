@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>View Compensation Claims</title>
     <!--TODO: to refactor into app-wide / useCase-wide centralised stylesheet later-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         table, tr, td {border: 1px solid; border-collapse: collapse}
     </style>
@@ -31,12 +32,11 @@
 
         <table>
             <tr>
-                <!-- TODO: to link to Create Compensation Claim-->
-                <td><button>New Compensation Claim</button></td>
+                <td><a href="/compensation-claims/create" class="button is-primary">New Compensation Claim</a></td>
                 <!-- TODO: to link to LeaveApplication page-->
-                <td><button>Apply Leave</button></td>
+                <td><a class="button is-primary">Apply Leave</a></td>
                 <!-- TODO: to implement save as CSV function-->
-                <td><button>Save as CSV</button></td>
+                <td><a class="button is-primary">Save as CSV</a></td>
             </tr>
         </table>
         <br>
@@ -48,7 +48,9 @@
                 <td>Overtime End</td>
                 <td>Overtime Hours</td>
                 <td>Eligible Compensation Leave</td>
-                <td>Details</td>
+                <td>Status</td>
+                <td>Update</td>
+                <td>Withdraw</td>
             </tr>
             <th:block th:each="claim:${compensationClaims}">
                 <tr>
@@ -57,31 +59,15 @@
                     <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
                     <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
                     <td th:text="${claim.compensationLeaveRequested}"></td>
-                    <!-- TODO: to implement button for accordion/collapsible rows with BootStrap -->
-                    <td><button th:attr="data-target='accordion_'+${claim.id}" data-toggle="collapse">Details</button></td>
+                    <td th:text="${claim.compensationClaimStatus}"></td>
+                    <!-- TODO: to implement Update feature -->
+                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
+                        <a th:href="@{/compensation-claims/update/{id}(id=${claim.id})}" class="button is-primary">Update</a></td>
+                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
+                        <a th:href="@{/compensation-claims/withdraw/{id}(id=${claim.id})}" class="button is-primary">Withdraw</a></td>
                 </tr>
-                <!-- TODO: to implement thymeleaf implementation for accordion/collapsible rows with BootStrap -->
-                <th:block th:if="${claim.compensationClaimStatus.name()=='APPROVED'|| claim.compensationClaimStatus.name()=='REJECTED'}">
-                    <tr>
-                        <td colspan="6" class="hiddenRow">
-                            <div class="accordion-body collapse" th:id="'accordion_'+${claim.id}"
-                                 th:text="
-                                    ${claim.compensationClaimStatus}
-                                    +' by: '+${claim.approvingManager.name}
-                                    +' on '+${#temporals.format(claim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}
-                                 ">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${claim.comments != null}">
-                        <td colspan="6" class="hiddenRow">
-                            <div class="accordion-body collapse"
-                                 th:id="'accordion_'+${claim.id}"
-                                 th:text="'Comments: '+${claim.comments}">
-                            </div>
-                        </td>
-                    </tr>
-                </th:block>
             </th:block>
         </table>
 
