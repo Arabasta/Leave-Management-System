@@ -17,7 +17,7 @@ public class LeaveBalance {
     private float annualLeave;
 
     @Column(nullable = false)
-    private float currentAnnualLeave;
+    private float currentAnnualLeave = annualLeave;
 
     @Column(nullable = false)
     private float medicalLeave = 60;
@@ -44,6 +44,5 @@ public class LeaveBalance {
 
     public LeaveBalance(int annualLeave) {
         this.annualLeave = annualLeave;
-        currentAnnualLeave = annualLeave;
     }
 }
