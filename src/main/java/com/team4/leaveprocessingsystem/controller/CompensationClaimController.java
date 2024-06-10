@@ -1,30 +1,25 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import com.team4.leaveprocessingsystem.exception.CompensationClaimInvalidException;
 import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundException;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.UserService;
-import com.team4.leaveprocessingsystem.utility.DateTimeCounterUtils;
+import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.ui.Model;
-import com.team4.leaveprocessingsystem.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @Controller
 public class CompensationClaimController {
