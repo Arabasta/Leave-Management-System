@@ -34,8 +34,8 @@
         <div>
             <!-- todo: fix bug, job designation names not appearing "-->
             <tr>
-                <label th:for="${jobDesignations}">Staff Job Designation:</label>
-                <select th:field="${jobDesignations}">
+                <label th:for="jobDesignation">Staff Job Designation:</label>
+                <select id="jobDesignation" th:field="*{jobDesignation.name}">
                     <option th:each="jd : ${jobDesignations}"
                             th:value="${jd.name}" th:text="${jd.name}"
                             ></option>
