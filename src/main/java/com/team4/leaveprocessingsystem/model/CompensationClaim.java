@@ -4,7 +4,7 @@ import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -25,10 +25,15 @@ public class CompensationClaim {
     private float compensationLeaveRequested;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeStartDateTime;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEndDateTime;
+
+    @Column(nullable = false)
+    private float overtimeHours;
 
     @ManyToOne(optional = false)
     private Manager approvingManager;
@@ -40,5 +45,27 @@ public class CompensationClaim {
 
     private String comments;
 
-    public CompensationClaim() {}
+    public CompensationClaim() {
+    }
+
+    public CompensationClaim(int id) {
+        this.id = id;
+    }
+
+    public CompensationClaim(Integer id, CompensationClaimStatusEnum compensationClaimStatus,
+                             float compensationLeaveRequested, LocalDateTime overtimeStartDateTime,
+                             LocalDateTime overtimeEndDateTime, Manager approvingManager,
+                             LocalDateTime reviewedDateTime, Employee claimingEmployee,
+                             String comments) {
+        super();
+        this.id = id;
+        this.compensationClaimStatus = compensationClaimStatus;
+        this.compensationLeaveRequested = compensationLeaveRequested;
+        this.overtimeStartDateTime = overtimeStartDateTime;
+        this.overtimeEndDateTime = overtimeEndDateTime;
+        this.approvingManager = approvingManager;
+        this.reviewedDateTime = reviewedDateTime;
+        this.claimingEmployee = claimingEmployee;
+        this.comments = comments;
+    }
 }

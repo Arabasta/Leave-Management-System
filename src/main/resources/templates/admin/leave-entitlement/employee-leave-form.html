@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container w-50 mt-5 text-center">
+
+<h1 class="mb-3 mt-3 text-center"
+        th:text="${isEditMode} ? 'Edit Leave Entitlement' : 'View Leave Entitlement'"></h1>
+
+    <form th:if="${isEditMode}" th:action="@{/admin/leave-entitlement/update}" th:object="${leaveBalance}"
+          method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" name="employeeId" th:value="${employeeId}"/>
+
+        <div class="mb-3 row align-items-center">
+            <label for="annualLeave" class="col-4 col-form-label">Annual Leave:</label>
+            <div class="col-8">
+                <input type="text" id="annualLeave" th:field="*{annualLeave}" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentAnnualLeave" class="col-4 col-form-label">Current Annual Leave:</label>
+            <div class="col-8">
+                <input type="text" id="currentAnnualLeave" th:field="*{currentAnnualLeave}" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="medicalLeave" class="col-4 col-form-label">Annual Medical Leave:</label>
+            <div class="col-8">
+                <input type="text" id="medicalLeave" th:field="*{medicalLeave}" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentMedicalLeave" class="col-4 col-form-label">Medical Leave Used:</label>
+            <div class="col-8">
+                <input type="text" id="currentMedicalLeave" th:field="*{currentMedicalLeave}" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="compassionateLeaveConsumed" class="col-4 col-form-label">Compassionate Leave Used:</label>
+            <div class="col-8">
+                <input type="text" id="compassionateLeaveConsumed" th:field="*{compassionateLeaveConsumed}"
+                       class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="compensationLeave" class="col-4 col-form-label">Compensation Leave:</label>
+            <div class="col-8">
+                <input type="text" id="compensationLeave" th:field="*{compensationLeave}" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentCompensationLeave" class="col-4 col-form-label">Current Compensation Leave:</label>
+            <div class="col-8">
+                <input type="text" id="currentCompensationLeave" th:field="*{currentCompensationLeave}"
+                       class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="unpaidLeaveConsumed" class="col-4 form-label">Unpaid Leave Used:</label>
+            <div class="col-8">
+                <input type="text" id="unpaidLeaveConsumed" th:field="*{unpaidLeaveConsumed}" class="form-control"/>
+            </div>
+        </div>
+
+        <div>
+            <input type="submit" value="Update" class="btn btn-primary float-end"/>
+        </div>
+    </form>
+
+    <div th:if="${!isEditMode}">
+        <div class="mb-3 row align-items-center">
+            <label for="annualLeave" class="col-4 col-form-label">Annual Leave:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.annualLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentAnnualLeave" class="col-4 col-form-label">Current Annual Leave:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.currentAnnualLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="medicalLeave" class="col-4 col-form-label">Annual Medical Leave:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.medicalLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentMedicalLeave" class="col-4 col-form-label">Medical Leave Used:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.currentMedicalLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="compassionateLeaveConsumed" class="col-4 col-form-label">Compassionate Leave Used:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.compassionateLeaveConsumed}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="compensationLeave" class="col-4 col-form-label">Compensation Leave:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.compensationLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="currentCompensationLeave" class="col-4 col-form-label">Current Compensation Leave:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.currentCompensationLeave}"></p>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="unpaidLeaveConsumed" class="col-4 form-label">Unpaid Leave Used:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" th:text="${leaveBalance.unpaidLeaveConsumed}"></p>
+            </div>
+        </div>
+
+        <div>
+            <a th:href="@{/admin/leave-entitlement/edit/{id}(id=${leaveBalance.id})}" class="btn btn-primary float-end">Edit</a>
+        </div>
+
+        <div th:if="${updateSuccess}" class="alert alert-success mt-3">Leave balance updated successfully!</div>
+
+    </div>
+</div>
+</body>
+</html>

@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class JobDesignationService implements IJobDesignation {
     @Autowired
@@ -30,5 +32,11 @@ public class JobDesignationService implements IJobDesignation {
     public JobDesignation findByName(String name) {
         return jobDesignationRepository.findByName(name)
                 .orElseThrow(() -> new EntityNotFoundException("Role " + name + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public List<JobDesignation> listAllJobDesignations() {
+        return jobDesignationRepository.findAll();
     }
 }

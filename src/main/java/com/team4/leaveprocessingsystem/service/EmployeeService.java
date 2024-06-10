@@ -77,12 +77,6 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> listAllEmployees() {
-        return employeeRepository.findAll();
-    }
-
-    @Override
-    @Transactional
     public List<Employee> SearchEmployeeByName(String keyword) {
         return employeeRepository.SearchEmployeeByName(keyword);
     }
@@ -99,9 +93,15 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findUserByRoleType(roleType);
     }
 
-
+    @Override
+    @Transactional
     public Employee findEmployeeById(int id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
+    }
+    @Override
+    @Transactional
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
     }
 }

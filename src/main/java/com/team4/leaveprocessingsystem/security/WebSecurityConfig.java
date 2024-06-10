@@ -9,14 +9,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 // source: https://docs.spring.io/spring-security/reference/servlet/getting-started.html
 // source: https://spring.io/guides/gs/securing-web
@@ -38,7 +36,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/images/team_4_logo.png", "/auth/login", "/js/auth/loginValidation.js").permitAll()
 
                          // employee
                         .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
@@ -54,13 +52,17 @@ public class WebSecurityConfig {
                 )
                 // successful login redirection path
                 .formLogin((form) -> form
-                        .loginPage("/login") // do not touch this
+                        .loginPage("/auth/login")
                         .successHandler(authenticationSuccessHandler())
-                        .failureHandler(authenticationFailureHandler())
+                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
-                // allows everyone to access logout
-                .logout(LogoutConfigurer::permitAll)
+                // logout
+                .logout((logout) -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/auth/login?logout")
+                        .permitAll()
+                )
                 .exceptionHandling((exceptions) -> exceptions
                         .accessDeniedHandler(accessDeniedHandler())
                 );
@@ -75,11 +77,6 @@ public class WebSecurityConfig {
             String redirectUrl = redirectService.getAuthSuccessRedirectUrl();
             response.sendRedirect(redirectUrl);
         };
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return (request, response, exception) -> response.sendRedirect("/auth/failure");
     }
 
     @Bean

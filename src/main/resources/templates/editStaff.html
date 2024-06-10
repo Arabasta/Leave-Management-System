@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Staff</title>
+</head>
+
+<style>
+</style>
+
+<body>
+<div>
+    <h1>Edit Current Staff</h1>
+    <br/>
+    <form action="#" method="post" th:action="@{/save}" th:object="${employee}">
+        <table>
+            <tr>
+                <td>Staff ID:</td>
+                <td><input readonly="readonly" th:field="*{id}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Staff Name:</td>
+                <td><input th:field="*{name}" type="text"/></td>
+            </tr>
+
+            <!-- drop down list for manager?  -->
+            <tr>
+                <td>Staff's Manager:</td>
+                <td><input th:field="*{manager}" type="text"/></td>
+            </tr>
+
+        </table>
+
+        <br>
+        <div>
+            <!-- todo: fix bug, job designation names not appearing "-->
+            <tr>
+                <label th:for="${jobDesignations}">Staff Job Designation:</label>
+                <select th:field="${jobDesignations}">
+                    <option th:each="jd : ${jobDesignations}"
+                            th:value="${jd.name}" th:text="${jd.name}"
+                            ></option>
+                </select>
+            </tr>
+        </div>
+        <br>
+
+        <div>
+
+            <label>Staff Roles:
+                <input name="roles" th:checked="${flag.apply(employeeUserAccountList,role) ? true : false}"
+                       th:each="role: ${roles}"
+                       th:text="${role}"
+                       th:value="${role}"
+                       type="checkbox"
+                >
+            </label>
+        </div>
+        <br>
+        <div>
+            <td colspan="2">
+                <button type="submit">Save</button>
+            </td>
+        </div>
+    </form>
+</div>
+</body>
+</html>
