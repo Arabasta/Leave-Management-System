@@ -20,7 +20,7 @@
 
         <tr>
             <td>Approved Compensation Leave: </td>
-            <td th:text="${leaveBalanceService.findByEmployee(employee.id).getCompensationLeave()}+' Days'"></td>
+            <td th:text="${leaveBalance}+' Days'"></td>
         </tr>
     </table>
     <br>

@@ -56,6 +56,12 @@ public class CompensationClaimService implements ICompensationClaim {
 
     @Override
     @Transactional
+    public float compensationLeaveRequested(float overtimeHours) {
+        return (int)(overtimeHours / 4) * 0.5f;
+    }
+
+    @Override
+    @Transactional
     public CompensationClaim findCompensationClaim(Integer id) {
         return compensationClaimRepository.findById(id).orElse(null);
     }

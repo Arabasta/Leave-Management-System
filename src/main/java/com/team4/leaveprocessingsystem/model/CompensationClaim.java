@@ -4,6 +4,7 @@ import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -24,9 +25,11 @@ public class CompensationClaim {
     private float compensationLeaveRequested;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeStartDateTime;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEndDateTime;
 
     @Column(nullable = false)

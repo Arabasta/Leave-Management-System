@@ -54,10 +54,12 @@ public class CompensationClaimController {
         User currentUser = userService.findByUsername(currentUserDetails.getUsername());
         // TODO: implement redirectNonEmployee()
         Employee currentEmployee = currentUser.getEmployee();
+        assert currentEmployee != null;
         model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaims", (currentEmployee != null ? currentEmployee.getCompensationClaims() : null));
+        model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("leaveBalanceService", leaveBalanceService);
+        model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
         return "/compensation-claims/history";
     }
 
@@ -65,10 +67,8 @@ public class CompensationClaimController {
     public String deleteCompensationClaim(Model model, @PathVariable Integer id) throws CompensationClaimNotFoundException {
         // TODO: verify actor is logged in Employee
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
-
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.changeCompensationClaim(compensationClaim);
-
         String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
         model.addAttribute("withdrawn_message",message);
 
@@ -81,13 +81,15 @@ public class CompensationClaimController {
         // TODO: implement redirectNonEmployee()
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         model.addAttribute("compensationClaim", compensationClaim);
-        model.addAttribute("employee", compensationClaim.getClaimingEmployee());
         return "/compensation-claims/update";
     }
 
     @PostMapping("compensation-claims/update-submit")
     public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim) {
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
+        float overtimeHours =compensationClaimService.overtimeHours(compensationClaim);
+        compensationClaim.setOvertimeHours(overtimeHours);
+        compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaimService.save(compensationClaim);
         return "redirect:/compensation-claims/history";
     }
@@ -100,6 +102,7 @@ public class CompensationClaimController {
         User currentUser = userService.findByUsername(currentUserDetails.getUsername());
         // TODO: implement redirectNonEmployee()
         Employee currentEmployee = currentUser.getEmployee();
+        assert currentEmployee != null;
         model.addAttribute("isAdmin", currentUser.getRole()==RoleEnum.ROLE_ADMIN);
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
@@ -119,16 +122,16 @@ public class CompensationClaimController {
         // TODO: implement redirectNonEmployee()
         // START - Set CompensationClaim details - START
         Employee currentEmployee = currentUser.getEmployee();
+        assert currentEmployee != null;
         compensationClaim.setClaimingEmployee(currentEmployee);
         compensationClaim.setApprovingManager(currentEmployee.getManager());
         // TODO: to implement validation is working
         float overtimeHours = (float)DateTimeCounterUtils.countCalendarHours(
                 compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
         compensationClaim.setOvertimeHours(overtimeHours);
-        // TODO: to implement validation is working
+            // TODO: to implement validation is working
         // TODO: to refactor calculation of eligibleOvertimeHours using Service
-        int eligibleOvertimeHours = (int) overtimeHours / 4;
-        compensationClaim.setCompensationLeaveRequested(eligibleOvertimeHours * 0.5f);
+        compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
         compensationClaimService.save(compensationClaim);
         // END - Set CompensationClaim details - END

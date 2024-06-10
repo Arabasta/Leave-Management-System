@@ -13,16 +13,20 @@
     <h1>Update Compensation Claim </h1>
 
     <form action="#" th:action="@{/compensation-claims/update-submit}" th:object="${compensationClaim}" method="post">
+        <input type="hidden" th:field="${compensationClaim.id}"/>
+        <input type="hidden" th:field="${compensationClaim.claimingEmployee}"/>
+        <input type="hidden" th:field="${compensationClaim.approvingManager}"/>
+
         <table>
             <tbody>
                 <tr>
                     <td>Name: </td>
-                    <td th:text="${employee.name}"></td>
+                    <td th:text="${compensationClaim.claimingEmployee.name}"></td>
                 </tr>
 
                 <tr>
                     <td>Approving Manager: </td>
-                    <td th:text="${employee.manager.name}"></td>
+                    <td th:text="${compensationClaim.approvingManager.name}"></td>
                 </tr>
             </tbody>
         </table>
