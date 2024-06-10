@@ -18,7 +18,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav nav-underline">
 
                 <!-- Admin Only -->
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
@@ -49,9 +49,21 @@
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE, MANAGER'')')}">
                     <a class="nav-link" th:href="@{/your/employee/applyLeavePage}">Apply Leave</a>
                 </li>
-
             </ul>
         </div>
+            <!-- right side -->
+            <ul class="nav">
+                <!-- Greeting -->
+                <li class="nav-item pt-3">
+                    <span class="navbar-text">Hello, <span th:text="${#authentication.name}"></span></span>
+                </li>
+                <!-- logout -->
+                <li class="nav-item pt-2">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-link nav-link">Logout</button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </nav>
 </div>

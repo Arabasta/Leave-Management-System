@@ -1,12 +1,12 @@
 package com.team4.leaveprocessingsystem.seeder;
 
-import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
+import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import org.springframework.stereotype.Service;
 
