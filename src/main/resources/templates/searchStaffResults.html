@@ -27,6 +27,7 @@
         text-align: center;
         font-size: 15px;
         font-weight: 500;
+        width: 15%;
     }
 
     h2, h3 {
@@ -38,12 +39,21 @@
         gap: 10px;
     }
 
+    .card {
+        box-shadow: rgba(14, 30, 37, 0.12) 1px 2px 2px 0px, rgba(14, 30, 37, 0.32) 1px 2px 2px 0px;
+    }
+
+    .container {
+        margin: 20px auto;
+    }
+
     .container > form {
         display: flex;
         justify-content: center;
         height: 40%;
         gap: 5px;
     }
+
 </style>
 
 <script type="text/javascript">
@@ -57,10 +67,13 @@
 
 </nav>
 <main>
+
     <br>
     <div class="items_table mt-5 mb-4">
         <div class="table-responsive p-2">
+
             <h2>Staff Management System</h2>
+
             <div class="container">
                 <form method="get" th:action="@{/search-staff}">
                     <div style="font-weight:bold">
@@ -93,6 +106,7 @@
                 <th>Name</th>
                 <th>Job Designation</th>
                 <th>Role</th>
+                <th>Action</th>
                 </thead>
                 <tbody>
                 <tr th:each="staff:${staffs}">
@@ -100,7 +114,11 @@
                     <td th:text="${staff.name}">Name</td>
                     <td th:text="${staff.jobDesignation.name}">Job Designation</td>
                     <td>
-                        <span th:each="user : ${staff.users}" th:text=" ${user.role}">Role</span>
+                        <span th:each="user : ${staff.users}" th:text="${user.role} + ' '">Role</span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/edit/' + ${staff.id}}">Edit</a>
+                        <a th:href="@{'/delete/' + ${staff.id}}">Delete</a>
                     </td>
 
                 </tr>
@@ -114,8 +132,21 @@
 
     <table>
         <tr>
-            <td style="text-align:center; font-weight:bold;">
+            <td>
                 <a href="#" onclick="history.go(-1); return false;">Return to previous page</a>
+            </td>
+            <td></td>
+            <td></td>
+
+            <td class="addModalBtn">
+                <a data-bs-toggle="modal" href="#addEmployeeModal" role="button"
+                   style="text-decoration: none; color: white;">
+                    <div class="card bg-primary">
+                        <div class="card-body">
+                            <h5 class="text-light"><i class="fa fa-plus"></i> Add Employee</h5>
+                        </div>
+                    </div>
+                </a>
             </td>
         </tr>
     </table>

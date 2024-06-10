@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface JobDesignationRepository extends JpaRepository<JobDesignation, Integer> {
     Optional<JobDesignation> findByName(String name);
+
+
 }
