@@ -7,12 +7,19 @@ import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.RollbackException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 
 import java.util.List;
 
@@ -30,6 +37,8 @@ public class EmployeeService implements IEmployee {
     @Autowired
     private UserRepository userRepository;
 
+    private static final Logger log = (Logger) LoggerFactory.getLogger(EmployeeService.class);
+
     public EmployeeService(EmployeeRepository employeeRepository, LeaveBalanceRepository leaveBalanceRepository,
                            PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
@@ -41,14 +50,35 @@ public class EmployeeService implements IEmployee {
     @Transactional
     public boolean save(Employee employee) {
         try {
-            // add some logic here to auto add leave balance?
-            employeeRepository.save(employee);
+            employeeRepository.saveAndFlush(employee);
             return true;
         } catch (Exception e) {
+            log.error("Error saving employee: " + employee.getName(), e);
+            handleException(e);
+
             throw new ServiceSaveException("Failed to save employee: " + employee.getName(), e);
         }
     }
 
+    private void handleException(Exception e) {
+        if (e instanceof ConstraintViolationException) {
+            ConstraintViolationException cve = (ConstraintViolationException) e;
+            for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
+                log.error("Validation error: " + violation.getPropertyPath() + " - " + violation.getMessage());
+            }
+        } else if (e instanceof DataIntegrityViolationException) {
+            DataIntegrityViolationException dive = (DataIntegrityViolationException) e;
+            log.error("Data integrity violation: " + dive.getMostSpecificCause().getMessage());
+        } else if (e instanceof EntityExistsException) {
+            log.error("Entity already exists: " + e.getMessage());
+        } else if (e instanceof TransactionSystemException) {
+            TransactionSystemException tse = (TransactionSystemException) e;
+            if (tse.getCause() instanceof RollbackException) {
+                RollbackException re = (RollbackException) tse.getCause();
+                log.error("Transaction rollback: " + re.getMessage());
+            }
+        }
+    }
     @Override
     @Transactional
     public long count() {

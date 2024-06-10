@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head.html :: html_head"></head>
+<head th:replace="~{fragments/head :: html_head}"></head>
 
 <body>
-<div th:replace="fragments/navbar :: menu"></div>
+<div th:replace="~{fragments/navbar :: menu}"></div>
 
 <div class="container w-50 mt-5 text-center">
     <h1 class="mb-3 mt-3 text-center"
@@ -11,8 +11,6 @@
 
     <form method="post" th:action="@{/admin/manage-staff/update}" th:if="${isEditMode}" th:object="${employee}">
         <input name="employeeId" th:value="${employeeId}" type="hidden"/>
-
-        <input th:field="*{leaveBalance}" type="hidden"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeId">ID (read-only):</label>
@@ -28,63 +26,15 @@
             </div>
         </div>
 
-        <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="employeeManager">Assigned Manager:</label>
-            <div class="col-8">
-                <input class="form-control" id="employeeManager" th:field="*{manager}" type="text"/>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="employeeJobDesignation">Job Designation:</label>
-            <div class="col-8">
-                <select class="form-select" id="employeeJobDesignation" th:field="*{jobDesignation.name}">
-                    <option th:each="jd : ${jobDesignationList}"
-                            th:text="${jd.name}" th:value="${jd.name}"></option>
-                </select>
-            </div>
-        </div>
-        <!--
-       <div>
-           <label>Staff Roles:
-               <input name="roles" th:checked="${userRoleflag.apply(userAccountListByEmployeeId,role) ? true : false}"
-                      th:each="role: ${roles}"
-                      th:text="${role}"
-                      th:value="${role}"
-                      type="checkbox"
-           </label>
-       </div>
-       -->
-        <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label">Assigned Roles:</label>
-            <div class="col-7">
-                <div class="">
-                    <div class="form-check form-check-inline">
-                        <label class="checkbox" th:each="role: ${roles}">
-                            <input th:checked="${userRoleflag.apply(userAccountListByEmployeeId,role) ? true : false}"
-                                   th:text="${role}"
-                                   th:value="${role}"
-                                   type="checkbox"> <br>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div>
             <input class="btn btn-primary float-end" type="submit" value="Update"/>
         </div>
-
-
     </form>
 
     <div th:if="${!isEditMode}">
-        <!-- todo: include saved details -->
-
         <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
     </div>
-
-
 </div>
 
 </body>

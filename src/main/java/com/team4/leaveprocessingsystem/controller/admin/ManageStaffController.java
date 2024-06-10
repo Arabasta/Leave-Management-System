@@ -1,34 +1,28 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
-import com.team4.leaveprocessingsystem.interfacemethods.IEmployee;
-import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
-import com.team4.leaveprocessingsystem.repository.UserRepository;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
-
-import jakarta.validation.Valid;
+import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(value = "/admin/manage-staff")
 public class ManageStaffController {
 
-    //todo: field injection is not recommended
+    private final EmployeeService employeeService;
+    private final JobDesignationService jobDesignationService;
+    private final UserService userService;
+
     @Autowired
-    private IEmployee employeeService;
-    @Autowired
-    private JobDesignationService jobDesignationService;
-    @Autowired
-    private UserRepository userRepository;
+    public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService, UserService userService) {
+        this.employeeService = employeeService;
+        this.jobDesignationService = jobDesignationService;
+        this.userService = userService;
+    }
 
     @GetMapping("/")
     public String search(@RequestParam(value = "keyword", required = false) String k,
@@ -64,24 +58,7 @@ public class ManageStaffController {
 
         Employee employee = employeeService.findEmployeeById(employeeId);
 
-        BiFunction<List<User>, String, Boolean> userHasThisRole = (employeeUserAccounts, userAccountRole) -> {
-            return employeeUserAccounts.stream().anyMatch(userAccount -> userAccount.getRole().toString().equals(userAccountRole));
-        };
-
-        List<String> roleEnumsAsStrings = Stream.of(RoleEnum.values())
-                .map(RoleEnum::name)
-                .collect(Collectors.toList());
-
-        List<User> userAccountListByEmployeeId = userRepository.findUserRolesByEmployeeId(employeeId);
-
-        List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
-
         model.addAttribute("employee", employee);
-        model.addAttribute("userRoleflag", userHasThisRole);
-        model.addAttribute("roles", roleEnumsAsStrings);
-        model.addAttribute("userAccountListByEmployeeId", userAccountListByEmployeeId);
-        model.addAttribute("jobDesignationList", jobDesignationList);
-
         model.addAttribute("isEditMode", true);
 
         return "manage-staff/edit-employee-details-form";
@@ -89,23 +66,18 @@ public class ManageStaffController {
 
     @PostMapping("/update")
     public String updateEmployeeDetails(@RequestParam("employeeId") int employeeId,
-                                        @Valid @ModelAttribute("employee") Employee employee,
-                                        BindingResult bindingResult,
-                                        Model model
-                                        ) {
-        employeeService.save(employee); // todo: fix bug
+                                        @ModelAttribute Employee employee,
+                                        Model model) {
+        Employee existingEmployee = employeeService.findEmployeeById(employeeId);
 
-        if (bindingResult.hasErrors()) {
-            System.out.println("There are validation errors.");
-            model.addAttribute("employee", employee);
-            return "manage-staff/edit-employee-details-form";
+        if (employee.getJobDesignation() == null) {
+            employee.setJobDesignation(existingEmployee.getJobDesignation());
         }
-        // todo: save the role of the employee?
+        employeeService.save(employee);
 
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 
-        return "redirect:/admin/manage-staff/view-all";
+        return "redirect:/admin/manage-staff/";
     }
-
 }

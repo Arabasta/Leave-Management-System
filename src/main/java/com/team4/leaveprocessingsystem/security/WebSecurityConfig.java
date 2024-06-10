@@ -45,7 +45,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/home/manager").hasRole("MANAGER")
 
                         // admin
-                        .requestMatchers("/", "/home/admin").hasRole("ADMIN")
+                        .requestMatchers("/", "/home/admin", "admin/manage-staff/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
 

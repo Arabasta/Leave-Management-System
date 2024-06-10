@@ -1,9 +1,6 @@
 package com.team4.leaveprocessingsystem.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +15,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull(message = "Job Designation cannot be blank")
+    // @NotNull(message = "Job Designation cannot be blank")
     @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee")
     private List<User> users = new ArrayList<>();
 
     @ManyToOne
@@ -31,13 +28,13 @@ public class Employee {
     @OneToOne(orphanRemoval = true)
     private LeaveBalance leaveBalance;
 
-    @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
-    private List<LeaveApplication> leaveApplications;
+    @OneToMany(mappedBy = "submittingEmployee")
+    private List<LeaveApplication> leaveApplications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "claimingEmployee", orphanRemoval = true)
-    private List<CompensationClaim> compensationClaims;
+    @OneToMany(mappedBy = "claimingEmployee")
+    private List<CompensationClaim> compensationClaims = new ArrayList<>();
 
-    @NotBlank(message = "Name cannot be blank")
+    //@NotBlank(message = "Name cannot be blank")
     private String name;
 
     public Employee() {}
@@ -49,6 +46,8 @@ public class Employee {
         this.manager = manager;
         this.leaveBalance = leaveBalance;
         this.users = new ArrayList<>();
+        this.leaveApplications = new ArrayList<>();
+        this.compensationClaims = new ArrayList<>();
     }
 
     public void setManager(Manager manager) {
