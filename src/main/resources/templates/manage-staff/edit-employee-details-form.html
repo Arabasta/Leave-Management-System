@@ -11,7 +11,7 @@
 <div>
     <h1>Edit Current Staff</h1>
     <br/>
-    <form action="#" method="post" th:action="@{/save}" th:object="${employee}">
+    <form method="post" th:action="@{/update}" th:object="${employee}">
         <table>
             <tr>
                 <td>Staff ID:</td>
@@ -32,11 +32,10 @@
 
         <br>
         <div>
-            <!-- todo: fix bug, job designation names not appearing "-->
             <tr>
                 <label th:for="jobDesignation">Staff Job Designation:</label>
                 <select id="jobDesignation" th:field="*{jobDesignation.name}">
-                    <option th:each="jd : ${jobDesignations}"
+                    <option th:each="jd : ${jobDesignationList}"
                             th:value="${jd.name}" th:text="${jd.name}"
                             ></option>
                 </select>
@@ -47,7 +46,7 @@
         <div>
 
             <label>Staff Roles:
-                <input name="roles" th:checked="${flag.apply(employeeUserAccountList,role) ? true : false}"
+                <input name="roles" th:checked="${userRoleflag.apply(userAccountListByEmployeeId,role) ? true : false}"
                        th:each="role: ${roles}"
                        th:text="${role}"
                        th:value="${role}"
@@ -62,6 +61,8 @@
             </td>
         </div>
     </form>
+
+    <div th:if="${updateSuccess}" class="alert alert-success mt-3">Leave balance updated successfully!</div>
 </div>
 </body>
 </html>

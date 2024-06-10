@@ -75,7 +75,7 @@
             <h2>Staff Management System</h2>
 
             <div class="container">
-                <form method="get" th:action="@{/search-staff}">
+                <form action="#" th:action="@{/}">
                     <div style="font-weight:bold">
                         Search By:
                         <select name="searchtype">
@@ -117,8 +117,8 @@
                         <span th:each="user : ${staff.users}" th:text="${user.role} + ' '">Role</span>
                     </td>
                     <td>
-                        <a th:href="@{'/edit/' + ${staff.id}}">Edit</a>
-                        <a th:href="@{'/delete/' + ${staff.id}}">Delete</a>
+                        <a th:href="@{/edit/{id}(id=${staff.id})}">Edit</a>
+                        <a th:href="@{/delete/{id}(id=${staff.id})}">Delete</a>
                     </td>
 
                 </tr>
