@@ -7,7 +7,7 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
-import com.team4.leaveprocessingsystem.utility.DaysCounterUtils;
+import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,8 +40,8 @@ public class LeaveBalanceService implements ILeaveBalance {
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
         LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
 
-        Long numOfCalendarDays = DaysCounterUtils.countCalendarDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
-        Long numOfWorkingDays = DaysCounterUtils.countWorkingDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
+        Long numOfCalendarDays = DateTimeCounterUtils.countCalendarDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
+        Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
         Long numOfAnnualLeaveDeducted;
         if (numOfCalendarDays <= 14) {
             numOfAnnualLeaveDeducted = numOfWorkingDays;

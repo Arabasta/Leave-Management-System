@@ -1,12 +1,11 @@
 package com.team4.leaveprocessingsystem.service;
 
-import com.team4.leaveprocessingsystem.exception.CompensationClaimInvalidException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ICompensationClaim;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.repository.CompensationClaimRepository;
-import com.team4.leaveprocessingsystem.utility.DateTimeCounterUtils;
+import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

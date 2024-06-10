@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.utility;
+package com.team4.leaveprocessingsystem.util;
 
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
 
