@@ -7,13 +7,13 @@
 <body>
 
     <h3>
-        <span th:if="${applicationStatus == 'create'}" th:text="'New Leave Application'"></span>
-        <span th:if="${applicationStatus == 'update'}" th:text="'Edit Leave Application'"></span>
+        <span th:if="${applicationType == 'create'}" th:text="'New Leave Application'"></span>
+        <span th:if="${applicationType == 'update'}" th:text="'Edit Leave Application'"></span>
 <!--        Leave Application-->
     </h3>
 
     <form th:action="@{/leave/save}" method="post">
-        <input type="hidden" name="applicationStatus" th:value="${applicationStatus}" />
+        <input type="hidden" name="applicationType" th:value="${applicationType}" />
         <input type="hidden" name="applicationId" th:field="${leave.id}" />
         <table>
             <tbody>
