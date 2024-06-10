@@ -35,6 +35,7 @@ public class CompensationClaimService implements ICompensationClaim {
 
     public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
         try {
+            //TODO: to verify if this should call employeeService for the List instead of the model directly
             return employee.getCompensationClaims();
         } catch (NoSuchElementException e) {
             return null;
@@ -50,7 +51,13 @@ public class CompensationClaimService implements ICompensationClaim {
     public float overtimeHours(CompensationClaim compensationClaim) {
         LocalDateTime start = compensationClaim.getOvertimeStartDateTime();
         LocalDateTime end = compensationClaim.getOvertimeEndDateTime();
-        return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) :  0;
+        return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) : 0;
+    }
+
+    @Override
+    @Transactional
+    public float compensationLeaveRequested(float overtimeHours) {
+        return (int) (overtimeHours / 4) * 0.5f;
     }
 
     @Override

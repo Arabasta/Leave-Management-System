@@ -1,77 +1,63 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>View Compensation Claims</title>
-    <!--TODO: to refactor into app-wide / useCase-wide centralised stylesheet later-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        table, tr, td {border: 1px solid; border-collapse: collapse}
-    </style>
-</head>
+<head th:replace="fragments/head :: html_head"></head>
 <body>
+    <div th:replace="fragments/navbar :: menu"></div>
     <h1>View Compensation Claims</h1>
 
-    <h3 th:if="${isAdmin}">Note: You are currently viewing this page as an Admin.
-        <br>Please <a href="/login">log in</a> with your Employee account to view this page.</h3>
+    <table>
+        <tr>
+            <td>Name: </td>
+            <td th:text="${employee.name}"></td>
+        </tr>
 
-    <th:block th:if="${!isAdmin}">
+        <tr>
+            <td>Approved Compensation Leave: </td>
+            <td th:text="${leaveBalance}+' Days'"></td>
+        </tr>
+    </table>
+    <br>
 
-        <table>
+    <table>
+        <tr>
+            <td><a href="/compensation-claims/create" class="button is-primary">New Compensation Claim</a></td>
+            <!-- TODO: to link to LeaveApplication page-->
+            <td><a class="button is-primary">Apply Leave</a></td>
+            <!-- TODO: to implement save as CSV function-->
+            <td><a class="button is-primary">Save as CSV</a></td>
+        </tr>
+    </table>
+    <br>
+
+    <table>
+        <tr>
+            <td>Claim Id</td>
+            <td>Overtime Start</td>
+            <td>Overtime End</td>
+            <td>Overtime Hours</td>
+            <td>Eligible Compensation Leave</td>
+            <td>Status</td>
+            <td>Update</td>
+            <td>Withdraw</td>
+        </tr>
+        <th:block th:each="claim:${compensationClaims}">
             <tr>
-                <td>Name: </td>
-                <td th:text="${employee.name}"></td>
+                <td th:text="${claim.id}"></td>
+                <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
+                <td th:text="${claim.compensationLeaveRequested}"></td>
+                <td th:text="${claim.compensationClaimStatus}"></td>
+                <!-- TODO: to implement Update feature -->
+                <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                            ${claim.compensationClaimStatus.name()}=='UPDATED'">
+                    <a th:href="@{/compensation-claims/update/{id}(id=${claim.id})}" class="button is-primary">Update</a></td>
+                <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                            ${claim.compensationClaimStatus.name()}=='UPDATED'">
+                    <a th:href="@{/compensation-claims/withdraw/{id}(id=${claim.id})}" class="button is-primary">Withdraw</a></td>
             </tr>
-
-            <tr>
-                <td>Approved Compensation Leave: </td>
-                <td th:text="${leaveBalanceService.findByEmployee(employee.id).getCompensationLeave()}+' Days'"></td>
-            </tr>
-        </table>
-        <br>
-
-        <table>
-            <tr>
-                <td><a href="/compensation-claims/create" class="button is-primary">New Compensation Claim</a></td>
-                <!-- TODO: to link to LeaveApplication page-->
-                <td><a class="button is-primary">Apply Leave</a></td>
-                <!-- TODO: to implement save as CSV function-->
-                <td><a class="button is-primary">Save as CSV</a></td>
-            </tr>
-        </table>
-        <br>
-
-        <table>
-            <tr>
-                <td>Claim Id</td>
-                <td>Overtime Start</td>
-                <td>Overtime End</td>
-                <td>Overtime Hours</td>
-                <td>Eligible Compensation Leave</td>
-                <td>Status</td>
-                <td>Update</td>
-                <td>Withdraw</td>
-            </tr>
-            <th:block th:each="claim:${compensationClaims}">
-                <tr>
-                    <td th:text="${claim.id}"></td>
-                    <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                    <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                    <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
-                    <td th:text="${claim.compensationLeaveRequested}"></td>
-                    <td th:text="${claim.compensationClaimStatus}"></td>
-                    <!-- TODO: to implement Update feature -->
-                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
-                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
-                        <a th:href="@{/compensation-claims/update/{id}(id=${claim.id})}" class="button is-primary">Update</a></td>
-                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
-                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
-                        <a th:href="@{/compensation-claims/withdraw/{id}(id=${claim.id})}" class="button is-primary">Withdraw</a></td>
-                </tr>
-            </th:block>
-        </table>
-
-    </th:block>
+        </th:block>
+    </table>
 
     <h3 th:if="${#lists.isEmpty(compensationClaims)}">You do not have any Compensation Claims!</h3>
 
