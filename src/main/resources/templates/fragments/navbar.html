@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head.html :: html_head"></head>
+
+<body>
+<div th:fragment="menu" id="menu">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Logo / Home Auto Routed -->
+        <a class="navbar-brand ps-2" th:href="@{/home}">
+            <img src="/images/team_4_logo.png" height="25" alt="team 4 logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+
+                <!-- Admin Only -->
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/home/admin}">Home</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/leave-entitlement/}">Leave Entitlement</a>
+                </li>
+
+                <!-- Manager Only -->
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/home/admin}">Home</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/home/employee}">Employee Home</a>
+                </li>
+
+                <!-- Employee Only -->
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}">
+                    <a class="nav-link" th:href="@{/home/employee}">Home</a>
+                </li>
+
+                <!-- Employee + Manager -->
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE, MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/your/employee/applyLeavePage}">Apply Leave</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>
