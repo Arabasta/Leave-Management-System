@@ -9,7 +9,6 @@
     <h3>
         <span th:if="${applicationType == 'create'}" th:text="'New Leave Application'"></span>
         <span th:if="${applicationType == 'update'}" th:text="'Edit Leave Application'"></span>
-<!--        Leave Application-->
     </h3>
 
     <form th:action="@{/leave/save}" method="post">

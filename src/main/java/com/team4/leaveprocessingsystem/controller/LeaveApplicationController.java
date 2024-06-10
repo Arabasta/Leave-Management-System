@@ -111,5 +111,10 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeaveHistory";
     }
 
-
+    @GetMapping("view/{id}")
+    public String viewLeave(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
 }
