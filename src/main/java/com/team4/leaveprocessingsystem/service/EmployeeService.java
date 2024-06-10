@@ -83,7 +83,7 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> SearchEmployeeByName(@Param("k") String keyword) {
+    public List<Employee> SearchEmployeeByName(String keyword) {
         return employeeRepository.SearchEmployeeByName(keyword);
     }
 
