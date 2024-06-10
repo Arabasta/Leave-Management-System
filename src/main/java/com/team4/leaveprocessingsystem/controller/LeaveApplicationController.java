@@ -16,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("leave")
 @Controller
 public class LeaveApplicationController {
@@ -109,11 +111,20 @@ public class LeaveApplicationController {
     @GetMapping("history")
     public String leaveHistory(Model model){
         Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
+        //I will delete later
+        //to-do
+        //1. to demonstrate the subordinate of manager
+        //2. search bar        3.design as demo layout
         List<LeaveApplication> allLeaves = employee.getLeaveApplications();
         model.addAttribute("leaveApplications", allLeaves);
 
         return "leaveApplication/viewLeaveHistory";
     }
 
-
+    @GetMapping("view/{id}")
+    public String viewLeave(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
 }
