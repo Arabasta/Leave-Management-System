@@ -17,6 +17,9 @@ public class Manager extends Employee {
     @OneToMany(mappedBy = "reviewingManager")
     private List<LeaveApplication> leaveApplications;
 
+    @OneToMany(mappedBy = "approvingManager")
+    private List<CompensationClaim> compensationClaims;
+
     public Manager() {}
 
     public Manager(String name, JobDesignation jobDesignation, Manager manager, LeaveBalance leaveBalance) {

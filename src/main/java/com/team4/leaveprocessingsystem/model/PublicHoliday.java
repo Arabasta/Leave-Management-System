@@ -22,4 +22,8 @@ public class PublicHoliday {
 
     public PublicHoliday() {}
 
+    public PublicHoliday(LocalDate date, String holiday) {
+        this.date = date;
+        this.holiday = holiday;
+    }
 }

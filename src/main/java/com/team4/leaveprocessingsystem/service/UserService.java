@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.service;
 
-import com.team4.leaveprocessingsystem.Exceptions.ServiceSaveException;
+import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IUser;
 import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
 
 
 @Service
