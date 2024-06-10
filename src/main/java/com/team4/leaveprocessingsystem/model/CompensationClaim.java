@@ -45,7 +45,8 @@ public class CompensationClaim {
 
     private String comments;
 
-    public CompensationClaim() {}
+    public CompensationClaim() {
+    }
 
     public CompensationClaim(int id) {
         this.id = id;

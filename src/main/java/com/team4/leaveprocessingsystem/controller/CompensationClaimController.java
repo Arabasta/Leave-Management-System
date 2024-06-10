@@ -70,7 +70,7 @@ public class CompensationClaimController {
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.changeCompensationClaim(compensationClaim);
         String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
-        model.addAttribute("withdrawn_message",message);
+        model.addAttribute("withdrawn_message", message);
 
         return "redirect:/compensation-claims/history";
     }
@@ -87,7 +87,7 @@ public class CompensationClaimController {
     @PostMapping("compensation-claims/update-submit")
     public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim) {
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
-        float overtimeHours =compensationClaimService.overtimeHours(compensationClaim);
+        float overtimeHours = compensationClaimService.overtimeHours(compensationClaim);
         compensationClaim.setOvertimeHours(overtimeHours);
         compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaimService.save(compensationClaim);
@@ -103,7 +103,7 @@ public class CompensationClaimController {
         // TODO: implement redirectNonEmployee()
         Employee currentEmployee = currentUser.getEmployee();
         assert currentEmployee != null;
-        model.addAttribute("isAdmin", currentUser.getRole()==RoleEnum.ROLE_ADMIN);
+        model.addAttribute("isAdmin", currentUser.getRole() == RoleEnum.ROLE_ADMIN);
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("compensationClaim", new CompensationClaim());
@@ -126,10 +126,10 @@ public class CompensationClaimController {
         compensationClaim.setClaimingEmployee(currentEmployee);
         compensationClaim.setApprovingManager(currentEmployee.getManager());
         // TODO: to implement validation is working
-        float overtimeHours = (float)DateTimeCounterUtils.countCalendarHours(
+        float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
                 compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
         compensationClaim.setOvertimeHours(overtimeHours);
-            // TODO: to implement validation is working
+        // TODO: to implement validation is working
         // TODO: to refactor calculation of eligibleOvertimeHours using Service
         compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);

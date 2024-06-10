@@ -51,13 +51,13 @@ public class CompensationClaimService implements ICompensationClaim {
     public float overtimeHours(CompensationClaim compensationClaim) {
         LocalDateTime start = compensationClaim.getOvertimeStartDateTime();
         LocalDateTime end = compensationClaim.getOvertimeEndDateTime();
-        return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) :  0;
+        return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) : 0;
     }
 
     @Override
     @Transactional
     public float compensationLeaveRequested(float overtimeHours) {
-        return (int)(overtimeHours / 4) * 0.5f;
+        return (int) (overtimeHours / 4) * 0.5f;
     }
 
     @Override
