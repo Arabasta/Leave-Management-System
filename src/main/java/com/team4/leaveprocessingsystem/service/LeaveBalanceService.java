@@ -40,16 +40,8 @@ public class LeaveBalanceService implements ILeaveBalance {
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
         LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
 
-        Long numOfCalendarDays = DateTimeCounterUtils.countCalendarDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
         Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
-        Long numOfAnnualLeaveDeducted;
-        if (numOfCalendarDays <= 14) {
-            numOfAnnualLeaveDeducted = numOfWorkingDays;
-        }
-        else {
-            numOfAnnualLeaveDeducted = numOfCalendarDays;
-        }
-
+        Long numOfAnnualLeaveDeducted = DateTimeCounterUtils.numOfAnnualLeaveToBeCounted(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
         switch(leaveType){
             case MEDICAL:
                 empLeaveBalance.setCurrentMedicalLeave(empLeaveBalance.getCurrentMedicalLeave() - numOfWorkingDays);
@@ -71,8 +63,6 @@ public class LeaveBalanceService implements ILeaveBalance {
         leaveBalanceRepository.save(empLeaveBalance);
 
         // For testing only. To delete
-        System.out.println(numOfWorkingDays);
-        System.out.println(numOfCalendarDays);
         System.out.println("Medical Leave Entitlement:" + empLeaveBalance.getMedicalLeave());
         System.out.println("Medical Leave Consumed:" + (empLeaveBalance.getMedicalLeave() - empLeaveBalance.getCurrentMedicalLeave()));
         System.out.println("Medical Leave Remaining:" + empLeaveBalance.getCurrentMedicalLeave());
