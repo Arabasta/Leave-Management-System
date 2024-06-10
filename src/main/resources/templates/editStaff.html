@@ -28,22 +28,25 @@
                 <td><input th:field="*{manager}" type="text"/></td>
             </tr>
 
-            <!-- todo: work on job designation drop down list, fix bug at this loc 'th:each="jd: ${jobDesignations}}"-->
-            <!--
-            <tr>
-                <label>Staff Job Designation:</label>
-                <select th:field="*{jobDesignation}">
-                    <option th:each="jd : ${jobdesignations}"
-                            th:value="jd" th:text="jd"
-                            th:selected="jd == ${jobDesignation}"></option>
-                </select>
-            </tr>
-            -->
         </table>
 
         <br>
+        <div>
+            <!-- todo: fix bug, job designation names not appearing "-->
+
+            <tr>
+                <label th:for="*{jobDesignation.name}">Staff Job Designation:</label>
+                <select th:field="*{jobDesignation.name}">
+                    <option th:each="jd : ${jobdesignations}"
+                            th:value="jd" th:text="jd.name"
+                            th:selected="${jd == jobDesignation}"></option>
+                </select>
+            </tr>
+        </div>
+        <br>
 
         <div>
+
             <label>Staff Roles:
                 <input name="roles" th:checked="${flag.apply(employeeUserAccountList,role) ? true : false}"
                        th:each="role: ${roles}"
@@ -52,8 +55,6 @@
                        type="checkbox"
                 >
             </label>
-
-
         </div>
         <br>
         <div>

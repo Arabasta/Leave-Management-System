@@ -73,7 +73,7 @@ public class AdminManageStaffController {
         //model.addAttribute("staffs", employeeService.listAllEmployees());
         //model.addAttribute("roles", RoleEnum.values());
         //model.addAttribute("jobdesignations", jobDesignationService.listAllJobDesignations());
-        
+
         Boolean employeeHasThisUserRoleFlagDummy = true;
 
         // compare between the role(s) of a specific employee and roleEnum and see if there are matches
@@ -94,8 +94,6 @@ public class AdminManageStaffController {
 
         mav.addObject("employee", employee);
         mav.addObject("jobdesignations", jobDesignationService.listAllJobDesignations());
-
-
 
         mav.addObject("roles", roleEnumNamesStrings);
         mav.addObject("employeeUserAccountList", userRepository.findUserRolesByEmployeeId(id));
