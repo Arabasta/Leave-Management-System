@@ -49,28 +49,26 @@
     <tr>
         <td>
             <a th:href="@{/leave/edit/{id}(id=${leave.id})}"
-               th:if="${leave.leaveStatus == T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).APPLIED
-               or leave.leaveStatus == T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).UPDATED}">
+               th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')
+               or #strings.equals(leave.leaveStatus, 'UPDATED')}">
                 Edit
             </a>
-        </td>
-        <td>
             <a th:href="@{/leave/cancel/{id}(id=${leave.id})}"
-               th:if="${leave.leaveStatus == T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).APPROVED}">
+               th:if="${#strings.equals(leave.leaveStatus, 'APPROVED')}">
                 Cancel
             </a>
-        </td>
-        <td>
             <a th:href="@{/leave/delete/{id}(id=${leave.id})}"
-               th:if="${leave.leaveStatus == T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).APPLIED
-                or leave.leaveStatus == T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).UPDATED}">
+               th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')
+               or #strings.equals(leave.leaveStatus, 'UPDATED')}">
                 Delete
             </a>
+        </td>
+        <td>
+
         </td>
     </tr>
     </tbody>
 </table>
-<!--</form>-->
 
 </body>
 </html>
