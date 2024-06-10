@@ -12,7 +12,7 @@ public interface IEmployee {
     Employee findByName(String name);
     long count();
 
-    List<Employee> listAllEmployees();
+    List<Employee> findAll();
     List<Employee> SearchEmployeeByName(String keyword);
     List<Employee> findEmployeeByJobDesignation(String jobDesignation);
     List<Employee> findUserByRoleType(String roleType);

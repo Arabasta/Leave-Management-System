@@ -77,12 +77,6 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> listAllEmployees() {
-        return employeeRepository.findAll();
-    }
-
-    @Override
-    @Transactional
     public List<Employee> SearchEmployeeByName(String keyword) {
         return employeeRepository.SearchEmployeeByName(keyword);
     }

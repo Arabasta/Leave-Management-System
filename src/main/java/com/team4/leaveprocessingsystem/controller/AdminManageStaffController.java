@@ -44,12 +44,12 @@ public class AdminManageStaffController {
         String roleType = "roleType";
 
         // Todo:
-        if (k == null) model.addAttribute("staffs", employeeService.listAllEmployees());
+        if (k == null) model.addAttribute("staffs", employeeService.findAll());
         if (t == null) t = "";
 
         switch (t) {
             case (""):
-                model.addAttribute("staffs", employeeService.listAllEmployees());
+                model.addAttribute("staffs", employeeService.findAll());
                 break;
             case ("name"):
                 model.addAttribute("staffs", employeeService.SearchEmployeeByName(k));
