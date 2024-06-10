@@ -49,6 +49,10 @@
         </div>
             <!-- right side -->
             <ul class="nav">
+                <!-- Greeting -->
+                <li class="nav-item pt-3">
+                    <span class="navbar-text">Hello, <span th:text="${#authentication.name}"></span></span>
+                </li>
                 <!-- logout -->
                 <li class="nav-item pt-2">
                     <form th:action="@{/logout}" method="post">
