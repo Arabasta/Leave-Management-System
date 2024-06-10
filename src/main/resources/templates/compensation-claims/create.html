@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Compensation Claims</title>
-    <!--TODO: to refactor into app-wide / useCase-wide centralised stylesheet later-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        table, tr, td {border: 1px solid; border-collapse: collapse}
-    </style>
-</head>
+<head th:replace="fragments/head :: html_head"></head>
 <body>
+<div th:replace="fragments/navbar :: menu"></div>
     <h1>Create Compensation Claim</h1>
     
     <form action="#" th:action="@{/compensation-claims/create-submit}"
