@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.management.relation.Role;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,21 +73,21 @@ public class AdminManageStaffController {
         //model.addAttribute("staffs", employeeService.listAllEmployees());
         //model.addAttribute("roles", RoleEnum.values());
         //model.addAttribute("jobdesignations", jobDesignationService.listAllJobDesignations());
+        
+        Boolean employeeHasThisUserRoleFlagDummy = true;
 
-        // todo: checkboxes for role, to find a way to check if the role == that users' role(s)
-        boolean employeeWithUserRoleFlag = true;
+        // compare between the role(s) of a specific employee and roleEnum and see if there are matches
+        BiFunction<List<User>, String, Boolean> employeeHasThisUserRoleFlag = (listOfUserRoles, specificRole) -> {
+            return listOfUserRoles.stream().anyMatch(user -> user.getRole().toString().equals(specificRole));
+        };
 
-        // compare between the role(s) of a specific employee and roleEnum and see which matches
+        List<User> employeeUserAccountList = userRepository.findUserRolesByEmployeeId(id);
 
-        List<User> employeeUserAccount = userRepository.findUserRolesByEmployeeId(id);
-
-        List<String> roleEnumNames = Stream.of(RoleEnum.values())
+        List<String> roleEnumNamesStrings = Stream.of(RoleEnum.values())
                 .map(RoleEnum::name)
                 .collect(Collectors.toList());
 
-
-
-        model.addAttribute("flag", employeeWithUserRoleFlag);
+        model.addAttribute("flag", employeeHasThisUserRoleFlag);
 
         ModelAndView mav = new ModelAndView("editStaff");
         Employee employee = employeeService.findEmployeeById(id);
@@ -95,8 +97,8 @@ public class AdminManageStaffController {
 
 
 
-        mav.addObject("roles", roleEnumNames);
-        mav.addObject("users", userRepository.findUserRolesByEmployeeId(id));
+        mav.addObject("roles", roleEnumNamesStrings);
+        mav.addObject("employeeUserAccountList", userRepository.findUserRolesByEmployeeId(id));
         return mav;
     }
 

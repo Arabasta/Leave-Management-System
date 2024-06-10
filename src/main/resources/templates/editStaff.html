@@ -43,10 +43,9 @@
 
         <br>
 
-        <!-- todo: checkboxes for role, to find a way to check if the role == that users' role(s) -->
         <div>
             <label>Staff Roles:
-                <input name="roles" th:checked="${flag ? true : false}"
+                <input name="roles" th:checked="${flag.apply(employeeUserAccountList,role) ? true : false}"
                        th:each="role: ${roles}"
                        th:text="${role}"
                        th:value="${role}"
