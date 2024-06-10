@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 // source: https://docs.spring.io/spring-security/reference/servlet/getting-started.html
@@ -37,7 +36,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
-                        .requestMatchers("/images/team_4_logo.png", "/login").permitAll()
+                        .requestMatchers("/images/team_4_logo.png", "/auth/login").permitAll()
 
                          // employee
                         .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
@@ -53,15 +52,15 @@ public class WebSecurityConfig {
                 )
                 // successful login redirection path
                 .formLogin((form) -> form
-                        .loginPage("/login") // do not touch this
+                        .loginPage("/auth/login")
                         .successHandler(authenticationSuccessHandler())
-                        .failureHandler(authenticationFailureHandler())
+                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
                 // logout
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/auth/login?logout")
                         .permitAll()
                 )
                 .exceptionHandling((exceptions) -> exceptions
@@ -78,11 +77,6 @@ public class WebSecurityConfig {
             String redirectUrl = redirectService.getAuthSuccessRedirectUrl();
             response.sendRedirect(redirectUrl);
         };
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return (request, response, exception) -> response.sendRedirect("/auth/failure");
     }
 
     @Bean
