@@ -37,7 +37,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/images/team_4_logo.png", "/login").permitAll()
 
                          // employee
                         .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
