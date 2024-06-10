@@ -12,17 +12,17 @@
 <body>
     <h1>Update Compensation Claim </h1>
 
-    <form action="#" th:action="@{/compensation-claims/update/{id}(id=${compensationClaim.id})}" th:object="${compensationClaim}" method="post">
+    <form action="#" th:action="@{/compensation-claims/update-submit}" th:object="${compensationClaim}" method="post">
         <table>
             <tbody>
                 <tr>
                     <td>Name: </td>
-                    <td th:text="${compensationClaim.claimingEmployee.name}"></td>
+                    <td th:text="${employee.name}"></td>
                 </tr>
 
                 <tr>
                     <td>Approving Manager: </td>
-                    <td th:text="${compensationClaim.approvingManager.name}"></td>
+                    <td th:text="${employee.manager.name}"></td>
                 </tr>
             </tbody>
         </table>
@@ -31,7 +31,39 @@
         <table>
             <tbody>
                 <tr>
-                    <td>WIP</td>
+                    <td><label for="overtimeStartDateTime">Overtime Start</label></td>
+                    <td th:text="${#temporals.format(compensationClaim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                </tr>
+
+                <tr>
+                    <td><label for="overtimeStartDateTime">Updated Overtime Start</label></td>
+                    <td><input id="overtimeStartDateTime" type="datetime-local"
+                                th:value="${compensationClaim.overtimeStartDateTime}"
+                                th:field="${compensationClaim.overtimeStartDateTime}"/></td>
+                    <!--                        <td th:if="${#fields.hasErrors('overtimeStartDateTime')}"-->
+                    <!--                            th:errors="*{compensationClaim.overtimeStartDateTime}"></td>-->
+                </tr>
+
+                <tr>
+                    <td><label for="overtimeEndDateTime">Overtime End</label></td>
+                    <td th:text="${#temporals.format(compensationClaim.getOvertimeEndDateTime(), 'dd-MMM-yyyy, HH:mm')}"></td>
+                </tr>
+
+                <tr>
+                    <td><label for="overtimeEndDateTime">Updated Overtime End</label></td>
+                    <td><input id="overtimeEndDateTime" type="datetime-local"
+                               th:value="${compensationClaim.overtimeEndDateTime}"
+                               th:field="${compensationClaim.overtimeEndDateTime}"/></td>
+                    <!--                        <td th:if="${#fields.hasErrors('overtimeEndDateTime')}"-->
+                    <!--                            th:errors="*{compensationClaim.overtimeEndDateTime}"></td>-->
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Update" />
+                        <input type="reset" value="Reset" />
+                    </td>
                 </tr>
             </tbody>
         </table>
