@@ -93,7 +93,7 @@ public class AdminManageStaffController {
         Employee employee = employeeService.findEmployeeById(id);
 
         mav.addObject("employee", employee);
-        mav.addObject("jobdesignations", jobDesignationService.listAllJobDesignations());
+        mav.addObject("jobDesignations", jobDesignationService.listAllJobDesignations());
 
         mav.addObject("roles", roleEnumNamesStrings);
         mav.addObject("employeeUserAccountList", userRepository.findUserRolesByEmployeeId(id));

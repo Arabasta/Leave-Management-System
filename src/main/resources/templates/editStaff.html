@@ -34,11 +34,11 @@
         <div>
             <!-- todo: fix bug, job designation names not appearing "-->
             <tr>
-                <label th:for="*{jobDesignation.name}">Staff Job Designation:</label>
-                <select th:field="*{jobDesignation.name}">
-                    <option th:each="jd : ${jobdesignations}"
-                            th:value="jd" th:text="jd.name"
-                            th:selected="${jd == jobDesignation}"></option>
+                <label th:for="${jobDesignations}">Staff Job Designation:</label>
+                <select th:field="${jobDesignations}">
+                    <option th:each="jd : ${jobDesignations}"
+                            th:value="${jd.name}" th:text="${jd.name}"
+                            ></option>
                 </select>
             </tr>
         </div>
