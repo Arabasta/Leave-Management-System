@@ -12,8 +12,4 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/auth/failure")
-    public String loginFailure() {
-        return "auth/failure";
-    }
 }

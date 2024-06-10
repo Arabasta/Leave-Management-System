@@ -7,9 +7,6 @@
 <head th:replace="fragments/head :: html_head"></head>
 
 <body>
-<div th:if="${param.error}">Invalid username and password.</div>
-<div th:if="${param.logout}">You have been logged out.</div>
-
 <div class="container w-25 mt-5 text-left">
     <img src="/images/team_4_logo.png" height="64" alt="team 4 logo">
 
@@ -34,6 +31,9 @@
             <input type="submit" value="Log in" class="btn btn-outline-dark"/>
         </div>
 </form>
+    <div th:if="${param.error}" class="alert alert-danger mt-5">Invalid username or password.</div>
+    <div th:if="${param.logout}" class="alert alert-success mt-5">You have been logged out.</div>
+
 
 </div>
 </body>

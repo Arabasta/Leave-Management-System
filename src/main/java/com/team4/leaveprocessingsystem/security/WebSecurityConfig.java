@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 // source: https://docs.spring.io/spring-security/reference/servlet/getting-started.html
@@ -55,7 +54,7 @@ public class WebSecurityConfig {
                 .formLogin((form) -> form
                         .loginPage("/login") // do not touch this
                         .successHandler(authenticationSuccessHandler())
-                        .failureHandler(authenticationFailureHandler())
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 // logout
@@ -78,11 +77,6 @@ public class WebSecurityConfig {
             String redirectUrl = redirectService.getAuthSuccessRedirectUrl();
             response.sendRedirect(redirectUrl);
         };
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return (request, response, exception) -> response.sendRedirect("/auth/failure");
     }
 
     @Bean
