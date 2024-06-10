@@ -1,15 +1,15 @@
-package com.team4.leaveprocessingsystem.controller;
+package com.team4.leaveprocessingsystem.controller.auth;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class AuthController {
+public class LoginController {
 
     // IMPORTANT: do not change route
-    @GetMapping("/login")
+    @GetMapping("/auth/login")
     public String login() {
-        return "login";
+        return "auth/login";
     }
 
 }

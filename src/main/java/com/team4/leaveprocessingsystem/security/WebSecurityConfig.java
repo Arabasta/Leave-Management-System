@@ -36,7 +36,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
-                        .requestMatchers("/images/team_4_logo.png", "/login").permitAll()
+                        .requestMatchers("/images/team_4_logo.png", "/auth/login").permitAll()
 
                          // employee
                         .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
@@ -52,15 +52,15 @@ public class WebSecurityConfig {
                 )
                 // successful login redirection path
                 .formLogin((form) -> form
-                        .loginPage("/login") // do not touch this
+                        .loginPage("/auth/login")
                         .successHandler(authenticationSuccessHandler())
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
                 // logout
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/auth/login?logout")
                         .permitAll()
                 )
                 .exceptionHandling((exceptions) -> exceptions
