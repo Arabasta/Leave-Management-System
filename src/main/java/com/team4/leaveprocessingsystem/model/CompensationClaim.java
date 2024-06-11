@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.model;
 
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Past;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,10 +26,12 @@ public class CompensationClaim {
     private float compensationLeaveRequested;
 
     @Column(nullable = false)
+    @Past(message = "Overtime Start DateTime must be in the past")
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeStartDateTime;
 
     @Column(nullable = false)
+    @Past(message = "Overtime End DateTime must be in the past")
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEndDateTime;
 

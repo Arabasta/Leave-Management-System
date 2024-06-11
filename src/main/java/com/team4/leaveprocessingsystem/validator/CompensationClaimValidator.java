@@ -19,7 +19,11 @@ public class CompensationClaimValidator implements Validator {
         CompensationClaim claim = (CompensationClaim) target;
         if ((claim.getOvertimeStartDateTime() != null && claim.getOvertimeEndDateTime() != null) &&
                 (claim.getOvertimeStartDateTime().isAfter(claim.getOvertimeEndDateTime()))) {
-            errors.rejectValue("toDate", "error.dates", "Overtime End date should be greater than Overtime Start date.");
+            errors.rejectValue("overtimeEndDateTime", "error.dates", "End DateTime must be later than Start DateTime.");
+        }
+        if ((claim.getOvertimeStartDateTime() != null && claim.getOvertimeEndDateTime() != null) &&
+                claim.getOvertimeStartDateTime().compareTo(claim.getOvertimeEndDateTime()) < 4) {
+            errors.rejectValue("overtimeEndDateTime", "error.dates", "Each Compensation Claim must have at least 4 hours of overtime.");
         }
     }
 

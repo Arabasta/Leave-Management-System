@@ -43,7 +43,7 @@ public class CompensationClaimController {
     @Autowired
     private CompensationClaimValidator compensationClaimValidator;
 
-    @InitBinder("course")
+    @InitBinder
     private void initCourseBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
     }
@@ -64,10 +64,54 @@ public class CompensationClaimController {
     }
 
     /*
+    EMPLOYEE - GET - CREATE COMPENSATION CLAIM
+ */
+    @ModelAttribute
+    @GetMapping(value = "/compensation-claims/create")
+    // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
+    // TODO: refactor using Sessions after it is implemented
+    public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        model.addAttribute("employee", currentEmployee);
+        model.addAttribute("compensationClaimService", compensationClaimService);
+        model.addAttribute("compensationClaim", new CompensationClaim());
+        return "/compensation-claims/create";
+    }
+
+    /*
+        EMPLOYEE - POST - CREATE COMPENSATION CLAIM
+    */
+    //TODO: validate overtimeEndDateTime isBefore LocalDateTime.now()
+    @PostMapping("/compensation-claims/create-submit")
+    public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
+                                          @AuthenticationPrincipal UserDetails currentUserDetails,
+                                          BindingResult bindingResult) {
+        // Return back to page if validation has errors
+        if (bindingResult.hasErrors()) {return "/compensation-claims/create";}
+        // Continue if no errors
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        compensationClaim.setClaimingEmployee(currentEmployee);
+        compensationClaim.setApprovingManager(currentEmployee.getManager());
+        float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
+                compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
+        compensationClaim.setOvertimeHours(overtimeHours);
+        // TODO: to refactor calculation of eligibleOvertimeHours using Service
+        compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
+        compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        compensationClaimService.save(compensationClaim);
+        // END - Set CompensationClaim details - END
+
+        String message = "New Compensation Claim " + compensationClaim.getId() + " was successfully created.";
+        System.out.println(message);
+        return "redirect:/compensation-claims/history";
+    }
+
+    /*
         EMPLOYEE - POST - WITHDRAW COMPENSATION CLAIM
      */
     @PostMapping(value = "/compensation-claims/withdraw/{id}")
-    public String deleteCompensationClaim(Model model, @PathVariable Integer id) throws CompensationClaimNotFoundException {
+    public String deleteCompensationClaim(Model model, @PathVariable Integer id)
+            throws CompensationClaimNotFoundException {
         // TODO: verify actor is logged in Employee
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
@@ -95,55 +139,16 @@ public class CompensationClaimController {
      */
     //TODO: style new overtimeStartDateTime and overtimeEndDateTime to dd-MM-yyyy, hh-mm (verify format)
     @PostMapping("compensation-claims/update-submit")
-    public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim) {
+    public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
+                                          BindingResult bindingResult) {
+        // Return back to page if validation has errors
+        if (bindingResult.hasErrors()) {return "/compensation-claims/update";}
+        // Continue if no errors
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
         float overtimeHours = compensationClaimService.overtimeHours(compensationClaim);
         compensationClaim.setOvertimeHours(overtimeHours);
         compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaimService.save(compensationClaim);
-        return "redirect:/compensation-claims/history";
-    }
-
-    /*
-        EMPLOYEE - GET - CREATE COMPENSATION CLAIM
-     */
-    @ModelAttribute
-    @GetMapping(value = "/compensation-claims/create")
-    // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
-    // TODO: refactor using Sessions after it is implemented
-    public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
-        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
-        model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaimService", compensationClaimService);
-        model.addAttribute("compensationClaim", new CompensationClaim());
-        return "/compensation-claims/create";
-    }
-
-    /*
-        EMPLOYEE - POST - CREATE COMPENSATION CLAIM
-    */
-    //TODO: validate overtimeEndDateTime isBefore LocalDateTime.now()
-    @PostMapping("/compensation-claims/create-submit")
-    public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
-                                          @AuthenticationPrincipal UserDetails currentUserDetails,
-                                          BindingResult result) {
-        if (result.hasErrors()) {
-            return "/compensation-claims/create";
-        }
-        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
-        compensationClaim.setClaimingEmployee(currentEmployee);
-        compensationClaim.setApprovingManager(currentEmployee.getManager());
-        float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
-                compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
-        compensationClaim.setOvertimeHours(overtimeHours);
-        // TODO: to refactor calculation of eligibleOvertimeHours using Service
-        compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
-        compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
-        compensationClaimService.save(compensationClaim);
-        // END - Set CompensationClaim details - END
-
-        String message = "New Compensation Claim " + compensationClaim.getId() + " was successfully created.";
-        System.out.println(message);
         return "redirect:/compensation-claims/history";
     }
 
