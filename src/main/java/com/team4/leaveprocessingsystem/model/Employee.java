@@ -1,6 +1,8 @@
 package com.team4.leaveprocessingsystem.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,11 +17,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // @NotNull(message = "Job Designation cannot be blank")
+    @NotNull(message = "Job Designation cannot be blank")
     @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 
     @ManyToOne
@@ -28,13 +30,13 @@ public class Employee {
     @OneToOne(orphanRemoval = true)
     private LeaveBalance leaveBalance;
 
-    @OneToMany(mappedBy = "submittingEmployee")
+    @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
     private List<LeaveApplication> leaveApplications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "claimingEmployee")
+    @OneToMany(mappedBy = "claimingEmployee", orphanRemoval = true)
     private List<CompensationClaim> compensationClaims = new ArrayList<>();
 
-    //@NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     public Employee() {}
