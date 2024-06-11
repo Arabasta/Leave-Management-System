@@ -61,7 +61,6 @@ public class CompensationClaimController {
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
         model.addAttribute("compensationClaimService", compensationClaimService);
-        model.addAttribute("leaveBalanceService", leaveBalanceService);
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
         return "/compensation-claims/history";
     }
@@ -75,9 +74,9 @@ public class CompensationClaimController {
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.changeCompensationClaim(compensationClaim);
-        String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
-        model.addAttribute("withdrawn_message", message);
-
+        // TODO: to implement / remove / refactor withdrawn/update success message
+//        String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
+//        model.addAttribute("withdrawn_message", message);
         return "redirect:/compensation-claims/history";
     }
 
@@ -119,7 +118,6 @@ public class CompensationClaimController {
         // TODO: implement redirectNonEmployee()
         Employee currentEmployee = currentUser.getEmployee();
         assert currentEmployee != null;
-        model.addAttribute("isAdmin", currentUser.getRole() == RoleEnum.ROLE_ADMIN);
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("compensationClaim", new CompensationClaim());
@@ -208,7 +206,9 @@ public class CompensationClaimController {
     public String reviewCompensationClaim(@ModelAttribute("compensationClaimApproval") @Valid CompensationClaimApproval approval,
                                           @PathVariable Integer id) {
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
+        // Set Manager's review time into Employee's CompensationLeave
         compensationClaim.setReviewedDateTime(LocalDateTime.now());
+        // Set Manager's comment into Employee's CompensationLeave
         compensationClaim.setComments(approval.getComment());
 
         if (approval.getDecision().trim().equalsIgnoreCase(CompensationClaimStatusEnum.APPROVED.toString())) {
