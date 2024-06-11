@@ -13,7 +13,7 @@
         <table>
             <tbody>
                 <tr>
-                    <td>Name: </td>
+                    <td>Claiming Employee Name: </td>
                     <td th:text="${compensationClaim.claimingEmployee.name}"></td>
                 </tr>
 
@@ -28,7 +28,7 @@
         <table>
             <tbody>
                 <tr>
-                    <td><label for="overtimeStartDateTime">Overtime Start</label></td>
+                    <td>Overtime Start</td>
                     <td th:text="${#temporals.format(compensationClaim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
                 </tr>
 
@@ -42,7 +42,7 @@
                 </tr>
 
                 <tr>
-                    <td><label for="overtimeEndDateTime">Overtime End</label></td>
+                    <td>Overtime End</td>
                     <td th:text="${#temporals.format(compensationClaim.getOvertimeEndDateTime(), 'dd-MMM-yyyy, HH:mm')}"></td>
                 </tr>
 
