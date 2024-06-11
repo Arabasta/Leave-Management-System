@@ -10,6 +10,7 @@ import java.util.Objects;
 // This class is used as a DTO during Manager's approval of CompensationClaim (from view -> controller)
 public class CompensationClaimApproval {
 
+    // TODO: refactor using enum
     private String decision;
 
     private String comment;

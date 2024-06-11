@@ -36,8 +36,8 @@ public class CompensationClaimController {
     private final CompensationClaimService compensationClaimService;
     private final CompensationClaimValidator compensationClaimValidator;
 
-    @InitBinder("compensation-claims")
-    private void initCourseBinder(WebDataBinder binder) {
+    @InitBinder
+    private void initCompensationClaimBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
     }
 
@@ -62,8 +62,8 @@ public class CompensationClaimController {
 //        // TODO: implement redirectNonEmployee()
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         assert currentEmployee != null;
-        model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaims", (compensationClaimService.findCompensationClaimsByEmployee(currentEmployee)));
+        model.addAttribute("employee", currentEmployee.getName());
+        model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
         return "compensation-claims/history";
     }
@@ -77,9 +77,11 @@ public class CompensationClaimController {
     // TODO: refactor using Sessions after it is implemented
     public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
-        model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaimService", compensationClaimService);
-        model.addAttribute("compensationClaim", new CompensationClaim());
+        assert currentEmployee != null;
+        CompensationClaim compensationClaim = new CompensationClaim();
+        compensationClaim.setClaimingEmployee(currentEmployee);
+        compensationClaim.setApprovingManager(currentEmployee.getManager());
+        model.addAttribute("compensationClaim", compensationClaim);
         return "compensation-claims/create";
     }
 
@@ -88,27 +90,27 @@ public class CompensationClaimController {
     */
     //TODO: validate overtimeEndDateTime isBefore LocalDateTime.now()
     @PostMapping("/create-submit")
-    public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
+    public String createCompensationClaim(@Valid @ModelAttribute("compensationClaim") CompensationClaim compensationClaim,
                                           @AuthenticationPrincipal UserDetails currentUserDetails,
-                                          BindingResult bindingResult) {
+                                          BindingResult result, Model model)
+            throws CompensationClaimNotFoundException {
         // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {
+        if (result.hasErrors()) {
+            model.addAttribute("compensationClaim", compensationClaim);
             return "compensation-claims/create";
         }
-        // Continue if no errors
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
-        compensationClaim.setClaimingEmployee(currentEmployee);
-        compensationClaim.setApprovingManager(currentEmployee.getManager());
+        assert currentEmployee == compensationClaim.getClaimingEmployee();
+        // Continue if no errors
+        // TODO: to refactor calculation of overtimeHours using Service
         float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
                 compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
         compensationClaim.setOvertimeHours(overtimeHours);
-        // TODO: to refactor calculation of eligibleOvertimeHours using Service
+        // TODO: to refactor calculation of CompensationLeaveRequested using Service
         compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
         compensationClaimService.save(compensationClaim);
         // END - Set CompensationClaim details - END
-        String message = "New Compensation Claim " + compensationClaim.getId() + " was successfully created.";
-        System.out.println(message);
         return "redirect:/compensation-claims/history";
     }
 
@@ -116,15 +118,13 @@ public class CompensationClaimController {
         EMPLOYEE - GET - WITHDRAW COMPENSATION CLAIM
      */
     @GetMapping(value = "/withdraw/{id}")
-    public String withdrawCompensationClaim(Model model, @PathVariable Integer id)
-            throws CompensationClaimNotFoundException {
-        // TODO: verify actor is logged in Employee
+    public String withdrawCompensationClaim(@PathVariable Integer id,
+                                            @AuthenticationPrincipal UserDetails currentUserDetails) {
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        assert currentEmployee == compensationClaim.getClaimingEmployee();
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.save(compensationClaim);
-        // TODO: to implement / remove / refactor withdrawn/update success message
-//        String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
-//        model.addAttribute("withdrawn_message", message);
         return "redirect:/compensation-claims/history";
     }
 
@@ -132,10 +132,11 @@ public class CompensationClaimController {
         EMPLOYEE - GET - UPDATE COMPENSATION CLAIM
      */
     @GetMapping("/update/{id}")
-    public String updateCompensationClaimPage(@PathVariable Integer id, Model model) {
-        // TODO: verify actor is logged in Employee
-        // TODO: implement redirectNonEmployee()
+    public String updateCompensationClaimPage(@PathVariable Integer id, Model model,
+                                              @AuthenticationPrincipal UserDetails currentUserDetails) {
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        assert currentEmployee == compensationClaim.getClaimingEmployee();
         model.addAttribute("compensationClaim", compensationClaim);
         return "compensation-claims/update";
     }
@@ -145,12 +146,16 @@ public class CompensationClaimController {
      */
     //TODO: style new overtimeStartDateTime and overtimeEndDateTime to dd-MM-yyyy, hh-mm (verify format)
     @PostMapping("update-submit")
-    public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
-                                          BindingResult bindingResult) {
+    public String updateCompensationClaim(@Valid @ModelAttribute("compensationClaim") CompensationClaim compensationClaim,
+                                          @AuthenticationPrincipal UserDetails currentUserDetails,
+                                          BindingResult result, Model model) {
         // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {
-            return "/compensation-claims/update";
+        if (result.hasErrors()) {
+            model.addAttribute("compensationClaim", compensationClaim);
+            return "compensation-claims/update/"+compensationClaim.getId();
         }
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        assert currentEmployee == compensationClaim.getClaimingEmployee();
         // Continue if no errors
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
         float overtimeHours = compensationClaimService.overtimeHours(compensationClaim);
@@ -182,7 +187,6 @@ public class CompensationClaimController {
                 )
                 .collect(Collectors.toList());
         model.addAttribute("employeesPendingClaimsList", employeesPendingClaimsList);
-        model.addAttribute("compensationClaimService", compensationClaimService);
         return "compensation-claims/pending";
     }
 
@@ -194,26 +198,27 @@ public class CompensationClaimController {
 //        // TODO: verify actor is logged in Manager
 //        // TODO: implement redirectNonManager()
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
-        model.addAttribute("compensationClaimApproval", new CompensationClaimApproval());
         model.addAttribute("compensationClaim", compensationClaim);
-        model.addAttribute("compensationClaimService", compensationClaimService);
         return "compensation-claims/review";
     }
 
     /*
         MANAGER - POST - REVIEW COMPENSATION CLAIM
     */
-    @PostMapping("/review-submit/{id}")
-    public String reviewCompensationClaim(@ModelAttribute("compensationClaimApproval") @Valid CompensationClaimApproval approval,
-                                          @PathVariable Integer id) {
-        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
+    @PostMapping("/review-submit")
+    public String reviewCompensationClaim(@Valid @ModelAttribute("compensationClaim") CompensationClaim compensationClaim,
+                                          BindingResult result,
+                                          Model model) {
+        // Return back to page if validation has errors
+        if (result.hasErrors()) {
+            model.addAttribute("compensationClaim", compensationClaim);
+            return "compensation-claims/review";
+        }
         // Set Manager's review time into Employee's CompensationLeave
         compensationClaim.setReviewedDateTime(LocalDateTime.now());
         // Set Manager's comment into Employee's CompensationLeave
-        compensationClaim.setComments(approval.getComment());
-
-        if (approval.getDecision().trim().equalsIgnoreCase(CompensationClaimStatusEnum.APPROVED.toString())) {
-            compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPROVED);
+        compensationClaim.setComments(compensationClaim.getComments());
+        if (compensationClaim.getCompensationClaimStatus()==CompensationClaimStatusEnum.APPROVED) {
             float employeeCurrentCompensationLeaveBalance = compensationClaim
                     .getClaimingEmployee()
                     .getLeaveBalance().getCompensationLeave();

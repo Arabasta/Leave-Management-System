@@ -26,12 +26,10 @@ public class CompensationClaim {
     private float compensationLeaveRequested;
 
     @Column(nullable = false)
-    @Past(message = "Overtime Start DateTime must be in the past")
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeStartDateTime;
 
     @Column(nullable = false)
-    @Past(message = "Overtime End DateTime must be in the past")
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEndDateTime;
 
@@ -40,6 +38,9 @@ public class CompensationClaim {
 
     @ManyToOne(optional = false)
     private Manager approvingManager;
+
+    @Column(nullable = false)
+    private LocalDateTime claimedDateTime;
 
     private LocalDateTime reviewedDateTime;
 
