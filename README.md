@@ -15,7 +15,7 @@ Replace your `<head></head>` tag in your HTML file with:
 
 ```html
 
-<head th:replace="fragments/head :: html_head"></head>
+<head th:replace="~{fragments/head :: html_head}"></head>
 ```
 
 This will insert the navigation bar onto the top of your page, along with bootstrap and a title. Ignore the 'Missing

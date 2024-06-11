@@ -9,8 +9,11 @@
     <h1 class="mb-3 mt-3 text-center"
         th:text="${isEditMode} ? 'Edit Employee Details' : 'View Updated Employee Details'"></h1>
 
+    <!-- Edit mode form -->
     <form method="post" th:action="@{/admin/manage-staff/update}" th:if="${isEditMode}" th:object="${employee}">
+        <!-- hidden fields -->
         <input name="employeeId" th:value="${employeeId}" type="hidden"/>
+        <input th:field="*{leaveBalance}" type="hidden"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeId">ID (read-only):</label>
@@ -26,12 +29,19 @@
             </div>
         </div>
 
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="managerId">Assigned Manager Id:</label>
+            <div class="col-8">
+                <input class="form-control" id="managerId" th:field="*{manager.id}" type="text"/>
+            </div>
+        </div>
 
         <div>
             <input class="btn btn-primary float-end" type="submit" value="Update"/>
         </div>
     </form>
 
+    <!-- Edit Success View -->
     <div th:if="${!isEditMode}">
         <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
     </div>
