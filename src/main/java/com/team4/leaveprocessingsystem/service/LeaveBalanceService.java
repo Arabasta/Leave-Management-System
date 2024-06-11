@@ -40,23 +40,22 @@ public class LeaveBalanceService implements ILeaveBalance {
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
         LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
 
-        Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
-        Long numOfAnnualLeaveDeducted = DateTimeCounterUtils.numOfAnnualLeaveToBeCounted(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
+        Long numOfLeaveToBeCounted = DateTimeCounterUtils.numOfLeaveToBeCounted(leaveApplication.getStartDate(), leaveApplication.getEndDate(), leaveType, publicHolidayService);
         switch(leaveType){
             case MEDICAL:
-                empLeaveBalance.setCurrentMedicalLeave(empLeaveBalance.getCurrentMedicalLeave() - numOfWorkingDays);
+                empLeaveBalance.setCurrentMedicalLeave(empLeaveBalance.getCurrentMedicalLeave() - numOfLeaveToBeCounted);
                 break;
             case ANNUAL:
-                empLeaveBalance.setCurrentAnnualLeave(empLeaveBalance.getCurrentAnnualLeave() - numOfAnnualLeaveDeducted);
+                empLeaveBalance.setCurrentAnnualLeave(empLeaveBalance.getCurrentAnnualLeave() - numOfLeaveToBeCounted);
                 break;
             case COMPASSIONATE:
-                empLeaveBalance.setCompassionateLeaveConsumed(empLeaveBalance.getCompassionateLeaveConsumed() + numOfWorkingDays);
+                empLeaveBalance.setCompassionateLeaveConsumed(empLeaveBalance.getCompassionateLeaveConsumed() + numOfLeaveToBeCounted);
                 break;
             case COMPENSATION:
-                empLeaveBalance.setCurrentCompensationLeave(empLeaveBalance.getCurrentCompensationLeave() - numOfWorkingDays);
+                empLeaveBalance.setCurrentCompensationLeave(empLeaveBalance.getCurrentCompensationLeave() - numOfLeaveToBeCounted);
                 break;
             case UNPAID:
-                empLeaveBalance.setUnpaidLeaveConsumed(empLeaveBalance.getUnpaidLeaveConsumed() + numOfWorkingDays);
+                empLeaveBalance.setUnpaidLeaveConsumed(empLeaveBalance.getUnpaidLeaveConsumed() + numOfLeaveToBeCounted);
                 break;
         }
 
