@@ -21,7 +21,7 @@ public class Employee {
     @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE)
     private List<User> users = new ArrayList<>();
 
     @ManyToOne
@@ -30,10 +30,10 @@ public class Employee {
     @OneToOne(orphanRemoval = true)
     private LeaveBalance leaveBalance;
 
-    @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
+    @OneToMany(mappedBy = "submittingEmployee", cascade = CascadeType.MERGE)
     private List<LeaveApplication> leaveApplications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "claimingEmployee", orphanRemoval = true)
+    @OneToMany(mappedBy = "claimingEmployee", cascade = CascadeType.MERGE)
     private List<CompensationClaim> compensationClaims = new ArrayList<>();
 
     @NotBlank(message = "Name cannot be blank")
@@ -61,8 +61,67 @@ public class Employee {
         }
     }
 
-    public void setUser(User user) {
+    public void addUser(User user) {
         users.add(user);
     }
 
+//    public void addUser(User user) {
+//        addUser(user, true);
+//    }
+//    public void addUser(User user, boolean set) {
+//        if (user != null) {
+//            if (getUsers().contains(user)) {
+//                getUsers().set(getUsers().indexOf(user), user);
+//            } else {
+//                getUsers().add(user);
+//            }
+//            if (set) {
+//                user.setEmployee(this, false);
+//            }
+//        }
+//    }
+//    public void removeUser(User user) {
+//        getUsers().remove(user);
+//        user.setEmployee(null);
+//    }
+//
+//    public void addLeaveApplication(LeaveApplication leaveApplication) {
+//        addLeaveApplication(leaveApplication, true);
+//    }
+//    public void addLeaveApplication(LeaveApplication leaveApplication, boolean set) {
+//        if (leaveApplication != null) {
+//            if (getLeaveApplications().contains(leaveApplication)) {
+//                getLeaveApplications().set(getLeaveApplications().indexOf(leaveApplication), leaveApplication);
+//            } else {
+//                getLeaveApplications().add(leaveApplication);
+//            }
+//            if (set) {
+//                leaveApplication.setEmployee(this, false);
+//            }
+//        }
+//    }
+//    public void removeLeaveApplication(LeaveApplication leaveApplication) {
+//        getLeaveApplications().remove(leaveApplication);
+//        leaveApplication.setEmployee(null);
+//    }
+//
+//    public void addCompensationClaim(CompensationClaim compensationClaims) {
+//        addCompensationClaim(compensationClaims, true);
+//    }
+//    public void addCompensationClaim(CompensationClaim compensationClaims, boolean set) {
+//        if (compensationClaims != null) {
+//            if (getCompensationClaims().contains(compensationClaims)) {
+//                getCompensationClaims().set(getCompensationClaims().indexOf(compensationClaims), compensationClaims);
+//            } else {
+//                getCompensationClaims().add(compensationClaims);
+//            }
+//            if (set) {
+//                compensationClaims.setEmployee(this, false);
+//            }
+//        }
+//    }
+//    public void removeCompensationClaim(CompensationClaim compensationClaims) {
+//        getCompensationClaims().remove(compensationClaims);
+//        compensationClaims.setEmployee(null);
+//    }
 }

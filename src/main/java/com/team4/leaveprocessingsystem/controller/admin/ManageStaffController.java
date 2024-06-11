@@ -102,16 +102,17 @@ public class ManageStaffController {
             return "manage-staff/edit-employee-details-form";
         }
 
-        employee.setManager((Manager) manager);
+        existingEmployee.setManager((Manager) manager);
+        existingEmployee.setName(employee.getName());
+        JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
+        existingEmployee.setJobDesignation(jd);
 
-        if (employee.getJobDesignation() == null) {
-            employee.setJobDesignation(existingEmployee.getJobDesignation());
-        }
-        employeeService.save(employee);
+        employeeService.save(existingEmployee);
+
 
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
-        model.addAttribute("employee", employee);
+        model.addAttribute("employee", existingEmployee);
 
         return "redirect:/admin/manage-staff/";
     }

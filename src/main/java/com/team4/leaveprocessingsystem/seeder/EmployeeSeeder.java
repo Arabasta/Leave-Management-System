@@ -49,7 +49,7 @@ public class EmployeeSeeder {
                 managementJobDesignation,
                 null,
                 managerLeaveBalance);
-        manager.setUser(managerUser);
+        manager.addUser(managerUser);
 
         managerUser.setEmployee(manager);
 
@@ -76,8 +76,8 @@ public class EmployeeSeeder {
                 administrativeJobDesignation,
                 manager,
                 adminLeaveBalance);
-        administrativeEmployee.setUser(employeeUser);
-        administrativeEmployee.setUser(employeeAdminUser);
+        administrativeEmployee.addUser(employeeUser);
+        administrativeEmployee.addUser(employeeAdminUser);
 
         employeeUser.setEmployee(administrativeEmployee);
         employeeAdminUser.setEmployee(administrativeEmployee);
@@ -100,7 +100,7 @@ public class EmployeeSeeder {
                 internJobDesignation,
                 manager,
                 internLeaveBalance);
-        intern.setUser(internUser);
+        intern.addUser(internUser);
 
         internUser.setEmployee(intern);
 
@@ -122,7 +122,7 @@ public class EmployeeSeeder {
                 cleaningJobDesignation,
                 manager,
                 cleaningLeaveBalance);
-        cleaningEmployee.setUser(cleaningUser);
+        cleaningEmployee.addUser(cleaningUser);
 
         cleaningUser.setEmployee(cleaningEmployee);
 

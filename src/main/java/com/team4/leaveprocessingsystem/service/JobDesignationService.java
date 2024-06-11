@@ -39,4 +39,10 @@ public class JobDesignationService implements IJobDesignation {
     public List<JobDesignation> listAllJobDesignations() {
         return jobDesignationRepository.findAll();
     }
+
+    @Transactional
+    public JobDesignation findJobDesignationById(int id) {
+        return jobDesignationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
+    }
 }

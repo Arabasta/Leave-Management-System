@@ -41,6 +41,30 @@
             </div>
         </div>
 
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeJobDesignation">Job Designation:</label>
+            <div class="col-8">
+                <select class="form-select" id="employeeJobDesignation" th:field="*{jobDesignation.id}">
+                    <option th:each="jd : ${jobDesignationList}" th:text="${jd.name}" th:value="${jd.id}"
+                            th:selected="${jd.id} == ${employee.jobDesignation.id}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label">Assigned Roles:</label>
+            <div class="col-7">
+                <div class="">
+                    <div class="form-check form-check-inline">
+                        <label class="checkbox" th:each="role: ${roles}">
+                            <input th:checked="${userRoleflag.apply(userAccountListByEmployeeId,role) ? true : false}"
+                                   th:text="${role}"
+                                   th:value="${role}"
+                                   type="checkbox"> <br>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div>
             <input class="btn btn-primary float-end" type="submit" value="Update"/>
         </div>
