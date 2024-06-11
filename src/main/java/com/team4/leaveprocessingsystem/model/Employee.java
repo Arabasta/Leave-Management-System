@@ -21,7 +21,7 @@ public class Employee {
     @OneToOne(optional = false)
     private JobDesignation jobDesignation;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.MERGE)
     private List<User> users = new ArrayList<>();
 
     @ManyToOne

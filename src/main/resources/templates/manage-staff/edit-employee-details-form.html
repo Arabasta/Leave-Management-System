@@ -14,6 +14,10 @@
         <!-- hidden fields -->
         <input name="employeeId" th:value="${employeeId}" type="hidden"/>
         <input th:field="*{leaveBalance}" type="hidden"/>
+        <input th:field="*{jobDesignation.id}" type="hidden"/>
+        <input th:field="*{users}" type="hidden"/>
+        <input th:field="*{leaveApplications}" type="hidden"/>
+        <input th:field="*{compensationClaims}" type="hidden"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeId">ID (read-only):</label>
@@ -32,7 +36,8 @@
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="managerId">Assigned Manager Id:</label>
             <div class="col-8">
-                <input class="form-control" id="managerId" th:field="*{manager.id}" type="text"/>
+                <input class="form-control" id="managerId" name="managerId" th:value="${employee.manager.id}"
+                       type="text"/>
             </div>
         </div>
 
@@ -41,7 +46,7 @@
         </div>
     </form>
 
-    <!-- Edit Success View -->
+    <!-- Success View -->
     <div th:if="${!isEditMode}">
         <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
     </div>

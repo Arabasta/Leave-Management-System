@@ -95,19 +95,18 @@ public class ManageStaffController {
                                         @ModelAttribute Employee employee,
                                         Model model) {
         Employee existingEmployee = employeeService.findEmployeeById(employeeId);
-        Manager manager = (Manager) employeeService.findEmployeeById(managerId);
-        employee.setManager(manager);
+        Employee manager = employeeService.findEmployeeById(managerId);
+
+        if (!(manager instanceof Manager)) {
+            model.addAttribute("errorMessage", "Invalid manager id");
+            return "manage-staff/edit-employee-details-form";
+        }
+
+        employee.setManager((Manager) manager);
+
         if (employee.getJobDesignation() == null) {
             employee.setJobDesignation(existingEmployee.getJobDesignation());
         }
-        if (employee.getManager() == null)
-            employee.setManager(existingEmployee.getManager());
-
-        if (employee.getLeaveApplications() == null)
-            employee.setLeaveApplications(existingEmployee.getLeaveApplications());
-
-        if (employee.getCompensationClaims() == null)
-            employee.setCompensationClaims(existingEmployee.getCompensationClaims());
         employeeService.save(employee);
 
         model.addAttribute("isEditMode", false);
