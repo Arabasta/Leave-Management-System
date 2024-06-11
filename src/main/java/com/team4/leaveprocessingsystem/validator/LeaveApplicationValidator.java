@@ -3,6 +3,7 @@ package com.team4.leaveprocessingsystem.validator;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
 import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
@@ -14,6 +15,8 @@ import org.springframework.validation.Validator;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class LeaveApplicationValidator implements Validator {
@@ -53,31 +56,37 @@ public class LeaveApplicationValidator implements Validator {
                         "End date must be later than Start Date");
             }
 
-
+            // Ensure sufficient leave balance for applied duration
             LeaveBalance empLeaveBalance = leaveApplication.getSubmittingEmployee().getLeaveBalance();
             LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
-            Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(startDate, endDate, publicHolidayService);
-            Long numOfAnnualLeaveRequired = DateTimeCounterUtils.numOfAnnualLeaveToBeCounted(startDate, endDate, publicHolidayService);
+            Long numOfLeaveToBeCounted = DateTimeCounterUtils.numOfLeaveToBeCounted(startDate, endDate, leaveType, publicHolidayService);
+
+            // Get number of leave days pending approval (leave application status is APPLIED or UPDATED)
+            Employee employee = leaveApplication.getSubmittingEmployee();
+            List<LeaveApplication> allLeaveApplications = employee.getLeaveApplications();
+            Map<Object, Object> pendingLeaveMap = allLeaveApplications.stream()
+                    .filter(x -> (x.getLeaveStatus() == LeaveStatusEnum.APPLIED || x.getLeaveStatus() == LeaveStatusEnum.UPDATED))
+                    .collect(Collectors.toMap(x -> x.getLeaveType(), x -> DateTimeCounterUtils.numOfLeaveToBeCounted( x.getStartDate(), x.getEndDate(), x.getLeaveType(), publicHolidayService),
+                            (existingValue, newValue) -> (Long) existingValue + (Long) newValue));
+
             switch(leaveType){
                 case MEDICAL:
-                    if (empLeaveBalance.getCurrentMedicalLeave() < numOfWorkingDays)
-                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available days");
+                    if (empLeaveBalance.getCurrentMedicalLeave() < (numOfLeaveToBeCounted + (Long)pendingLeaveMap.get(leaveType)))
+                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                     break;
                 case ANNUAL:
-                    if (empLeaveBalance.getCurrentAnnualLeave() < numOfAnnualLeaveRequired)
-                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available days");
+                    if (empLeaveBalance.getCurrentAnnualLeave() < (numOfLeaveToBeCounted + (Long)pendingLeaveMap.get(leaveType)))
+                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                     break;
                 case COMPASSIONATE:
-                    if (empLeaveBalance.COMPASSIONATE_LEAVE < numOfWorkingDays)
-                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available days");
+                    if (empLeaveBalance.COMPASSIONATE_LEAVE < (numOfLeaveToBeCounted + (Long)pendingLeaveMap.get(leaveType)))
+                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                     break;
                 case COMPENSATION:
-                    if (empLeaveBalance.getCurrentCompensationLeave() < numOfWorkingDays)
-                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available days");
+                    if (empLeaveBalance.getCurrentCompensationLeave() < (numOfLeaveToBeCounted + (Long)pendingLeaveMap.get(leaveType)))
+                        errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                     break;
             }
-
-            // TODO: get days of leave pending approval and all applied leaves
         }
     }
 }

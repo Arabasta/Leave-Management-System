@@ -9,6 +9,8 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.PublicHolidayService;
+import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,8 @@ public class LeaveApplicationController {
     private EmployeeService employeeService;
     @Autowired
     private LeaveBalanceService leaveBalanceService;
-
+    @Autowired
+    private PublicHolidayService    publicHolidayService;
     @Autowired
     private LeaveApplicationValidator leaveApplicationValidator;
 
@@ -54,7 +57,6 @@ public class LeaveApplicationController {
 
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
     }
@@ -65,7 +67,6 @@ public class LeaveApplicationController {
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
     }
