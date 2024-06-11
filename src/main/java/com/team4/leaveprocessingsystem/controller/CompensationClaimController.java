@@ -43,7 +43,7 @@ public class CompensationClaimController {
     @Autowired
     private CompensationClaimValidator compensationClaimValidator;
 
-    @InitBinder
+    @InitBinder("compensation-claims")
     private void initCourseBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
     }

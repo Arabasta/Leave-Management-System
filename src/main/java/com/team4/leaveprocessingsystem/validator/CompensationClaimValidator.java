@@ -9,8 +9,8 @@ import org.springframework.validation.Validator;
 public class CompensationClaimValidator implements Validator {
 
     @Override
-    public boolean supports(Class<?> compensationClaim) {
-        return CompensationClaim.class.isAssignableFrom(compensationClaim);
+    public boolean supports(Class<?> clasz) {
+        return CompensationClaim.class.isAssignableFrom(clasz);
     }
 
     //TODO: to review implementation
