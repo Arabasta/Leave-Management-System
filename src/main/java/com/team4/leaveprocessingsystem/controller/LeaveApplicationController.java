@@ -71,11 +71,10 @@ public class LeaveApplicationController {
     }
 
     @PostMapping("save")
-    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model, @RequestParam("applicationStatus") String applicationStatus){
+    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-            model.addAttribute("applicationStatus", applicationStatus);
             return "leaveApplication/leaveForm";
         }
 
@@ -132,7 +131,7 @@ public class LeaveApplicationController {
 
         LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
         // Ensure an employee only accesses his own leave applications
-            if (leaveApplication.getSubmittingEmployee().getId() != employee.getId()){
+            if (leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())){
                 throw new LeaveApplicationNotFoundException("Leave Application Not Found");
             }
         return leaveApplication;
