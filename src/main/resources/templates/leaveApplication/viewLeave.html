@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
+<head th:replace="fragments/head :: html_head">
     <title>Leave Application</title>
     <script src="/js/leaveForm.js"></script>
 </head>
 <body>
-
+<div th:replace="fragments/navbar :: menu"></div>
 <h3>View Leave Application</h3>
 
 <table>

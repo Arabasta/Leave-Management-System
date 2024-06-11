@@ -1,15 +1,19 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
+import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +26,7 @@ import java.util.List;
 @Controller
 public class LeaveApplicationController {
     @Autowired
-    private ILeaveApplication leaveApplicationService;
+    private LeaveApplicationService leaveApplicationService;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -38,13 +42,18 @@ public class LeaveApplicationController {
 
     @GetMapping("create")
     public String createLeave(Model model){
+        // Get the user object that is logged in
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user =(User) authentication.getPrincipal();
+        Employee employee = user.getEmployee();
+
         LeaveApplication leaveApplication = new LeaveApplication();
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
         leaveApplication.setSubmittingEmployee(employee);
+        leaveApplication.setReviewingManager(employee.getManager());
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
 
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        model.addAttribute("applicationStatus", "APPLIED");
         //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
@@ -52,9 +61,10 @@ public class LeaveApplicationController {
 
     @GetMapping("edit/{id}")
     public String editLeave(@PathVariable int id, Model model){
-        model.addAttribute("leave", leaveApplicationService.findLeaveApplicationById(id));
+        LeaveApplication leaveApplication = getLeaveApplicationIfBelongsToEmployee(id);
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
+        model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        model.addAttribute("applicationStatus", "UPDATED");
         //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
@@ -62,10 +72,6 @@ public class LeaveApplicationController {
 
     @PostMapping("save")
     public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model, @RequestParam("applicationStatus") String applicationStatus){
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
-        leaveApplication.setSubmittingEmployee(employee);
-        leaveApplication.setReviewingManager(employee.getManager());
-        leaveApplication.setLeaveStatus(LeaveStatusEnum.valueOf(applicationStatus));
         if (bindingResult.hasErrors()) {
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
@@ -82,7 +88,7 @@ public class LeaveApplicationController {
 
     @GetMapping("delete/{id}")
     public String deleteLeave(@PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        LeaveApplication leaveApplication = getLeaveApplicationIfBelongsToEmployee(id);
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveApplicationService.save(leaveApplication);
 
@@ -93,7 +99,7 @@ public class LeaveApplicationController {
 
     @GetMapping("cancel/{id}")
     public String cancelLeave(@PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        LeaveApplication leaveApplication = getLeaveApplicationIfBelongsToEmployee(id);
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
 
@@ -113,8 +119,22 @@ public class LeaveApplicationController {
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
-        LeaveApplication leaveApplication = leaveService.findLeaveApplicationById(id);
+        LeaveApplication leaveApplication = getLeaveApplicationIfBelongsToEmployee(id);
         model.addAttribute("leave", leaveApplication);
         return "leaveApplication/viewLeave";
+    }
+
+    private LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id){
+        // Get the user object that is logged in
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Employee employee = user.getEmployee();
+
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        // Ensure an employee only accesses his own leave applications
+            if (leaveApplication.getSubmittingEmployee().getId() != employee.getId()){
+                throw new LeaveApplicationNotFoundException("Leave Application Not Found");
+            }
+        return leaveApplication;
     }
 }

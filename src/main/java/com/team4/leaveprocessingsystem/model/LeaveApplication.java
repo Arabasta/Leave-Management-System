@@ -36,7 +36,6 @@ public class LeaveApplication {
     private LeaveTypeEnum leaveType;
 
     @NotNull(message = "Start date cannot be blank")
-    @FutureOrPresent(message = "Start date must be today or in the future")
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;

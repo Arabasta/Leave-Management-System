@@ -7,16 +7,16 @@
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
     <h3>
-        <span th:if="${applicationStatus == 'create'}" th:text="'New Leave Application'"></span>
-        <span th:if="${applicationStatus == 'update'}" th:text="'Edit Leave Application'"></span>
-<!--        Leave Application-->
-        <span th:if="${applicationType == 'create'}" th:text="'New Leave Application'"></span>
-        <span th:if="${applicationType == 'update'}" th:text="'Edit Leave Application'"></span>
+        <span th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')}" th:text="'New Leave Application'"></span>
+        <span th:if="${#strings.equals(leave.leaveStatus, 'UPDATED')}" th:text="'Edit Leave Application'"></span>
     </h3>
 
     <form th:action="@{/leave/save}" method="post">
         <input type="hidden" name="applicationStatus" th:value="${applicationStatus}" />
         <input type="hidden" name="applicationId" th:field="${leave.id}" />
+        <input type="hidden" name="submittingEmployee" th:field="${leave.submittingEmployee}" />
+        <input type="hidden" name="reviewingManager" th:field="${leave.reviewingManager}" />
+        <input type="hidden" name="leaveStatus" th:field="${leave.leaveStatus}" />
         <table>
             <tbody>
             <tr>
