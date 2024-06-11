@@ -47,14 +47,11 @@ public class Employee {
         this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
-        this.users = new ArrayList<>();
-        this.leaveApplications = new ArrayList<>();
-        this.compensationClaims = new ArrayList<>();
     }
 
     public void setManager(Manager manager) {
-        // remove from old manager
-        if (this.manager != null) {
+        // remove employee from old manager
+        if (this.manager != null && manager != this.manager) {
             this.manager.removeSubordinate(this);
         }
 
@@ -67,4 +64,5 @@ public class Employee {
     public void setUser(User user) {
         users.add(user);
     }
+
 }
