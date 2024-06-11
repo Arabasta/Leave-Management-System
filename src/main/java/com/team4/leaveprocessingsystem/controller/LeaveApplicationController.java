@@ -10,7 +10,6 @@ import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
-import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,6 @@ public class LeaveApplicationController {
     private LeaveApplicationService leaveApplicationService;
     @Autowired
     private EmployeeService employeeService;
-    @Autowired
-    private LeaveBalanceService leaveBalanceService;
-    @Autowired
-    private PublicHolidayService    publicHolidayService;
     @Autowired
     private LeaveApplicationValidator leaveApplicationValidator;
 
@@ -64,6 +59,12 @@ public class LeaveApplicationController {
     @GetMapping("edit/{id}")
     public String editLeave(@PathVariable int id, Model model){
         LeaveApplication leaveApplication = getLeaveApplicationIfBelongsToEmployee(id);
+
+        // Only allow editing of leaves pending approval
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
+            throw new LeaveApplicationNotFoundException("Leave application cannot be updated");
+        }
+
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
@@ -79,8 +80,6 @@ public class LeaveApplicationController {
             return "leaveApplication/leaveForm";
         }
 
-        // only update if leave is approved
-        // leaveBalanceService.update(leaveApplication);
         leaveApplicationService.save(leaveApplication);
 
         return "redirect:/leave/history";
@@ -132,7 +131,7 @@ public class LeaveApplicationController {
 
         LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
         // Ensure an employee only accesses his own leave applications
-            if (leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())){
+            if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())){
                 throw new LeaveApplicationNotFoundException("Leave Application Not Found");
             }
         return leaveApplication;
