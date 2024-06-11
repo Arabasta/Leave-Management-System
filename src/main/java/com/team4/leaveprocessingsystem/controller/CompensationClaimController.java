@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 // TODO: refactor using Spring Security, maybe different views for Admin / Employee
 // TODO: refactor detection of logged in User to use Sessions
 @Controller
+@RequestMapping(value = "/compensation-claims")
 public class CompensationClaimController {
 
     @Autowired
@@ -52,7 +53,7 @@ public class CompensationClaimController {
         EMPLOYEE - GET - VIEW COMPENSATION CLAIMS
      */
     @ModelAttribute
-    @GetMapping("/compensation-claims/history")
+    @GetMapping("/history")
     public String viewCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
 //        // TODO: implement redirectNonEmployee()
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
@@ -60,14 +61,14 @@ public class CompensationClaimController {
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
-        return "/compensation-claims/history";
+        return "compensation-claims/history";
     }
 
     /*
     EMPLOYEE - GET - CREATE COMPENSATION CLAIM
  */
     @ModelAttribute
-    @GetMapping(value = "/compensation-claims/create")
+    @GetMapping(value = "/create")
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
     // TODO: refactor using Sessions after it is implemented
     public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
@@ -75,19 +76,21 @@ public class CompensationClaimController {
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("compensationClaim", new CompensationClaim());
-        return "/compensation-claims/create";
+        return "compensation-claims/create";
     }
 
     /*
         EMPLOYEE - POST - CREATE COMPENSATION CLAIM
     */
     //TODO: validate overtimeEndDateTime isBefore LocalDateTime.now()
-    @PostMapping("/compensation-claims/create-submit")
+    @PostMapping("/create-submit")
     public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
                                           @AuthenticationPrincipal UserDetails currentUserDetails,
                                           BindingResult bindingResult) {
         // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {return "/compensation-claims/create";}
+        if (bindingResult.hasErrors()) {
+            return "compensation-claims/create";
+        }
         // Continue if no errors
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         compensationClaim.setClaimingEmployee(currentEmployee);
@@ -100,17 +103,16 @@ public class CompensationClaimController {
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
         compensationClaimService.save(compensationClaim);
         // END - Set CompensationClaim details - END
-
         String message = "New Compensation Claim " + compensationClaim.getId() + " was successfully created.";
         System.out.println(message);
         return "redirect:/compensation-claims/history";
     }
 
     /*
-        EMPLOYEE - POST - WITHDRAW COMPENSATION CLAIM
+        EMPLOYEE - GET - WITHDRAW COMPENSATION CLAIM
      */
-    @PostMapping(value = "/compensation-claims/withdraw/{id}")
-    public String deleteCompensationClaim(Model model, @PathVariable Integer id)
+    @GetMapping(value = "/withdraw/{id}")
+    public String withdrawCompensationClaim(Model model, @PathVariable Integer id)
             throws CompensationClaimNotFoundException {
         // TODO: verify actor is logged in Employee
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
@@ -125,24 +127,26 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - GET - UPDATE COMPENSATION CLAIM
      */
-    @GetMapping("/compensation-claims/update/{id}")
+    @GetMapping("/update/{id}")
     public String updateCompensationClaimPage(@PathVariable Integer id, Model model) {
         // TODO: verify actor is logged in Employee
         // TODO: implement redirectNonEmployee()
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         model.addAttribute("compensationClaim", compensationClaim);
-        return "/compensation-claims/update";
+        return "compensation-claims/update";
     }
 
     /*
         EMPLOYEE - POST - UPDATE COMPENSATION CLAIM
      */
     //TODO: style new overtimeStartDateTime and overtimeEndDateTime to dd-MM-yyyy, hh-mm (verify format)
-    @PostMapping("compensation-claims/update-submit")
+    @PostMapping("update-submit")
     public String updateCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
                                           BindingResult bindingResult) {
         // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {return "/compensation-claims/update";}
+        if (bindingResult.hasErrors()) {
+            return "/compensation-claims/update";
+        }
         // Continue if no errors
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.UPDATED);
         float overtimeHours = compensationClaimService.overtimeHours(compensationClaim);
@@ -156,7 +160,7 @@ public class CompensationClaimController {
         MANAGER - GET - PENDING COMPENSATION CLAIMS
     */
     @ModelAttribute
-    @GetMapping("/compensation-claims/pending")
+    @GetMapping("/pending")
     public String pendingCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
         User currentUser = userService.findByUsername(currentUserDetails.getUsername());
         assert currentUser.getRole() == RoleEnum.ROLE_MANAGER; // TODO: implement redirectNonEmployee()
@@ -175,13 +179,13 @@ public class CompensationClaimController {
                 .collect(Collectors.toList());
         model.addAttribute("employeesPendingClaimsList", employeesPendingClaimsList);
         model.addAttribute("compensationClaimService", compensationClaimService);
-        return "/compensation-claims/pending";
+        return "compensation-claims/pending";
     }
 
     /*
         MANAGER - GET - REVIEW COMPENSATION CLAIM
     */
-    @GetMapping("/compensation-claims/review/{id}")
+    @GetMapping("/review/{id}")
     public String reviewCompensationClaimPage(@PathVariable Integer id, Model model) {
 //        // TODO: verify actor is logged in Manager
 //        // TODO: implement redirectNonManager()
@@ -189,13 +193,13 @@ public class CompensationClaimController {
         model.addAttribute("compensationClaimApproval", new CompensationClaimApproval());
         model.addAttribute("compensationClaim", compensationClaim);
         model.addAttribute("compensationClaimService", compensationClaimService);
-        return "/compensation-claims/review";
+        return "compensation-claims/review";
     }
 
     /*
         MANAGER - POST - REVIEW COMPENSATION CLAIM
     */
-    @PostMapping("compensation-claims/review-submit/{id}")
+    @PostMapping("/review-submit/{id}")
     public String reviewCompensationClaim(@ModelAttribute("compensationClaimApproval") @Valid CompensationClaimApproval approval,
                                           @PathVariable Integer id) {
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
