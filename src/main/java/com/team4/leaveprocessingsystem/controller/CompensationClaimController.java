@@ -54,13 +54,11 @@ public class CompensationClaimController {
     @ModelAttribute
     @GetMapping("/compensation-claims/history")
     public String viewCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
-        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
-        // TODO: implement redirectNonEmployee()
-        Employee currentEmployee = currentUser.getEmployee();
+//        // TODO: implement redirectNonEmployee()
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         assert currentEmployee != null;
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
-        model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
         return "/compensation-claims/history";
     }
@@ -73,7 +71,7 @@ public class CompensationClaimController {
         // TODO: verify actor is logged in Employee
         CompensationClaim compensationClaim = compensationClaimService.findCompensationClaim(id);
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
-        compensationClaimService.changeCompensationClaim(compensationClaim);
+        compensationClaimService.save(compensationClaim);
         // TODO: to implement / remove / refactor withdrawn/update success message
 //        String message = "Compensation Claim " + compensationClaim.getId() + " was successfully withdrawn.";
 //        model.addAttribute("withdrawn_message", message);
@@ -114,10 +112,7 @@ public class CompensationClaimController {
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
     // TODO: refactor using Sessions after it is implemented
     public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
-        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
-        // TODO: implement redirectNonEmployee()
-        Employee currentEmployee = currentUser.getEmployee();
-        assert currentEmployee != null;
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("compensationClaim", new CompensationClaim());
@@ -135,19 +130,12 @@ public class CompensationClaimController {
         if (result.hasErrors()) {
             return "/compensation-claims/create";
         }
-        User currentUser = userService.findByUsername(currentUserDetails.getUsername());
-        // TODO: verify actor is logged in Employee
-        // TODO: implement redirectNonEmployee()
-        // START - Set CompensationClaim details - START
-        Employee currentEmployee = currentUser.getEmployee();
-        assert currentEmployee != null;
+        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         compensationClaim.setClaimingEmployee(currentEmployee);
         compensationClaim.setApprovingManager(currentEmployee.getManager());
-        // TODO: to implement validation is working
         float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
                 compensationClaim.getOvertimeStartDateTime(), compensationClaim.getOvertimeEndDateTime());
         compensationClaim.setOvertimeHours(overtimeHours);
-        // TODO: to implement validation is working
         // TODO: to refactor calculation of eligibleOvertimeHours using Service
         compensationClaim.setCompensationLeaveRequested(compensationClaimService.compensationLeaveRequested(overtimeHours));
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.APPLIED);
@@ -170,7 +158,7 @@ public class CompensationClaimController {
         Manager currentManager = (Manager) currentUser.getEmployee();
         // TODO: refactor below list into a model's Service and call it.
         // Gets list of Employees with Compensation Claims that are not APPLIED nor UPDATED
-        List<Employee> employeesWithClaimsList = currentManager
+        List<Employee> employeesPendingClaimsList = currentManager
                 .getSubordinates()
                 .stream()
                 .filter(employee -> employee
@@ -180,7 +168,7 @@ public class CompensationClaimController {
                         || claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.UPDATED)
                 )
                 .collect(Collectors.toList());
-        model.addAttribute("employeesWithClaimsList", employeesWithClaimsList);
+        model.addAttribute("employeesPendingClaimsList", employeesPendingClaimsList);
         model.addAttribute("compensationClaimService", compensationClaimService);
         return "/compensation-claims/pending";
     }

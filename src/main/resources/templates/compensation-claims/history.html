@@ -45,7 +45,7 @@
                 <td th:text="${claim.id}"></td>
                 <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
                 <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                <td th:text="${compensationClaimService.overtimeHours(claim)}"></td>
+                <td th:text="${claim.overtimeHours}"></td>
                 <td th:text="${claim.compensationLeaveRequested}"></td>
                 <td th:text="${claim.compensationClaimStatus}"></td>
                 <!-- TODO: to implement Update feature -->
