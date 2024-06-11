@@ -14,10 +14,6 @@ public interface ICompensationClaim {
 
     CompensationClaim findCompensationClaim(Integer id);
 
-    CompensationClaim changeCompensationClaim(CompensationClaim compensationClaim);
-
-    Long countCalendarHours(CompensationClaim compensationClaim);
-
     float overtimeHours(CompensationClaim compensationClaim);
 
     float compensationLeaveRequested(float overtimeHours);

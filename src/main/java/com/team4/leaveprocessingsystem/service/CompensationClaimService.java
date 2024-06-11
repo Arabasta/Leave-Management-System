@@ -67,17 +67,4 @@ public class CompensationClaimService implements ICompensationClaim {
         return compensationClaimRepository.findById(id).orElse(null);
     }
 
-    @Override
-    @Transactional
-    public CompensationClaim changeCompensationClaim(CompensationClaim compensationClaim) {
-        return compensationClaimRepository.saveAndFlush(compensationClaim);
-    }
-
-    @Override
-    @Transactional
-    public Long countCalendarHours(CompensationClaim compensationClaim) {
-        return DateTimeCounterUtils.countCalendarHours(
-                compensationClaim.getOvertimeStartDateTime(),
-                compensationClaim.getOvertimeEndDateTime());
-    }
 }

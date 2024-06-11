@@ -9,8 +9,8 @@ import org.springframework.validation.Validator;
 public class CompensationClaimValidator implements Validator {
 
     @Override
-    public boolean supports(Class<?> compensationClaim) {
-        return CompensationClaim.class.isAssignableFrom(compensationClaim);
+    public boolean supports(Class<?> clasz) {
+        return CompensationClaim.class.isAssignableFrom(clasz);
     }
 
     //TODO: to review implementation
@@ -19,7 +19,7 @@ public class CompensationClaimValidator implements Validator {
         CompensationClaim claim = (CompensationClaim) target;
         if ((claim.getOvertimeStartDateTime() != null && claim.getOvertimeEndDateTime() != null) &&
                 (claim.getOvertimeStartDateTime().isAfter(claim.getOvertimeEndDateTime()))) {
-            errors.rejectValue("toDate", "error.dates", "Overtime End date should be greater than Overtime Start date.");
+            errors.rejectValue("overtimeEndDateTime", "error.dates", "End DateTime must be later than Start DateTime.");
         }
     }
 

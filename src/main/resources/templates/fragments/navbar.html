@@ -35,6 +35,9 @@
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
                     <a class="nav-link" th:href="@{/home/employee}">Employee Home</a>
                 </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/compensation-claims/pending}">Review Compensation Requests</a>
+                </li>
 
                 <!-- Employee Only -->
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}">
@@ -44,6 +47,9 @@
                 <!-- Employee + Manager -->
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE, MANAGER'')')}">
                     <a class="nav-link" th:href="@{/your/employee/applyLeavePage}">Apply Leave</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/compensation-claims/history}">My Compensation Claims</a>
                 </li>
             </ul>
         </div>

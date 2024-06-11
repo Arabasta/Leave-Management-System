@@ -8,6 +8,10 @@
     <table>
         <tbody>
             <tr>
+                <td>Claim Id: </td>
+                <td th:text="${compensationClaim.id}"></td>
+            </tr>
+            <tr>
                 <td>Claiming Employee Name: </td>
                 <td th:text="${compensationClaim.claimingEmployee.name}"></td>
             </tr>
@@ -39,7 +43,7 @@
         </tbody>
     </table>
     <br>
-
+    <!-- form shows error for th:action for `unexpected +`, but it works -->
     <form action="#" th:action="@{/compensation-claims/review-submit/}+${compensationClaim.id}"
           th:object="${compensationClaimApproval}" method="post">
         <table>
