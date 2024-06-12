@@ -15,9 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class PublicHolidayService implements IPublicHoliday {
-    @Autowired
-    private PublicHolidayRepository publicHolidayRepository;
+    private final PublicHolidayRepository publicHolidayRepository;
 
+    @Autowired
+    public PublicHolidayService(PublicHolidayRepository publicHolidayRepository) {
+        this.publicHolidayRepository = publicHolidayRepository;
+    }
     @Override
     @Transactional
     public boolean save(PublicHoliday publicHoliday) {

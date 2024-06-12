@@ -14,8 +14,12 @@ import java.util.List;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
+    private final LeaveApplicationRepository leaveApplicationRepository;
+
     @Autowired
-    LeaveApplicationRepository leaveApplicationRepository;
+    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository) {
+        this.leaveApplicationRepository = leaveApplicationRepository;
+    }
 
     @Override
     @Transactional

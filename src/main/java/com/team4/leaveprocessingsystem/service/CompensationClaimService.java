@@ -18,9 +18,12 @@ import java.util.NoSuchElementException;
 @Service
 public class CompensationClaimService implements ICompensationClaim {
 
-    @Autowired
-    CompensationClaimRepository compensationClaimRepository;
+    private final CompensationClaimRepository compensationClaimRepository;
 
+    @Autowired
+    public CompensationClaimService(CompensationClaimRepository compensationClaimRepository) {
+        this.compensationClaimRepository = compensationClaimRepository;
+    }
     @Override
     @Transactional
     public boolean save(CompensationClaim compensationClaim) {
