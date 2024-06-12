@@ -116,9 +116,10 @@ public class LeaveApplicationController {
     @GetMapping("history")
     public String leaveHistory(Model model){
         // todo: note; kei changed to use authService
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        List<LeaveApplication> allLeaves = leaveApplicationService.findBySubmittingEmployee(employee);
-        model.addAttribute("leaveApplications", allLeaves);
+        Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        int managerId = manager.getId();
+        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+        model.addAttribute("leaveApplications",allLeavesbyManagerSubordinates);
 
         return "leaveApplication/viewLeaveHistory";
     }
