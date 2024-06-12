@@ -14,13 +14,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LeaveBalanceService implements ILeaveBalance {
+    private final LeaveBalanceRepository leaveBalanceRepository;
+    private final PublicHolidayService publicHolidayService;
+    private final EmployeeService employeeService;
     @Autowired
-    LeaveBalanceRepository leaveBalanceRepository;
-    @Autowired
-    PublicHolidayService publicHolidayService;
-    @Autowired
-    EmployeeService employeeService;
+    public LeaveBalanceService(LeaveBalanceRepository leaveBalanceRepository, PublicHolidayService publicHolidayService, EmployeeService employeeService) {
+        this.leaveBalanceRepository = leaveBalanceRepository;
+        this.publicHolidayService = publicHolidayService;
+        this.employeeService = employeeService;
 
+    }
     @Override
     @Transactional
     public boolean save(LeaveBalance leaveBalance) {
@@ -40,6 +43,7 @@ public class LeaveBalanceService implements ILeaveBalance {
         Employee employee = leaveApplication.getSubmittingEmployee();
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
         LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
+
 
         Long numOfCalendarDays = DateTimeCounterUtils.countCalendarDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
         Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(leaveApplication.getStartDate(), leaveApplication.getEndDate(), publicHolidayService);
@@ -68,7 +72,6 @@ public class LeaveBalanceService implements ILeaveBalance {
                 empLeaveBalance.setUnpaidLeaveConsumed(empLeaveBalance.getUnpaidLeaveConsumed() + numOfWorkingDays);
                 break;
         }
-
         leaveBalanceRepository.save(empLeaveBalance);
 
         // For testing only. To delete

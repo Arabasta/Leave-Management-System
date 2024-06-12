@@ -13,9 +13,12 @@ import java.util.List;
 
 @Service
 public class JobDesignationService implements IJobDesignation {
-    @Autowired
-    JobDesignationRepository jobDesignationRepository;
+    private final JobDesignationRepository jobDesignationRepository;
 
+    @Autowired
+    public JobDesignationService(JobDesignationRepository jobDesignationRepository) {
+        this.jobDesignationRepository = jobDesignationRepository;
+    }
     @Override
     @Transactional
     public boolean save(JobDesignation jobDesignation) {
