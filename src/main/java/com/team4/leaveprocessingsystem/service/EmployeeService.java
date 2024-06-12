@@ -10,7 +10,6 @@ import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,6 @@ public class EmployeeService implements IEmployee {
     @Transactional
     public boolean save(Employee employee) {
         try {
-            // add some logic here to auto add leave balance?
             employeeRepository.save(employee);
             return true;
         } catch (Exception e) {
@@ -77,20 +75,20 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> SearchEmployeeByName(String keyword) {
-        return employeeRepository.SearchEmployeeByName(keyword);
+    public List<Employee> findEmployeesByName(String name) {
+        return employeeRepository.findEmployeesByName(name);
     }
 
     @Override
     @Transactional
-    public List<Employee> findEmployeeByJobDesignation(String jobDesignation) {
-        return employeeRepository.findEmployeeByJobDesignation(jobDesignation);
+    public List<Employee> findEmployeesByJobDesignation(String jobDesignation) {
+        return employeeRepository.findEmployeesByJobDesignation(jobDesignation);
     }
 
     @Override
     @Transactional
-    public List<Employee> findUserByRoleType(String roleType) {
-        return employeeRepository.findUserByRoleType(roleType);
+    public List<Employee> findUsersByRoleType(String roleType) {
+        return employeeRepository.findUsersByRoleType(roleType);
     }
 
     @Override
@@ -99,6 +97,7 @@ public class EmployeeService implements IEmployee {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee " + id + " not found"));
     }
+
     @Override
     @Transactional
     public List<Employee> findAll() {

@@ -13,8 +13,11 @@ public interface IEmployee {
     long count();
 
     List<Employee> findAll();
-    List<Employee> SearchEmployeeByName(String keyword);
-    List<Employee> findEmployeeByJobDesignation(String jobDesignation);
-    List<Employee> findUserByRoleType(String roleType);
+
+    List<Employee> findEmployeesByName(String keyword);
+
+    List<Employee> findEmployeesByJobDesignation(String jobDesignation);
+
+    List<Employee> findUsersByRoleType(String roleType);
     Employee findEmployeeById(int id);
 }
