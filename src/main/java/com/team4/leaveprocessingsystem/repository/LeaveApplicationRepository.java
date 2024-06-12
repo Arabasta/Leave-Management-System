@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface LeaveApplicationRepository extends JpaRepository<LeaveApplication, Integer> {
     List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId);
+    List<LeaveApplication> findLeaveApplicationsById(int id);
     List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee);
 
 }

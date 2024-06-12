@@ -114,7 +114,7 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("history")
-    public String leaveHistory(Model model){
+    public String subordinatesLeaveHistory(Model model){
         // todo: note; kei changed to use authService
         Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         int managerId = manager.getId();
@@ -124,11 +124,31 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeaveHistory";
     }
 
+
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
         model.addAttribute("leave", leaveApplication);
         return "leaveApplication/viewLeave";
+    }
+
+    //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
+    //so i create a new method
+    @GetMapping("managerView/{id}")
+    public String managerViewLeave(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
+
+    @GetMapping("personalHistory")
+    public String personalHistory(Model model){
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        int employeeId = employee.getId();
+
+        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findLeaveApplicationsById(employeeId);
+        model.addAttribute("personalLeaveApplications", personalLeaveApplications);
+        return "leaveApplication/personalViewLeave";
     }
 }

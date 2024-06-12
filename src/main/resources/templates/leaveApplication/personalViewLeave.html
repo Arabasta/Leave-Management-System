@@ -13,10 +13,10 @@
 <h2 style="text-align: center;">Search Result</h2>
 
 <h3 style="text-align: center;"
-    th:if="${#lists.isEmpty(leaveApplications)}">No Results.</h3>
+    th:if="${#lists.isEmpty(personalLeaveApplications)}">No Results.</h3>
 
 
-<table th:if="${not #lists.isEmpty(leaveApplications)}" style="width:80%;
+<table th:if="${not #lists.isEmpty(personalLeaveApplications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
         <th>Employee ID</th>
@@ -26,8 +26,8 @@ margin-left: auto; margin-right: auto;">
         <th>Leave Status</th>
         <th>Details</th>
     </tr>
-    <tr th:each="leaveApplication:${leaveApplications}">
-        <td th:text="${leaveApplication.getSubmittingEmployee().id}">Id</td>
+    <tr th:each="leaveApplication:${personalLeaveApplications}">
+        <td th:text="${leaveApplication.getId()}">Id</td>
 
         <td th:text="${leaveApplication.getSubmittingEmployee().getName()}">Name</td>
         <td><a th:text="${leaveApplication.getStartDate()}">Start Date</a></td>
@@ -36,7 +36,7 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
 
-        <td><a th:href="@{/leave/managerView/{id}(id=${leaveApplication.getId()})}">Details</a></td>
+        <td><a th:href="@{/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
 
     </tr>
 </table>
@@ -54,5 +54,6 @@ white;">
 
 </body>
 
+</div>
 
 </html>
