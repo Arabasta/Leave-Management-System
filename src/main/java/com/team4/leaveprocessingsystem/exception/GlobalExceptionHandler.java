@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     // add custom exceptions here
 
-    @ExceptionHandler(CompensationClaimInvalidException.class)
-    public ResponseEntity<Object> handleCompensationClaimInvalidException(CompensationClaimInvalidException e) {
+    @ExceptionHandler(CompensationClaimNotFoundException.class)
+    public ResponseEntity<Object> handleCompensationClaimNotFoundException(CompensationClaimNotFoundException e) {
         return ResponseEntity.status(500).body(e.getMessage());
     }
 

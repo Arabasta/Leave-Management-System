@@ -22,53 +22,48 @@ public class CompensationClaim {
     @Column(nullable = false)
     private CompensationClaimStatusEnum compensationClaimStatus;
 
-    @Column(nullable = false)
-    private float compensationLeaveRequested;
+    @ManyToOne(optional = false)
+    private Employee claimingEmployee;
 
     @Column(nullable = false)
-    @Past(message = "Overtime Start DateTime must be in the past")
+    private LocalDateTime claimDateTime;
+
+    @Column(nullable = false)
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeStartDateTime;
 
     @Column(nullable = false)
-    @Past(message = "Overtime End DateTime must be in the past")
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEndDateTime;
 
     @Column(nullable = false)
     private float overtimeHours;
 
+    @Column(nullable = false)
+    private float compensationLeaveRequested;
+
     @ManyToOne(optional = false)
     private Manager approvingManager;
 
     private LocalDateTime reviewedDateTime;
-
-    @ManyToOne(optional = false)
-    private Employee claimingEmployee;
 
     private String comments;
 
     public CompensationClaim() {
     }
 
-    public CompensationClaim(int id) {
-        this.id = id;
-    }
-
-    public CompensationClaim(Integer id, CompensationClaimStatusEnum compensationClaimStatus,
-                             float compensationLeaveRequested, LocalDateTime overtimeStartDateTime,
-                             LocalDateTime overtimeEndDateTime, Manager approvingManager,
-                             LocalDateTime reviewedDateTime, Employee claimingEmployee,
-                             String comments) {
-        super();
-        this.id = id;
-        this.compensationClaimStatus = compensationClaimStatus;
-        this.compensationLeaveRequested = compensationLeaveRequested;
-        this.overtimeStartDateTime = overtimeStartDateTime;
-        this.overtimeEndDateTime = overtimeEndDateTime;
-        this.approvingManager = approvingManager;
-        this.reviewedDateTime = reviewedDateTime;
-        this.claimingEmployee = claimingEmployee;
-        this.comments = comments;
+    @Override
+    public String toString() {
+        return "Compensation Claim [Id: " + id + " ], "
+                + "[Status: " + compensationClaimStatus + " ], "
+                + "[Claiming Employee: " + claimingEmployee + " ], "
+                + "[Claim Date: " + claimDateTime + " ], "
+                + "[Overtime Start DateTime: " + overtimeStartDateTime + " ], "
+                + "[Overtime End DateTime: " + overtimeEndDateTime + " ], "
+                + "[Overtime Hours: " + overtimeHours + " ], "
+                + "[Compensation Leave Requested: " + compensationLeaveRequested + " ], "
+                + "[Approving Manager: " + approvingManager + " ], "
+                + "[Reviewed Date: " + reviewedDateTime + " ], "
+                + "[Comments: " + comments + " ], ";
     }
 }

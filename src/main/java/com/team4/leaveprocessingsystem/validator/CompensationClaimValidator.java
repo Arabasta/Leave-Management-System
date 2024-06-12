@@ -1,9 +1,14 @@
 package com.team4.leaveprocessingsystem.validator;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
+import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Component
 public class CompensationClaimValidator implements Validator {
@@ -17,37 +22,54 @@ public class CompensationClaimValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         CompensationClaim claim = (CompensationClaim) target;
-        if ((claim.getOvertimeStartDateTime() != null && claim.getOvertimeEndDateTime() != null) &&
-                (claim.getOvertimeStartDateTime().isAfter(claim.getOvertimeEndDateTime()))) {
-            errors.rejectValue("overtimeEndDateTime", "error.dates", "End DateTime must be later than Start DateTime.");
-        }
-    }
+        CompensationClaimStatusEnum statusEnum = claim.getCompensationClaimStatus();
+        String comments = claim.getComments();
+        LocalDateTime overtimeStartDateTime = claim.getOvertimeStartDateTime();
+        LocalDateTime overtimeEndDateTime = claim.getOvertimeEndDateTime();
+        LocalDateTime claimDate = claim.getClaimDateTime();
 
-    /* conditions to implement for validate
-    @Transactional
-    public boolean validateClaims(List<CompensationClaim> compensationClaims) {
-        String error = null;
-        if (compensationClaims.isEmpty()) {
-            error = "There are no compensation claims";
+        // Ensure overtimeStartDateTime date is not empty
+        if (overtimeStartDateTime == null) {
+            errors.rejectValue("overtimeStartDateTime", "error.compensationClaim.dates.1",
+                    "Start DateTime cannot be empty.");
         }
-        for (CompensationClaim c : compensationClaims) {
-            if (c.getClaimingEmployee() == null) {
-                error = "Compensation claim employee is null";
-                break;
-            } else if (c.getApprovingManager() == null){
-                error = "Compensation claim approving manager is null";
-                break;
-            } else if (c.getOvertimeStartDateTime().isAfter(c.getOvertimeEndDateTime())) {
-                error = "Compensation claim overtime start date is after end date";
-                break;
-            } else if (c.getCompensationLeaveRequested() <= 0) {
-                error = "Compensation claim overtime leave requested is less than 0";
-                break;
+
+        // Ensure end date is not empty
+        if (overtimeEndDateTime == null) {
+            errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.2",
+                    "End DateTime cannot be empty.");
+        }
+
+        if (overtimeStartDateTime !=null && overtimeEndDateTime!=null) {
+
+            // Ensure end date is before claim date
+            if (claimDate.isBefore(overtimeEndDateTime)) {
+                errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.3",
+                        "End DateTime must be earlier than current DateTime.");
+            }
+
+            // Ensure end date is minimally equal or 4 hours after overtimeStartDateTime date
+            if (Duration.between(overtimeStartDateTime, overtimeEndDateTime).toHours() < 4) {
+                errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.5",
+                        "End DateTime must be at least 4 hours after Start DateTime.");
+            }
+
+            // Ensure claim is either approved or rejected.
+            if (statusEnum == null) {
+                errors.rejectValue("compensationClaimStatus", "error.compensationClaim.compensationClaimStatusEnum.1",
+                        "Must select Approve or Reject.");
+            }
+
+            assert statusEnum != null;
+            // Ensure claim is not at APPLIED nor UPDATED state.
+            if (statusEnum != CompensationClaimStatusEnum.APPLIED && statusEnum != CompensationClaimStatusEnum.UPDATED) {
+
+                // Ensure rejection comment is valid if Manager rejects claim.
+                if (statusEnum == CompensationClaimStatusEnum.REJECTED && comments.isEmpty()) {
+                    errors.rejectValue("comments", "error.compensationClaim.comments.1",
+                            "Must include reason for Rejection.");
+                }
             }
         }
-        if (error != null)
-            throw new CompensationClaimInvalidException(error);
-        return true;
     }
-     */
 }
