@@ -8,5 +8,6 @@ public interface ILeaveApplication {
     boolean save(LeaveApplication leaveApplication);
     LeaveApplication findLeaveApplicationById(Integer id);
     List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId);
+    List<LeaveApplication> findLeaveApplicationsById(int id);
     long count();
 }

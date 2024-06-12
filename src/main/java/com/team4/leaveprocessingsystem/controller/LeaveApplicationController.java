@@ -8,7 +8,6 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +106,7 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("history")
-    public String leaveHistory(Model model){
+    public String subordinatesLeaveHistory(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Employee manager = user.getEmployee();
@@ -117,6 +116,7 @@ public class LeaveApplicationController {
 
         return "leaveApplication/viewLeaveHistory";
     }
+
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
@@ -137,5 +137,26 @@ public class LeaveApplicationController {
                 throw new LeaveApplicationNotFoundException("Leave Application Not Found");
             }
         return leaveApplication;
+    }
+
+    //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
+    //so i create a new method
+    @GetMapping("managerView/{id}")
+    public String managerViewLeave(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
+
+    @GetMapping("personalHistory")
+    public String personalHistory(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Employee employee = user.getEmployee();
+        int employeeId = employee.getId();
+
+        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findLeaveApplicationsById(employeeId);
+        model.addAttribute("personalLeaveApplications", personalLeaveApplications);
+        return "leaveApplication/personalViewLeave";
     }
 }
