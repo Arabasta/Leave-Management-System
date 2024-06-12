@@ -4,6 +4,7 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.service.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// todo: add and refactor into a LeaveHistoryController
 @RequestMapping("leave")
 @Controller
 public class LeaveApplicationController {
@@ -25,6 +27,7 @@ public class LeaveApplicationController {
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
     private final LeaveApplicationValidator leaveApplicationValidator;
+    private final AuthenticationService authenticationService;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -33,17 +36,20 @@ public class LeaveApplicationController {
 
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
-                                      LeaveBalanceService leaveBalanceService, LeaveApplicationValidator leaveApplicationValidator) {
+                                      LeaveBalanceService leaveBalanceService, AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
-        this.leaveApplicationValidator = new LeaveApplicationValidator();
+        this.authenticationService = authenticationService;
+        this.leaveApplicationValidator = leaveApplicationValidator;
     }
 
     @GetMapping("create")
     public String createLeave(Model model){
         LeaveApplication leaveApplication = new LeaveApplication();
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
+        // todo: note; kei changed to use authService
+
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
         leaveApplication.setSubmittingEmployee(employee);
 
         model.addAttribute("leave", leaveApplication);
@@ -66,7 +72,8 @@ public class LeaveApplicationController {
 
     @PostMapping("save")
     public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model, @RequestParam("applicationStatus") String applicationStatus){
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
+        // todo: note; kei changed to use authService
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
         leaveApplication.setSubmittingEmployee(employee);
         leaveApplication.setReviewingManager(employee.getManager());
         leaveApplication.setLeaveStatus(LeaveStatusEnum.valueOf(applicationStatus));
@@ -108,7 +115,8 @@ public class LeaveApplicationController {
 
     @GetMapping("history")
     public String leaveHistory(Model model){
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
+        // todo: note; kei changed to use authService
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
         List<LeaveApplication> allLeaves = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("leaveApplications", allLeaves);
 
