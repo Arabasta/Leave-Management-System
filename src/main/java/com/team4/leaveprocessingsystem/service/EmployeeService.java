@@ -50,7 +50,7 @@ public class EmployeeService implements IEmployee {
     @Transactional
     public boolean save(Employee employee) {
         try {
-            employeeRepository.saveAndFlush(employee);
+            employeeRepository.save(employee);
             return true;
         } catch (Exception e) {
             log.error("Error saving employee: " + employee.getName(), e);
@@ -134,4 +134,5 @@ public class EmployeeService implements IEmployee {
     public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
+
 }

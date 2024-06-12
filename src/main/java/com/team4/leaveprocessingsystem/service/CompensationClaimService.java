@@ -36,7 +36,8 @@ public class CompensationClaimService implements ICompensationClaim {
     public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
         try {
             //TODO: to verify if this should call employeeService for the List instead of the model directly
-            return employee.getCompensationClaims();
+            //    return employee.getCompensationClaims();
+            return null;
         } catch (NoSuchElementException e) {
             return null;
         }

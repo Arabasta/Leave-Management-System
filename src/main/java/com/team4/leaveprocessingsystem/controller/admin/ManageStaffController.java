@@ -2,21 +2,17 @@ package com.team4.leaveprocessingsystem.controller.admin;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.JobDesignation;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.model.User;
-import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.UserService;
+import com.team4.leaveprocessingsystem.repository.ManagerRepository;
+import com.team4.leaveprocessingsystem.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(value = "/admin/manage-staff")
@@ -25,12 +21,20 @@ public class ManageStaffController {
     private final EmployeeService employeeService;
     private final JobDesignationService jobDesignationService;
     private final UserService userService;
+    private final ManagerRepository managerRepository;
+    private final ManagerService managerService;
+    @Autowired
+    private LeaveBalanceService leaveBalanceService;
+    private final View error;
 
     @Autowired
-    public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService, UserService userService) {
+    public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService, UserService userService, ManagerRepository managerRepository, ManagerService managerService, View error) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.userService = userService;
+        this.managerRepository = managerRepository;
+        this.managerService = managerService;
+        this.error = error;
     }
 
     @GetMapping("/")
@@ -66,54 +70,42 @@ public class ManageStaffController {
     public String editEmployeeDetails(@PathVariable(name = "employeeId") int employeeId, Model model) {
 
         Employee employee = employeeService.findEmployeeById(employeeId);
-
-        BiFunction<List<User>, String, Boolean> userHasThisRole = (employeeUserAccounts, userAccountRole) -> {
-            return employeeUserAccounts.stream().anyMatch(userAccount -> userAccount.getRole().toString().equals(userAccountRole));
-        };
-
-        List<String> roleEnumsAsStrings = Stream.of(RoleEnum.values())
-                .map(RoleEnum::name)
-                .collect(Collectors.toList());
-
-        List<User> userAccountListByEmployeeId = userService.findUserRolesByEmployeeId(employeeId);
-
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
-
+        List<Manager> managerList = managerRepository.findAll();
+        LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
         model.addAttribute("employee", employee);
-        model.addAttribute("userRoleflag", userHasThisRole);
-        model.addAttribute("roles", roleEnumsAsStrings);
-        model.addAttribute("userAccountListByEmployeeId", userAccountListByEmployeeId);
+        model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignationList", jobDesignationList);
+        model.addAttribute("managerList", managerList);
+
         model.addAttribute("isEditMode", true);
+        // model.addAttribute("updateSuccess", false);
 
         return "manage-staff/edit-employee-details-form";
     }
 
     @PostMapping("/update")
-    public String updateEmployeeDetails(@RequestParam("employeeId") int employeeId,
-                                        @RequestParam("managerId") int managerId,
-                                        @ModelAttribute Employee employee,
+    public String updateEmployeeDetails(
+            @ModelAttribute("employee") Employee employee,
                                         Model model) {
-        Employee existingEmployee = employeeService.findEmployeeById(employeeId);
-        Employee manager = employeeService.findEmployeeById(managerId);
 
-        if (!(manager instanceof Manager)) {
-            model.addAttribute("errorMessage", "Invalid manager id");
-            return "manage-staff/edit-employee-details-form";
-        }
+        Manager manager = managerService.findManagerById(employee.getManager().getId());
+        employee.setManager(manager);
 
-        existingEmployee.setManager((Manager) manager);
-        existingEmployee.setName(employee.getName());
         JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
-        existingEmployee.setJobDesignation(jd);
 
-        employeeService.save(existingEmployee);
+        employee.setJobDesignation(jd);
+
+
+        LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
+        employee.setLeaveBalance(leaveBalance);
+        employeeService.save(employee);
 
 
         model.addAttribute("isEditMode", false);
-        model.addAttribute("updateSuccess", true);
-        model.addAttribute("employee", existingEmployee);
+        model.addAttribute("employee", employee);
+        return "manage-staff/view-all";
 
-        return "redirect:/admin/manage-staff/";
+        //   return "redirect:/admin/manage-staff/";
     }
 }

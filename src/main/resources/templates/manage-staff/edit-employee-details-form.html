@@ -6,18 +6,14 @@
 <div th:replace="~{fragments/navbar :: menu}"></div>
 
 <div class="container w-50 mt-5 text-center">
-    <h1 class="mb-3 mt-3 text-center"
-        th:text="${isEditMode} ? 'Edit Employee Details' : 'View Updated Employee Details'"></h1>
+    <!--    <h1 class="mb-3 mt-3 text-center"-->
+    <!--        th:text="${isEditMode} ? 'Edit Employee Details' : 'View Updated Employee Details'"></h1>-->
 
     <!-- Edit mode form -->
-    <form method="post" th:action="@{/admin/manage-staff/update}" th:if="${isEditMode}" th:object="${employee}">
+    <form method="post" th:action="@{/admin/manage-staff/update}" th:object="${employee}">
         <!-- hidden fields -->
         <input name="employeeId" th:value="${employeeId}" type="hidden"/>
         <input th:field="*{leaveBalance}" type="hidden"/>
-        <input th:field="*{jobDesignation.id}" type="hidden"/>
-        <input th:field="*{users}" type="hidden"/>
-        <input th:field="*{leaveApplications}" type="hidden"/>
-        <input th:field="*{compensationClaims}" type="hidden"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeId">ID (read-only):</label>
@@ -34,46 +30,36 @@
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="managerId">Assigned Manager Id:</label>
+            <label class="col-4 col-form-label" for="manager">Assigned Manager:</label>
             <div class="col-8">
-                <input class="form-control" id="managerId" name="managerId" th:value="${employee.manager.id}"
-                       type="text"/>
+
+                <select th:field="*{manager.id}" class="form-select" id="manager" name="manager">
+                    <option th:each="manager : ${managerList}" th:text="${manager}" th:value="${manager.id}"
+                            th:selected="${employee.manager.id}"></option>
+                </select>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeJobDesignation">Job Designation:</label>
             <div class="col-8">
-                <select class="form-select" id="employeeJobDesignation" th:field="*{jobDesignation.id}">
+                <select th:field="*{jobDesignation.id}" class="form-select" id="employeeJobDesignation"
+                        name="jobDesignationId">
                     <option th:each="jd : ${jobDesignationList}" th:text="${jd.name}" th:value="${jd.id}"
-                            th:selected="${jd.id} == ${employee.jobDesignation.id}"></option>
+                            th:selected="${employee.jobDesignation.id}"></option>
                 </select>
             </div>
         </div>
-        <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label">Assigned Roles:</label>
-            <div class="col-7">
-                <div class="">
-                    <div class="form-check form-check-inline">
-                        <label class="checkbox" th:each="role: ${roles}">
-                            <input th:checked="${userRoleflag.apply(userAccountListByEmployeeId,role) ? true : false}"
-                                   th:text="${role}"
-                                   th:value="${role}"
-                                   type="checkbox"> <br>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div>
             <input class="btn btn-primary float-end" type="submit" value="Update"/>
         </div>
     </form>
 
-    <!-- Success View -->
-    <div th:if="${!isEditMode}">
-        <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
-    </div>
+    <!--     Success View-->
+    <!--    <div th:if="${!isEditMode}">-->
+    <!--        <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>-->
+    <!--    </div>-->
 </div>
 
 </body>

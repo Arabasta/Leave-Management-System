@@ -97,4 +97,9 @@ public class LeaveBalanceService implements ILeaveBalance {
     public LeaveBalance findByEmployee(int employee_id) {
         return employeeService.findEmployeeById(employee_id).getLeaveBalance();
     }
+
+    @Transactional
+    public LeaveBalance findLeaveBalanceById(int id) {
+        return leaveBalanceRepository.findById(id).orElseThrow();
+    }
 }

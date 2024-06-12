@@ -19,8 +19,8 @@ public class DatabaseSeeder {
             jobDesignationSeeder.seed();
             publicHolidaySeeder.seed();
             employeeSeeder.seed();
-            leaveApplicationSeeder.seed();
-            compensationClaimSeeder.seed();
+            //  leaveApplicationSeeder.seed();
+            //   compensationClaimSeeder.seed();
         };
     }
 }

@@ -2,97 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: html_head}"></head>
 
-<style>
-    body {
-        overflow-x: hidden;
-        scroll-behavior: smooth;
-    }
 
-    .table-responsive {
-        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-    }
-
-    th {
-        text-align: center;
-        font-size: 18px;
-    }
-
-    td {
-        text-align: center;
-        font-size: 15px;
-        font-weight: 500;
-        width: 15%;
-    }
-
-    h2, h3 {
-        text-align: center;
-    }
-
-    .btn-group {
-        display: flex;
-        gap: 10px;
-    }
-
-    .card {
-        box-shadow: rgba(14, 30, 37, 0.12) 1px 2px 2px 0px, rgba(14, 30, 37, 0.32) 1px 2px 2px 0px;
-    }
-
-    .container {
-        margin: 20px auto;
-    }
-
-    .container > form {
-        display: flex;
-        justify-content: center;
-        height: 40%;
-        gap: 5px;
-    }
-
-</style>
-
-<script type="text/javascript">
-    function clearSearch() {
-        window.location = "[[@{/search-staff}]]";
-    }
-</script>
 
 <body>
 <nav class="navbar navbar-expand-sm navbar-light mb-5">
 
 </nav>
 <main>
-
-    <br>
     <div class="items_table mt-5 mb-4">
         <div class="table-responsive p-2">
 
-            <h2>Staff Management System</h2>
-
-            <div class="container">
-                <form action="#" th:action="@{/}">
-                    <div style="font-weight:bold">
-                        Search By:
-                        <select name="searchtype">
-                            <option th:value="name" th:selected="${searchtype == 'name'}">Name</option>
-                            <option th:value="jobDesignation" th:selected="${searchtype == 'jobDesignation'}">Job Designation</option>
-                            <option th:value="roleType" th:selected="${searchtype == 'roleType'}">Role Type</option>
-                        </select>
-
-                    </div>
-
-                    <div style="font-weight:bold">
-                        Enter keyword:
-                        <input name="keyword" th:value="${keyword}" type="text">
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn btn-info" type="submit">Search</button>
-                        <button class="btn btn-info" onclick="clearSearch()" type="submit">Reset</button>
-                    </div>
-                </form>
-            </div>
-
-            <h3 th:if="${#lists.isEmpty(staffs)}">No Results.</h3>
 
             <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(staffs)}">
                 <thead class="bg-primary">
@@ -108,9 +27,6 @@
                     <td th:text="${staff.name}">Name</td>
                     <td th:text="${staff.jobDesignation.name}">Job Designation</td>
                     <td>
-                        <span th:each="user : ${staff.users}" th:text="${user.role} + ' '">Role</span>
-                    </td>
-                    <td>
                         <a th:href="@{/admin/manage-staff/edit/{id}(id=${staff.id})}">Edit</a>
                         <a th:href="@{/admin/manage-staff/delete/{id}(id=${staff.id})}">Delete</a>
                     </td>
@@ -122,28 +38,6 @@
         </div>
 
     </div>
-
-
-    <table>
-        <tr>
-            <td>
-                <a href="#" onclick="history.go(-1); return false;">Return to previous page</a>
-            </td>
-            <td></td>
-            <td></td>
-
-            <td class="addModalBtn">
-                <a data-bs-toggle="modal" href="#addEmployeeModal" role="button"
-                   style="text-decoration: none; color: white;">
-                    <div class="card bg-primary">
-                        <div class="card-body">
-                            <h5 class="text-light"><i class="fa fa-plus"></i> Add Employee</h5>
-                        </div>
-                    </div>
-                </a>
-            </td>
-        </tr>
-    </table>
 
 </main>
 
