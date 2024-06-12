@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.util;
 
+import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
 
 import java.time.DayOfWeek;
@@ -32,7 +33,25 @@ public class DateTimeCounterUtils {
         return Duration.between(startDateTime, endDateTime).toHours();
     }
 
-    public static Long countCalendarDays(LocalDate startDate, LocalDate endDate, PublicHolidayService publicHolidayService){
+    public static Long countCalendarDays(LocalDate startDate, LocalDate endDate){
         return endDate.toEpochDay() - startDate.toEpochDay() + 1;
+    }
+
+    public static Long numOfLeaveToBeCounted(LocalDate startDate, LocalDate endDate, LeaveTypeEnum leaveType, PublicHolidayService publicHolidayService){
+        Long numOfCalendarDays = DateTimeCounterUtils.countCalendarDays(startDate, endDate);
+        Long numOfWorkingDays = DateTimeCounterUtils.countWorkingDays(startDate, endDate, publicHolidayService);
+        switch(leaveType) {
+            case MEDICAL:
+            case COMPASSIONATE:
+            case COMPENSATION:
+                return numOfWorkingDays;
+            case ANNUAL:
+                if (numOfCalendarDays <= 14) {
+                    return numOfWorkingDays;
+                } else {
+                    return numOfCalendarDays;
+                }
+        }
+        return 0L;
     }
 }

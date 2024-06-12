@@ -3,7 +3,6 @@ package com.team4.leaveprocessingsystem.model;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -36,7 +35,6 @@ public class LeaveApplication {
     private LeaveTypeEnum leaveType;
 
     @NotNull(message = "Start date cannot be blank")
-    @FutureOrPresent(message = "Start date must be today or in the future")
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -51,6 +49,10 @@ public class LeaveApplication {
     private String submissionReason;
 
     private String rejectionReason;
+
+    private String workDissemination;
+
+    private String contactDetails;
 
     public LeaveApplication() {}
 }

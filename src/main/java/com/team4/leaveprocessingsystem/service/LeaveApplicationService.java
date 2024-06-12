@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.service;
 
+import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
@@ -28,7 +29,8 @@ public class LeaveApplicationService implements ILeaveApplication {
     @Override
     @Transactional
     public LeaveApplication findLeaveApplicationById(Integer id){
-        return leaveApplicationRepository.findById(id).get();
+        return leaveApplicationRepository.findById(id)
+                .orElseThrow(() -> new LeaveApplicationNotFoundException("Leave Application Not Found"));
     }
 
     @Override
