@@ -108,9 +108,12 @@ public class LeaveApplicationController {
 
     @GetMapping("history")
     public String leaveHistory(Model model){
-        Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
-        List<LeaveApplication> allLeaves = employee.getLeaveApplications();
-        model.addAttribute("leaveApplications", allLeaves);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Employee manager = user.getEmployee();
+        int managerId = manager.getId();
+        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+        model.addAttribute("leaveApplications",allLeavesbyManagerSubordinates);
 
         return "leaveApplication/viewLeaveHistory";
     }
