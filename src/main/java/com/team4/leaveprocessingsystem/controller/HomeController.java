@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-
     private final RedirectService redirectService;
 
     @Autowired
@@ -21,18 +20,18 @@ public class HomeController {
         return redirectService.getHomeRedirectUrl();
     }
 
-    @GetMapping("/home/employee")
+    @GetMapping("/employee/home")
     public String employeeHome(Model model) {
-        return "home/employee";
+        return "employee/home/home";
     }
 
-    @GetMapping("/home/admin")
+    @GetMapping("/admin/home")
     public String adminHome(Model model) {
-        return "home/admin";
+        return "admin/home/home";
     }
 
-    @GetMapping("/home/manager")
+    @GetMapping("/manager/home")
     public String managerHome(Model model) {
-        return "home/manager";
+        return "manager/home/home";
     }
 }

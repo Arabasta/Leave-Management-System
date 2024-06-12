@@ -18,13 +18,13 @@ public class RedirectService {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 switch (authority.getAuthority()) {
                     case "ROLE_ADMIN" -> {
-                        return "redirect:/home/admin";
+                        return "redirect:/admin/home";
                     }
                     case "ROLE_MANAGER" -> {
-                        return "redirect:/home/manager";
+                        return "redirect:/manager/home";
                     }
                     case "ROLE_EMPLOYEE" -> {
-                        return "redirect:/home/employee";
+                        return "redirect:/employee/home";
                     }
                 }
             }
@@ -41,13 +41,13 @@ public class RedirectService {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 switch (authority.getAuthority()) {
                     case "ROLE_ADMIN" -> {
-                        return "/home/admin";
+                        return "/admin/home";
                     }
                     case "ROLE_MANAGER" -> {
-                        return "/home/manager";
+                        return "/manager/home";
                     }
                     case "ROLE_EMPLOYEE" -> {
-                        return "/home/employee";
+                        return "/employee/home";
                     }
                 }
             }
