@@ -35,6 +35,7 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Override
     @Transactional
     public void update(LeaveApplication leaveApplication){
+        // todo: refactor this
         // Update employee's leave balances
         Employee employee = leaveApplication.getSubmittingEmployee();
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
@@ -96,5 +97,11 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Transactional
     public LeaveBalance findByEmployee(int employee_id) {
         return employeeService.findEmployeeById(employee_id).getLeaveBalance();
+    }
+
+    @Override
+    @Transactional
+    public LeaveBalance findLeaveBalanceById(int id) {
+        return leaveBalanceRepository.findById(id).orElseThrow();
     }
 }

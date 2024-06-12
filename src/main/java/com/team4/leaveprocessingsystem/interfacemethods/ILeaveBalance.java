@@ -7,4 +7,6 @@ public interface ILeaveBalance {
     boolean save(LeaveBalance leaveBalance);
     void update(LeaveApplication leaveApplication);
     LeaveBalance findByEmployee(int employee_id);
+
+    LeaveBalance findLeaveBalanceById(int id);
 }
