@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findEmployeeByJobDesignation(@Param("k") String keyword);
 
     @Query("Select e from Employee e " +
-            "join e.users u " +
+            "JOIN User u ON e.id = u.employee.id " +
             "where CAST(u.role as String) like CONCAT('%', :k, '%')")
     List<Employee> findUserByRoleType(@Param("k") String keyword);
 
