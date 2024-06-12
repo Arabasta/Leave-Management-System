@@ -56,7 +56,7 @@ public class CompensationClaimController {
         Employee currentEmployee = currentUser.getEmployee();
         assert currentEmployee != null;
         model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
+        model.addAttribute("compensationClaims", (compensationClaimService.findCompensationClaimsByEmployee(currentEmployee)));
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("leaveBalanceService", leaveBalanceService);
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
