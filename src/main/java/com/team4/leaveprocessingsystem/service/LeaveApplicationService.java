@@ -42,6 +42,17 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
+    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee) {
+        LeaveApplication leaveApplication = findLeaveApplicationById(id);
+        // Ensure an employee only accesses his own leave applications
+        if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())) {
+            throw new LeaveApplicationNotFoundException("Leave Application Not Found");
+        }
+        return leaveApplication;
+    }
+
+    @Override
+    @Transactional
     public long count() {
         return leaveApplicationRepository.count();
     }
