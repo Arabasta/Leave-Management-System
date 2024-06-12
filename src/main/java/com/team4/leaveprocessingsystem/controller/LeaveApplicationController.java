@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.controller;
 
+import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
@@ -7,7 +8,6 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import java.util.List;
 public class LeaveApplicationController {
     private final LeaveApplicationService leaveApplicationService;
     private final EmployeeService employeeService;
-    private final LeaveBalanceService leaveBalanceService;
     private final LeaveApplicationValidator leaveApplicationValidator;
     private final AuthenticationService authenticationService;
 
@@ -36,10 +35,9 @@ public class LeaveApplicationController {
 
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
-                                      LeaveBalanceService leaveBalanceService, AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator) {
+                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
-        this.leaveBalanceService = leaveBalanceService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
     }
@@ -49,43 +47,42 @@ public class LeaveApplicationController {
         LeaveApplication leaveApplication = new LeaveApplication();
         // todo: note; kei changed to use authService
 
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         leaveApplication.setSubmittingEmployee(employee);
+        leaveApplication.setReviewingManager(employee.getManager());
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
 
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        model.addAttribute("applicationStatus", "APPLIED");
-        //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
     }
 
     @GetMapping("edit/{id}")
     public String editLeave(@PathVariable int id, Model model){
-        model.addAttribute("leave", leaveApplicationService.findLeaveApplicationById(id));
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+
+        // Only allow editing of leaves pending approval
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
+            throw new LeaveApplicationNotFoundException("Leave application cannot be updated");
+        }
+
+        leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
+        model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-        model.addAttribute("applicationStatus", "UPDATED");
-        //TODO: Get all applied/updated/approved leave to prevent overlap
 
         return "leaveApplication/leaveForm";
     }
 
     @PostMapping("save")
-    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model, @RequestParam("applicationStatus") String applicationStatus){
-        // todo: note; kei changed to use authService
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
-        leaveApplication.setSubmittingEmployee(employee);
-        leaveApplication.setReviewingManager(employee.getManager());
-        leaveApplication.setLeaveStatus(LeaveStatusEnum.valueOf(applicationStatus));
+    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()) {
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-            model.addAttribute("applicationStatus", applicationStatus);
             return "leaveApplication/leaveForm";
         }
 
-        // only update if leave is approved
-        // leaveBalanceService.update(leaveApplication);
         leaveApplicationService.save(leaveApplication);
 
         return "redirect:/leave/history";
@@ -93,7 +90,8 @@ public class LeaveApplicationController {
 
     @GetMapping("delete/{id}")
     public String deleteLeave(@PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveApplicationService.save(leaveApplication);
 
@@ -104,7 +102,8 @@ public class LeaveApplicationController {
 
     @GetMapping("cancel/{id}")
     public String cancelLeave(@PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
 
@@ -116,10 +115,18 @@ public class LeaveApplicationController {
     @GetMapping("history")
     public String leaveHistory(Model model){
         // todo: note; kei changed to use authService
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId()); // Replace with session get employee obj
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         List<LeaveApplication> allLeaves = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("leaveApplications", allLeaves);
 
         return "leaveApplication/viewLeaveHistory";
+    }
+
+    @GetMapping("view/{id}")
+    public String viewLeave(Model model, @PathVariable int id){
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
     }
 }

@@ -104,9 +104,10 @@ public class LeaveApplicationValidator implements Validator {
         List<LeaveApplication> allLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
 
         // When editing an existing application, it will not be invalidated
-        LeaveApplication existingLeaveApplication = leaveApplicationService.findLeaveApplicationById(leaveApplication.getId());
-        allLeaveApplications.remove(existingLeaveApplication);
-
+        if (leaveApplication.getId() != null) {
+            LeaveApplication existingLeaveApplication = leaveApplicationService.findLeaveApplicationById(leaveApplication.getId());
+            allLeaveApplications.remove(existingLeaveApplication);
+        }
         for (LeaveApplication leave : allLeaveApplications){
             if (leave.getLeaveStatus() == LeaveStatusEnum.APPLIED || leave.getLeaveStatus() == LeaveStatusEnum.UPDATED || leave.getLeaveStatus() == LeaveStatusEnum.APPROVED) {
                 if (startDate.compareTo(leave.getEndDate()) <= 0 && endDate.compareTo(leave.getStartDate()) >= 0){
