@@ -63,7 +63,7 @@ public class CompensationClaimController {
         Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
         assert currentEmployee != null;
         model.addAttribute("employee", currentEmployee);
-        model.addAttribute("compensationClaims", (currentEmployee.getCompensationClaims()));
+        model.addAttribute("compensationClaims", (compensationClaimService.findCompensationClaimsByEmployee(currentEmployee)));
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(currentEmployee.getId()).getCompensationLeave());
         return "compensation-claims/history";
     }
@@ -174,8 +174,8 @@ public class CompensationClaimController {
         List<Employee> employeesPendingClaimsList = currentManager
                 .getSubordinates()
                 .stream()
-                .filter(employee -> employee
-                        .getCompensationClaims()
+                .filter(employee ->
+                        compensationClaimService.findCompensationClaimsByEmployee(employee)
                         .stream()
                         .anyMatch(claim -> claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.APPLIED
                         || claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.UPDATED)
