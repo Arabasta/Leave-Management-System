@@ -86,18 +86,16 @@ public class LeaveApplicationController {
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
             return "leaveApplication/leaveForm";
         }
-
         leaveApplicationService.save(leaveApplication);
 
+        // Send email notification to the manager
         Map<String, String> email =  EmailBuilderUtils.buildLeaveApplicationEmail(leaveApplication);
-        String recipient = email.get("recipient");
-        String subject = email.get("subject");
-        String text = email.get("text");
         try {
-            emailApiService.sendEmail(recipient, subject, text);
+            emailApiService.sendEmail(email.get("recipient"), email.get("subject"), email.get("text"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
         return "redirect:/leave/history";
     }
 

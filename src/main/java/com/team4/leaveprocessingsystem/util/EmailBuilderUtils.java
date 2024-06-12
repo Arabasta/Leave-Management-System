@@ -23,7 +23,7 @@ public class EmailBuilderUtils {
         LocalDate endDate = leaveApplication.getEndDate();
         String leaveType = leaveApplication.getLeaveType().toString();
         String reason= leaveApplication.getSubmissionReason();
-        String applicationUrl = "/leave/managerView/" + leaveApplication.getId();
+        String applicationUrl = "http://localhost:8080/leave/managerView/" + leaveApplication.getId();
 
         LeaveStatusEnum leaveStatus = leaveApplication.getLeaveStatus();
         if (leaveStatus == LeaveStatusEnum.APPLIED){
@@ -35,24 +35,26 @@ public class EmailBuilderUtils {
                     " - Duration: " + startDate + " to " + endDate;
         }
 
-        String text = "Dear " + managerName +",\n" +
-                "\n" +
-                "You have a new leave application pending your approval.\n" +
-                "\n" +
-                "Employee Name: " + employeeName +"\n" +
-                "\n" +
-                "Leave Details:\n" +
-                "- Start Date: " + startDate + "\n" +
-                "- End Date: " + endDate + "\n" +
-                "- Leave Type: " + leaveType + "\n" +
-                "- Reason: " + reason + "\n" +
-                "\n" +
-                "To review the leave application:" + "\n" +
-                "Link: " + applicationUrl;
+        String text = "Dear " + managerName + ",<br>" +
+                "<br>" +
+                "You have a new leave application pending your approval.<br>" +
+                "<br>" +
+                "Employee Name: " + employeeName + "<br>" +
+                "<br>" +
+                "Leave Details:<br>" +
+                "- Start Date: " + startDate + "<br>" +
+                "- End Date: " + endDate + "<br>" +
+                "- Leave Type: " + leaveType + "<br>" +
+                "- Reason: " + reason + "<br>" +
+                "<br>" +
+                "To review the leave application:<br>" +
+                "<a href=\"" + applicationUrl + "\">View Leave Application</a>";
+
+        String escapedText = text.replace("\"", "\\\"").replace("\n", "\\n");
 
         emailBuilder.put("recipient", managerEmail);
         emailBuilder.put("subject", subject);
-        emailBuilder.put("text", text);
+        emailBuilder.put("text", escapedText);
 
         return emailBuilder;
     }
@@ -71,37 +73,39 @@ public class EmailBuilderUtils {
         LocalDate endDate = leaveApplication.getEndDate();
         String leaveType = leaveApplication.getLeaveType().toString();
         String reason= leaveApplication.getSubmissionReason();
-        String applicationUrl = "/leave/view/" + leaveApplication.getId();
-
-        LeaveStatusEnum leaveStatus = leaveApplication.getLeaveStatus();
-        if (leaveStatus == LeaveStatusEnum.APPROVED){
-            subject = "Leave Application approved: " + employeeName +
-                    " - Duration: " + startDate + " to " + endDate;
+        String rejectionReason= leaveApplication.getRejectionReason();
+        String rejectionReasonStr = "";
+        if (rejectionReason != null && rejectionReason != ""){
+            rejectionReasonStr = "- Rejection Reason: " + rejectionReason + "<br>";
         }
-        else if (leaveStatus == LeaveStatusEnum.REJECTED){
-            subject = "Leave Application rejected: " + employeeName +
-                    " - Duration: " + startDate + " to " + endDate;
-        }
+        String applicationUrl = "http://localhost:8080/leave/view/" + leaveApplication.getId();
 
-        String text = "Dear " + employeeName +",\n" +
-                "\n" +
-                "Your leave application has been " + leaveStatus + ".\n" +
-                "\n" +
-                "Employee Name: " + employeeName +"\n" +
-                "\n" +
-                "Leave Details:\n" +
-                "- Start Date: " + startDate + "\n" +
-                "- End Date: " + endDate + "\n" +
-                "- Leave Type: " + leaveType + "\n" +
-                "- Reason: " + reason + "\n" +
-                "\n" +
-                "Manager Name: " + managerName +"\n" +
-                "To view your leave application:" + "\n" +
-                "Link: " + applicationUrl;
+        String leaveStatus = leaveApplication.getLeaveStatus().toString();
+        subject = "Leave Application " + leaveStatus + ": " + employeeName +
+                " - Duration: " + startDate + " to " + endDate;
+
+        String text = "Dear " + employeeName + ",<br>" +
+                "<br>" +
+                "Your leave application has been " + leaveStatus + ".<br>" +
+                "<br>" +
+                "Employee Name: " + employeeName + "<br>" +
+                "Manager Name: " + managerName + "<br>" +
+                "<br>" +
+                "Leave Details:<br>" +
+                "- Start Date: " + startDate + "<br>" +
+                "- End Date: " + endDate + "<br>" +
+                "- Leave Type: " + leaveType + "<br>" +
+                "- Reason: " + reason + "<br>" +
+                rejectionReasonStr +
+                "<br>" +
+                "To view your leave application:<br>" +
+                "<a href=\"" + applicationUrl + "\">View Leave Application</a>";
+
+        String escapedText = text.replace("\"", "\\\"").replace("\n", "\\n");
 
         emailBuilder.put("recipient", employeeEmail);
         emailBuilder.put("subject", subject);
-        emailBuilder.put("text", text);
+        emailBuilder.put("text", escapedText);
 
         return emailBuilder;
     }
