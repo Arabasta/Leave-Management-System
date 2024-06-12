@@ -26,16 +26,16 @@ public class CompensationClaimValidator implements Validator {
         String comments = claim.getComments();
         LocalDateTime overtimeStartDateTime = claim.getOvertimeStartDateTime();
         LocalDateTime overtimeEndDateTime = claim.getOvertimeEndDateTime();
-        LocalDateTime claimDate = claim.getClaimedDateTime();
+        LocalDateTime claimDate = claim.getClaimDateTime();
 
         // Ensure overtimeStartDateTime date is not empty
-        if (overtimeStartDateTime ==null) {
+        if (overtimeStartDateTime == null) {
             errors.rejectValue("overtimeStartDateTime", "error.compensationClaim.dates.1",
                     "Start DateTime cannot be empty.");
         }
 
         // Ensure end date is not empty
-        if (overtimeEndDateTime==null) {
+        if (overtimeEndDateTime == null) {
             errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.2",
                     "End DateTime cannot be empty.");
         }
@@ -46,12 +46,6 @@ public class CompensationClaimValidator implements Validator {
             if (claimDate.isBefore(overtimeEndDateTime)) {
                 errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.3",
                         "End DateTime must be earlier than current DateTime.");
-            }
-
-            // Ensure end date is after overtimeStartDateTime date
-            if (overtimeStartDateTime.isAfter(overtimeEndDateTime)) {
-                errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.4",
-                        "End DateTime must be later than Start DateTime.");
             }
 
             // Ensure end date is minimally equal or 4 hours after overtimeStartDateTime date

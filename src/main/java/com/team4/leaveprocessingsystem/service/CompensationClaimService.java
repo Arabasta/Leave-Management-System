@@ -1,29 +1,35 @@
 package com.team4.leaveprocessingsystem.service;
 
+import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ICompensationClaim;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.repository.CompensationClaimRepository;
-import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 @Service
 public class CompensationClaimService implements ICompensationClaim {
 
     private final CompensationClaimRepository compensationClaimRepository;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public CompensationClaimService(CompensationClaimRepository compensationClaimRepository) {
+    public CompensationClaimService(CompensationClaimRepository compensationClaimRepository, EmployeeService employeeService) {
         this.compensationClaimRepository = compensationClaimRepository;
+        this.employeeService = employeeService;
     }
+
     @Override
     @Transactional
     public boolean save(CompensationClaim compensationClaim) {
@@ -39,9 +45,8 @@ public class CompensationClaimService implements ICompensationClaim {
     public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
         try {
             return compensationClaimRepository.findByClaimingEmployee(employee);
-        } catch (NoSuchElementException e) {
-            // todo: whoever's incharge of this, add a proper exception
-            return null;
+        } catch (CompensationClaimNotFoundException e) {
+            throw new CompensationClaimNotFoundException(employee.getName(), e);
         }
     }
 
@@ -51,7 +56,7 @@ public class CompensationClaimService implements ICompensationClaim {
 
     @Override
     @Transactional
-    public float overtimeHours(CompensationClaim compensationClaim) {
+    public float calculateOvertimeHours(CompensationClaim compensationClaim) {
         LocalDateTime start = compensationClaim.getOvertimeStartDateTime();
         LocalDateTime end = compensationClaim.getOvertimeEndDateTime();
         if (start == null || end == null) return 0;
@@ -60,14 +65,43 @@ public class CompensationClaimService implements ICompensationClaim {
 
     @Override
     @Transactional
-    public float compensationLeaveRequested(float overtimeHours) {
-        return (int) (overtimeHours / 4) * 0.5f;
+    public float calculateLeaveRequested(CompensationClaim compensationClaim) {
+        return (int) (calculateOvertimeHours(compensationClaim) / 4) * 0.5f;
     }
 
     @Override
     @Transactional
-    public CompensationClaim findCompensationClaim(Integer id) {
+    public CompensationClaim findCompensationClaimById(Integer id) {
         return compensationClaimRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee) {
+        CompensationClaim compensationClaim = findCompensationClaimById(id);
+        // Ensure an employee only accesses his own compensationClaim
+        if (!compensationClaim.getClaimingEmployee().getId().equals(employee.getId())) {
+            throw new CompensationClaimNotFoundException(employee.getName());
+        }
+        return compensationClaim;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager) {
+        Map<String, List<CompensationClaim>> compensationClaims = new HashMap<>();
+        List<Employee> employeeList = employeeService.findEmployeesByManager(manager);
+        for (Employee employee : employeeList) {
+            List<CompensationClaim> claims = findCompensationClaimsByEmployee(employee)
+                    .stream()
+                    .filter(claim -> claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.APPLIED
+                        || claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.UPDATED)
+                    .toList();
+            if (!claims.isEmpty()) {
+                compensationClaims.put(employee.getName(), claims);
+            }
+        }
+        return compensationClaims;
     }
 
 }
