@@ -1,6 +1,8 @@
 package com.team4.leaveprocessingsystem.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,17 +27,5 @@ public class Manager extends Employee {
     public Manager(String name, JobDesignation jobDesignation, Manager manager, LeaveBalance leaveBalance) {
         super(name, jobDesignation, manager, leaveBalance);
         this.subordinates = new ArrayList<>();
-    }
-
-    public void addSubordinate(Employee employee) {
-        if (!subordinates.contains(employee)) {
-            subordinates.add(employee);
-            employee.setManager(this);
-        }
-    }
-
-    public void removeSubordinate(Employee employee) {
-        subordinates.remove(employee);
-        employee.setManager(null);
     }
 }

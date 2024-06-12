@@ -6,6 +6,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ManagerService {
     @Autowired
@@ -14,6 +16,11 @@ public class ManagerService {
     @Transactional
     public Manager findManagerById(Integer id) {
         return managerRepository.findById(id).orElseThrow();
+    }
+
+    @Transactional
+    public List<Manager> findAllManagers() {
+        return managerRepository.findAll();
     }
 
 }
