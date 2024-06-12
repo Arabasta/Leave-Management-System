@@ -19,7 +19,7 @@ public class ManagerService implements IManager {
     }
     @Transactional
     public Manager findManagerById(Integer id) {
-        return managerRepository.findById(id).orElseThrow();
+        return managerRepository.findById(id).orElse(null);
     }
 
     @Transactional

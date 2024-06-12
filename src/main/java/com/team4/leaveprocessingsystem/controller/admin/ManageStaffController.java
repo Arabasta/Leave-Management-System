@@ -65,7 +65,15 @@ public class ManageStaffController {
     @GetMapping("/edit/{employeeId}")
     public String editEmployeeDetails(@PathVariable(name = "employeeId") int employeeId,
                                       Model model) {
-
+//        Employee employee;
+//        if (managerService.findManagerById(employeeId) != null) {
+//            List<Employee> subordinates = managerService.findManagerById(employeeId).getSubordinates();
+//            List<CompensationClaim> compensationClaims = managerService.findManagerById(employeeId).getCompensationClaims();
+//            List<LeaveApplication> leaveApplications = managerService.findManagerById(employeeId).getLeaveApplications();
+//            model.addAttribute("subordinates", subordinates);
+//            model.addAttribute("compensationClaims", compensationClaims);
+//            model.addAttribute("leaveApplications", leaveApplications);
+//        }
         Employee employee = employeeService.findEmployeeById(employeeId);
         LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
 
@@ -76,6 +84,7 @@ public class ManageStaffController {
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("managerList", managerList);
+
 
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
@@ -97,6 +106,14 @@ public class ManageStaffController {
 
         LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
         employee.setLeaveBalance(leaveBalance);
+
+//        if (employee instanceof Manager) {
+//            ((Manager) employee).setSubordinates(((Manager) employee).getSubordinates());
+//            ((Manager) employee).setLeaveApplications(((Manager) employee).getLeaveApplications());
+//            ((Manager) employee).setCompensationClaims(((Manager) employee).getCompensationClaims());
+//            employeeService.save(employee);
+//        }
+        //else
 
         employeeService.save(employee);
 

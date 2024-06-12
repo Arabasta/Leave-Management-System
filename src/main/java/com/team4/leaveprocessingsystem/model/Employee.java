@@ -5,12 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorOptions;
 
 
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "EMP_TYPE")
+@DiscriminatorOptions(force = true)
+
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
