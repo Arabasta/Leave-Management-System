@@ -5,18 +5,23 @@
 <div th:replace="fragments/navbar :: menu"></div>
     <h1>Create Compensation Claim</h1>
     
-    <form action="#" th:action="@{/compensation-claims/create-submit}"
-                                  th:object="${compensationClaim}" method="post">
+    <form action="#" th:action="@{/compensation-claims/create-submit}" th:object="${compensationClaim}" method="post">
+        <input type="hidden" th:field="${compensationClaim.id}" />
+        <input type="hidden" th:field="${compensationClaim.claimingEmployee}" />
+        <input type="hidden" th:field="${compensationClaim.approvingManager}" />
+        <input type="hidden" th:field="${compensationClaim.compensationClaimStatus}" />
+        <input type="hidden" th:field="${compensationClaim.claimDateTime}" />
+
         <table>
             <tbody>
                 <tr>
                     <td>Name: </td>
-                    <td th:text="${employee.name}"></td>
+                    <td th:text="${compensationClaim.claimingEmployee.name}"></td>
                 </tr>
 
                 <tr>
                     <td>Approving Manager: </td>
-                    <td th:text="${employee.manager.name}"></td>
+                    <td th:text="${compensationClaim.approvingManager.name}"></td>
                 </tr>
             </tbody>
         </table>
@@ -30,7 +35,7 @@
                                th:value="${compensationClaim.overtimeStartDateTime}"
                                th:field="${compensationClaim.overtimeStartDateTime}"/></td>
                         <td th:if="${#fields.hasErrors('overtimeStartDateTime')}"
-                            th:errors="*{compensationClaim.overtimeStartDateTime}"></td>
+                            th:errors="*{overtimeStartDateTime}"></td>
                 </tr>
 
                 <tr>
@@ -39,7 +44,7 @@
                                th:value="${compensationClaim.overtimeEndDateTime}"
                                th:field="${compensationClaim.overtimeEndDateTime}"/></td>
                         <td th:if="${#fields.hasErrors('overtimeEndDateTime')}"
-                            th:errors="*{compensationClaim.overtimeEndDateTime}"></td>
+                            th:errors="*{overtimeEndDateTime}"></td>
                 </tr>
 
                 <tr>
@@ -47,6 +52,7 @@
                     <td>
                         <input type="submit" value="Create" />
                         <input type="reset" value="Reset" />
+                        <a th:href="@{/compensation-claims/history}" class="button is-primary">Back</a>
                     </td>
                 </tr>
             </tbody>
