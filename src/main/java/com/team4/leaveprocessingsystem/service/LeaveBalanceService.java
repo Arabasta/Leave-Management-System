@@ -39,7 +39,6 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Override
     @Transactional
     public void update(LeaveApplication leaveApplication){
-        // todo: refactor this
         // Update employee's leave balances
         Employee employee = leaveApplication.getSubmittingEmployee();
         LeaveBalance empLeaveBalance = employee.getLeaveBalance();
