@@ -31,27 +31,31 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/compensation-claims")
 public class CompensationClaimController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private LeaveBalanceService leaveBalanceService;
-
-    @Autowired
-    private CompensationClaimService compensationClaimService;
-
-    // TODO: review usage of CompensationClaimValidator
-    @Autowired
-    private CompensationClaimValidator compensationClaimValidator;
+    private final UserService userService;
+    private final LeaveBalanceService leaveBalanceService;
+    private final CompensationClaimService compensationClaimService;
+    private final CompensationClaimValidator compensationClaimValidator;
 
     @InitBinder("compensation-claims")
     private void initCourseBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
     }
 
-    /*
-        EMPLOYEE - GET - VIEW COMPENSATION CLAIMS
-     */
+    @Autowired
+    public CompensationClaimController(UserService userService, LeaveBalanceService leaveBalanceService,
+                                       CompensationClaimService compensationClaimService, CompensationClaimValidator validator) {
+        this.userService = userService;
+        this.leaveBalanceService = leaveBalanceService;
+        this.compensationClaimService = compensationClaimService;
+        this.compensationClaimValidator = validator;
+    }
+
+    // TODO: implement with Spring Security instead
+//    @RequestMapping(value = "/compensation-claims/redirect-admin")
+//    public String redirectNonEmployee() {
+//        return "/compensation-claims/redirect-admin";
+//    }
+
     @ModelAttribute
     @GetMapping("/history")
     public String viewCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
