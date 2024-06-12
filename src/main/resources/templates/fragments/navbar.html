@@ -25,6 +25,9 @@
                     <a class="nav-link" th:href="@{/home/admin}">Home</a>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/manage-staff/}">Manage Staff</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <a class="nav-link" th:href="@{/admin/leave-entitlement/}">Leave Entitlement</a>
                 </li>
 

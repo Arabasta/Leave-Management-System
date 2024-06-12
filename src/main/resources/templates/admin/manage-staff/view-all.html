@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+<h1>Manage Staff</h1>
+
+<div class="container">
+
+
+    <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(employees)}">
+        <thead class="bg-primary">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Job Designation</th>
+            <th>Manager</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e:${employees}">
+            <td th:text="${e.id}">Id</td>
+            <td th:text="${e.name}">Name</td>
+            <td th:text="${e.jobDesignation.name}">Job Designation</td>
+            <td th:if="${e.manager != null}" th:text="${e.manager.name}">Manager</td>
+            <td th:if="${e.manager == null}">No Manager</td>
+
+            <td>
+                <a class="btn btn-primary" th:href="@{/admin/manage-staff/edit/{id}(id=${e.id})}">Edit</a>
+                <a class="btn btn-primary" th:href="@{/admin/manage-staff/delete/{id}(id=${e.id})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+</body>
+</html>

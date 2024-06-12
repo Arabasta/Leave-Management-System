@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,18 +38,4 @@ public class Employee {
         this.manager = manager;
         this.leaveBalance = leaveBalance;
     }
-
-    // todo: test this
-    public void setManager(Manager manager) {
-        // remove from old manager
-        if (this.manager != null) {
-            this.manager.removeSubordinate(this);
-        }
-
-        this.manager = manager;
-        if (manager != null) {
-            manager.addSubordinate(this);
-        }
-    }
-
 }
