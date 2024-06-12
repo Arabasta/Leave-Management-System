@@ -33,7 +33,7 @@
 
                 <!-- Manager Only -->
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/home/admin}">Home</a>
+                    <a class="nav-link" th:href="@{/home/manager}">Home</a>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
                     <a class="nav-link" th:href="@{/home/employee}">Employee Home</a>
