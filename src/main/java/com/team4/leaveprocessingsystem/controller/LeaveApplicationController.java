@@ -6,10 +6,12 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.service.EmailApiService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.PublicHolidayService;
+import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("leave")
 @Controller
@@ -30,6 +34,9 @@ public class LeaveApplicationController {
     private LeaveApplicationService leaveApplicationService;
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    EmailApiService emailApiService;
+
     @Autowired
     private LeaveApplicationValidator leaveApplicationValidator;
 
@@ -82,6 +89,15 @@ public class LeaveApplicationController {
 
         leaveApplicationService.save(leaveApplication);
 
+        Map<String, String> email =  EmailBuilderUtils.buildLeaveApplicationEmail(leaveApplication);
+        String recipient = email.get("recipient");
+        String subject = email.get("subject");
+        String text = email.get("text");
+        try {
+            emailApiService.sendEmail(recipient, subject, text);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         return "redirect:/leave/history";
     }
 
