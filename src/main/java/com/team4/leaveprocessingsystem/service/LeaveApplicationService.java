@@ -2,11 +2,14 @@ package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
@@ -35,5 +38,10 @@ public class LeaveApplicationService implements ILeaveApplication {
     @Transactional
     public long count() {
         return leaveApplicationRepository.count();
+    }
+
+    @Transactional
+    public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
+        return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
     }
 }

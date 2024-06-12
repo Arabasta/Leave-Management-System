@@ -1,11 +1,11 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
+import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 public class LeaveApplicationController {
     @Autowired
-    private ILeaveApplication leaveApplicationService;
+    private LeaveApplicationService leaveApplicationService;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -105,7 +105,7 @@ public class LeaveApplicationController {
     @GetMapping("history")
     public String leaveHistory(Model model){
         Employee employee = employeeService.findByName("employee"); // Replace with session get employee obj
-        List<LeaveApplication> allLeaves = employee.getLeaveApplications();
+        List<LeaveApplication> allLeaves = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("leaveApplications", allLeaves);
 
         return "leaveApplication/viewLeaveHistory";
