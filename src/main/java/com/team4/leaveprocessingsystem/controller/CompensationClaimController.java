@@ -4,9 +4,7 @@ import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundExcept
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
-import com.team4.leaveprocessingsystem.service.CompensationClaimService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.UserService;
+import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
 import jakarta.validation.Valid;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 // TODO: refactor Manager / Employee methods into different controller
 // TODO: refactor VIEW / CREATE / UPDATE methods into different controller
 // TODO: refactor using Spring Security, maybe different views for Admin / Employee
-// TODO: refactor detection of logged in User to use Sessions
+// TODO: refactor detection of logged in User to use Sessions . Kei, dont need session, fixed it for u
 @Controller
 @RequestMapping(value = "/compensation-claims")
 public class CompensationClaimController {
@@ -34,8 +32,11 @@ public class CompensationClaimController {
     private final UserService userService;
     private final LeaveBalanceService leaveBalanceService;
     private final CompensationClaimService compensationClaimService;
-    private final CompensationClaimValidator compensationClaimValidator;
-
+    private final EmployeeService employeeService;
+    private final AuthenticationService authenticationService;
+    // private final CompensationClaimValidator compensationClaimValidator;
+    @Autowired
+    private CompensationClaimValidator compensationClaimValidator;
     @InitBinder("compensation-claims")
     private void initCourseBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
@@ -43,11 +44,16 @@ public class CompensationClaimController {
 
     @Autowired
     public CompensationClaimController(UserService userService, LeaveBalanceService leaveBalanceService,
-                                       CompensationClaimService compensationClaimService, CompensationClaimValidator validator) {
+                                       CompensationClaimService compensationClaimService,
+                                       EmployeeService employeeService, AuthenticationService authenticationService
+                                       // ,CompensationClaimValidator validator
+    ) {
         this.userService = userService;
         this.leaveBalanceService = leaveBalanceService;
         this.compensationClaimService = compensationClaimService;
-        this.compensationClaimValidator = validator;
+        this.employeeService = employeeService;
+        //  this.compensationClaimValidator = validator;
+        this.authenticationService = authenticationService;
     }
 
     // TODO: implement with Spring Security instead
@@ -60,7 +66,7 @@ public class CompensationClaimController {
     @GetMapping("/history")
     public String viewCompensationClaims(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
 //        // TODO: implement redirectNonEmployee()
-        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         assert currentEmployee != null;
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaims", (compensationClaimService.findCompensationClaimsByEmployee(currentEmployee)));
@@ -74,9 +80,9 @@ public class CompensationClaimController {
     @ModelAttribute
     @GetMapping(value = "/create")
     // ref: check logged in user: https://stackoverflow.com/questions/45733193/how-to-get-id-of-currently-logged-in-user-using-spring-security-and-thymeleaf
-    // TODO: refactor using Sessions after it is implemented
-    public String createCompensationClaimPage(Model model, @AuthenticationPrincipal UserDetails currentUserDetails) {
-        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+    // TODO: refactor using Sessions after it is implemented. Kei, dont need session, fixed it for u
+    public String createCompensationClaimPage(Model model) {
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         model.addAttribute("employee", currentEmployee);
         model.addAttribute("compensationClaimService", compensationClaimService);
         model.addAttribute("compensationClaim", new CompensationClaim());
@@ -89,14 +95,13 @@ public class CompensationClaimController {
     //TODO: validate overtimeEndDateTime isBefore LocalDateTime.now()
     @PostMapping("/create-submit")
     public String createCompensationClaim(@ModelAttribute @Valid CompensationClaim compensationClaim,
-                                          @AuthenticationPrincipal UserDetails currentUserDetails,
                                           BindingResult bindingResult) {
         // Return back to page if validation has errors
         if (bindingResult.hasErrors()) {
             return "compensation-claims/create";
         }
         // Continue if no errors
-        Employee currentEmployee = userService.findByUsername(currentUserDetails.getUsername()).getEmployee();
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         compensationClaim.setClaimingEmployee(currentEmployee);
         compensationClaim.setApprovingManager(currentEmployee.getManager());
         float overtimeHours = (float) DateTimeCounterUtils.countCalendarHours(
