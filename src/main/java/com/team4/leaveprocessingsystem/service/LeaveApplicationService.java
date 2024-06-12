@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
     @Autowired
@@ -38,4 +40,11 @@ public class LeaveApplicationService implements ILeaveApplication {
     public long count() {
         return leaveApplicationRepository.count();
     }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId){
+        return leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+    }
+
 }
