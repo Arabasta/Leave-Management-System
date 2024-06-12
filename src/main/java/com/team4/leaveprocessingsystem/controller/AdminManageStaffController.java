@@ -2,15 +2,12 @@ package com.team4.leaveprocessingsystem.controller;
 
 import com.team4.leaveprocessingsystem.interfacemethods.IEmployee;
 import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.JobDesignation;
-
 import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.management.relation.Role;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -52,13 +48,13 @@ public class AdminManageStaffController {
                 model.addAttribute("staffs", employeeService.findAll());
                 break;
             case ("name"):
-                model.addAttribute("staffs", employeeService.SearchEmployeeByName(k));
+                model.addAttribute("staffs", employeeService.findEmployeesByName(k));
                 break;
             case ("jobDesignation"):
-                model.addAttribute("staffs", employeeService.findEmployeeByJobDesignation(k));
+                model.addAttribute("staffs", employeeService.findEmployeesByJobDesignation(k));
                 break;
             case ("roleType"):
-                model.addAttribute("staffs", employeeService.findUserByRoleType(k));
+                model.addAttribute("staffs", employeeService.findUsersByRoleType(k));
                 break;
             default:
                 return "errorStaffNotFound";
