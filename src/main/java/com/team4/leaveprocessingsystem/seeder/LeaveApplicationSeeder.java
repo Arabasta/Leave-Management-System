@@ -26,8 +26,8 @@ public class LeaveApplicationSeeder {
     public void seed() {
         if (leaveApplicationService.count() == 0) {
             // todo : add a lot more and modularise
-            Employee employee = employeeService.findByName("Employee");
-            Manager manager = employeeService.findManagerByName("Manager");
+            Employee employee = employeeService.findByName("Anya Forger");
+            Manager manager = employeeService.findManagerByName("Madara Uchiha");
 
             LeaveApplication leaveApplication1 = new LeaveApplication();
             leaveApplication1.setSubmittingEmployee(employee);

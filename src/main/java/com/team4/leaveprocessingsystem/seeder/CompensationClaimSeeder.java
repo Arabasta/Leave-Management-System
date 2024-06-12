@@ -29,8 +29,8 @@ public class CompensationClaimSeeder {
 
     public void seed() {
         if (compensationClaimService.count() == 0) {
-            Employee employee = employeeService.findByName("Employee");
-            Manager manager = employeeService.findManagerByName("Manager");
+            Employee employee = employeeService.findByName("Anya Forger");
+            Manager manager = employeeService.findManagerByName("Madara Uchiha");
             LeaveBalance employeeLeaveBalance = leaveBalanceService.findByEmployee(employee.getId());
 
             CompensationClaim compensationClaim1 = new CompensationClaim();
