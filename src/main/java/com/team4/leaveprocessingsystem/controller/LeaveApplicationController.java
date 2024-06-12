@@ -21,19 +21,23 @@ import java.util.List;
 @RequestMapping("leave")
 @Controller
 public class LeaveApplicationController {
-    @Autowired
-    private LeaveApplicationService leaveApplicationService;
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private LeaveBalanceService leaveBalanceService;
-
-    @Autowired
-    private LeaveApplicationValidator leaveApplicationValidator;
+    private final LeaveApplicationService leaveApplicationService;
+    private final EmployeeService employeeService;
+    private final LeaveBalanceService leaveBalanceService;
+    private final LeaveApplicationValidator leaveApplicationValidator;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
         binder.addValidators(leaveApplicationValidator);
+    }
+
+    @Autowired
+    public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
+                                      LeaveBalanceService leaveBalanceService, LeaveApplicationValidator leaveApplicationValidator) {
+        this.leaveApplicationService = leaveApplicationService;
+        this.employeeService = employeeService;
+        this.leaveBalanceService = leaveBalanceService;
+        this.leaveApplicationValidator = new LeaveApplicationValidator();
     }
 
     @GetMapping("create")

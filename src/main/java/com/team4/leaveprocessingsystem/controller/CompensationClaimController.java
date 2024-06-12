@@ -25,21 +25,23 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class CompensationClaimController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private LeaveBalanceService leaveBalanceService;
-
-    @Autowired
-    private CompensationClaimService compensationClaimService;
-
-    @Autowired
-    private CompensationClaimValidator compensationClaimValidator;
+    private final UserService userService;
+    private final LeaveBalanceService leaveBalanceService;
+    private final CompensationClaimService compensationClaimService;
+    private final CompensationClaimValidator compensationClaimValidator;
 
     @InitBinder("course")
     private void initCourseBinder(WebDataBinder binder) {
         binder.addValidators(compensationClaimValidator);
+    }
+
+    @Autowired
+    public CompensationClaimController(UserService userService, LeaveBalanceService leaveBalanceService,
+                                       CompensationClaimService compensationClaimService, CompensationClaimValidator validator) {
+        this.userService = userService;
+        this.leaveBalanceService = leaveBalanceService;
+        this.compensationClaimService = compensationClaimService;
+        this.compensationClaimValidator = validator;
     }
 
     // TODO: implement with Spring Security instead
