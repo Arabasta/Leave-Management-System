@@ -2,14 +2,10 @@ package com.team4.leaveprocessingsystem.util;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
-import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
-import net.minidev.json.JSONObject;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +17,6 @@ public class EmailBuilderUtils {
 
         String employeeName = employee.getName();
         String managerName = employee.getManager().getName();
-        String employeeEmail= employee.getUsers().get(0).getEmail();
         String subject = "";
         String startDate = leaveApplication.getStartDate().toString();
         String endDate = leaveApplication.getEndDate().toString();
@@ -29,7 +24,7 @@ public class EmailBuilderUtils {
         String reason= leaveApplication.getSubmissionReason();
         String rejectionReason= leaveApplication.getRejectionReason();
         String rejectionReasonStr = "";
-        if (rejectionReason != null && rejectionReason != ""){
+        if (rejectionReason != null && rejectionReason.isEmpty()){
             rejectionReasonStr = "- Rejection Reason: " + rejectionReason + "<br>";
         }
         String applicationUrlForEmployee = "http://localhost:8080/leave/view/" + leaveApplication.getId();
@@ -85,7 +80,6 @@ public class EmailBuilderUtils {
         String escapedHtmlContent = htmlContent.replaceAll("\\r?\\n", "\\\\n");
         escapedHtmlContent = escapedHtmlContent.replace("\"", "\\\"");
 
-        emailBuilder.put("recipient", employeeEmail);
         emailBuilder.put("subject", subject);
         emailBuilder.put("text", escapedHtmlContent);
 
