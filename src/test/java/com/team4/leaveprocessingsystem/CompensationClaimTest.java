@@ -1,6 +1,8 @@
 package com.team4.leaveprocessingsystem;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import org.junit.jupiter.api.Test;
@@ -44,16 +46,31 @@ public class CompensationClaimTest {
     }
 
     @Test
-    public void testGetCompensationLeaveRequested() {
+    public void testGetClaimingEmployee() {
         CompensationClaim c = new CompensationClaim();
-        assertThat(c.getCompensationLeaveRequested()).isEqualTo(0f);
+        assertThat(c.getClaimingEmployee()).isNull();
     }
 
     @Test
-    public void testSetCompensationLeaveRequested() {
+    public void testSetClaimingEmployee() {
         CompensationClaim c = new CompensationClaim();
-        c.setCompensationLeaveRequested(1f);
-        assertThat(c.getCompensationLeaveRequested()).isEqualTo(1f);
+        Employee e = new Employee();
+        c.setClaimingEmployee(e);
+        assertThat(c.getClaimingEmployee()).isEqualTo(e);
+    }
+
+    @Test
+    public void testGetClaimedDateTime() {
+        CompensationClaim c = new CompensationClaim();
+        assertThat(c.getClaimDateTime()).isNull();
+    }
+
+    @Test
+    public void testSetClaimedDateTime() {
+        CompensationClaim c = new CompensationClaim();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        c.setClaimDateTime(localDateTime);
+        assertThat(c.getClaimDateTime()).isEqualTo(localDateTime);
     }
 
     @Test
@@ -97,20 +114,31 @@ public class CompensationClaimTest {
         assertThat(c.getOvertimeHours()).isEqualTo(1f);
     }
 
-    //    TODO: verify if test for Manager is needed;
-
     @Test
-    public void testGetClaimedDateTime() {
+    public void testGetCompensationLeaveRequested() {
         CompensationClaim c = new CompensationClaim();
-        assertThat(c.getClaimedDateTime()).isNull();
+        assertThat(c.getCompensationLeaveRequested()).isEqualTo(0f);
     }
 
     @Test
-    public void testSetClaimedDateTime() {
+    public void testSetCompensationLeaveRequested() {
         CompensationClaim c = new CompensationClaim();
-        LocalDateTime localDateTime = LocalDateTime.now();
-        c.setClaimedDateTime(localDateTime);
-        assertThat(c.getClaimedDateTime()).isEqualTo(localDateTime);
+        c.setCompensationLeaveRequested(1f);
+        assertThat(c.getCompensationLeaveRequested()).isEqualTo(1f);
+    }
+
+    @Test
+    public void testGetApprovingManager() {
+        CompensationClaim c = new CompensationClaim();
+        assertThat(c.getApprovingManager()).isNull();
+    }
+
+    @Test
+    public void testSetApprovingManager() {
+        CompensationClaim c = new CompensationClaim();
+        Manager m = new Manager();
+        c.setApprovingManager(m);
+        assertThat(c.getApprovingManager()).isEqualTo(m);
     }
 
     @Test
@@ -126,8 +154,6 @@ public class CompensationClaimTest {
         c.setReviewedDateTime(localDateTime);
         assertThat(c.getReviewedDateTime()).isEqualTo(localDateTime);
     }
-
-    //    TODO: verify if test for Employee is needed;
 
     @Test
     public void testGetComments() {
