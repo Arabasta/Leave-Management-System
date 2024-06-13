@@ -138,8 +138,7 @@ public class LeaveApplicationController {
     @GetMapping("managerView")
     public String managerViewLeave(Model model) throws IllegalAccessException {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        RoleEnum role = authenticationService.getLoggedInRole();
-        if (role != RoleEnum.ROLE_MANAGER){
+        if(!authenticationService.isLoggedInAManager()){
             throw new IllegalAccessException();
         }
         int managerId = employee.getId();
