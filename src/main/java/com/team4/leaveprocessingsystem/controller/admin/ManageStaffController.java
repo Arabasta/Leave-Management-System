@@ -1,6 +1,9 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
-import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.JobDesignation;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,10 +168,10 @@ public class ManageStaffController {
                                  Model model) {
         Employee employee = employeeService.findEmployeeById(employeeId);
 
-        // todo: fix bug, soft delete works, but always see error page before the
-        //  the employee disappears
+        // todo: fix bug, soft delete works sometimes only.
 
-        employee.setDeleted(true);
+        //employee.setDeleted(true);
+        employeeService.removeEmployee(employee);
 
         // TESTING - without soft delete, only able to remove Mikasa
         /*
