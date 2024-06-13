@@ -30,6 +30,7 @@ public class CompensationClaimController {
     private final AuthenticationService authenticationService;
     private final CompensationClaimValidator compensationClaimValidator;
     private final EmployeeService employeeService;
+    private final ManagerService managerService;
 
     @InitBinder
     private void initCompensationClaimBinder(WebDataBinder binder) {
@@ -39,12 +40,14 @@ public class CompensationClaimController {
     @Autowired
     public CompensationClaimController(AuthenticationService authenticationService,
                                        EmployeeService employeeService,
+                                       ManagerService managerService,
                                        LeaveBalanceService leaveBalanceService,
                                        CompensationClaimService compensationClaimService,
                                        CompensationClaimValidator validator) {
 
         this.authenticationService = authenticationService;
         this.employeeService = employeeService;
+        this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
         this.compensationClaimService = compensationClaimService;
         this.compensationClaimValidator = validator;
@@ -108,7 +111,8 @@ public class CompensationClaimController {
     */
     @GetMapping("/update/{id}")
     public String updateCompensationClaimPage(@PathVariable Integer id, Model model) {
-        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimById(id);
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimIfBelongsToEmployee(id, currentEmployee);
         compensationClaim.setClaimDateTime(LocalDateTime.now());
         model.addAttribute("compensationClaim", compensationClaim);
         return "compensation-claims/update";
@@ -144,7 +148,8 @@ public class CompensationClaimController {
      */
     @GetMapping(value = "/withdraw/{id}")
     public String withdrawCompensationClaim(@PathVariable Integer id) {
-        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimById(id);
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimIfBelongsToEmployee(id, currentEmployee);
         compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.save(compensationClaim);
         return "redirect:/compensation-claims/history";
@@ -156,7 +161,8 @@ public class CompensationClaimController {
     @ModelAttribute
     @GetMapping("/pending")
     public String pendingCompensationClaims(Model model) {
-        Manager currentManager = (Manager) employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        Manager currentManager =
+                managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         Map<String, List<CompensationClaim>> employeesPendingClaims =
                 compensationClaimService.findCompensationClaimsPendingReviewByManager(currentManager);
         model.addAttribute("employeesPendingClaims", employeesPendingClaims);
@@ -168,7 +174,10 @@ public class CompensationClaimController {
     */
     @GetMapping("/review/{id}")
     public String reviewCompensationClaimPage(@PathVariable Integer id, Model model) {
-        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimById(id);
+        Manager currentManager =
+                managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
+        CompensationClaim compensationClaim =
+                compensationClaimService.findCompensationClaimIfBelongsToManagerForReview(id, currentManager);
         model.addAttribute("compensationClaim", compensationClaim);
         return "compensation-claims/review";
     }

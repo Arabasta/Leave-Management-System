@@ -18,6 +18,8 @@ public interface ICompensationClaim {
 
     CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee);
 
+    CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager);
+
     float calculateOvertimeHours(CompensationClaim compensationClaim);
 
     float calculateLeaveRequested(CompensationClaim compensationClaim);
