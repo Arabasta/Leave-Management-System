@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+    <body>
+    <div th:replace="fragments/navbar :: menu"></div>
+    <h1>View Compensation Claim Details</h1>
+    <table style="table-layout:fixed" th:object="${compensationClaim}">
+        <thead>
+            <tr>
+                <td>Claim Id</td>
+                <td>Overtime Start</td>
+                <td>Overtime End</td>
+                <td>Overtime Hours</td>
+                <td>Eligible Compensation Leave</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="${compensationClaim.id}"></td>
+                <td th:text="${#temporals.format(compensationClaim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${#temporals.format(compensationClaim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${compensationClaim.overtimeHours}"></td>
+                <td th:text="${compensationClaim.compensationLeaveRequested}"></td>
+                <td th:text="${compensationClaim.compensationClaimStatus}"></td>
+            </tr>
+            <tr>
+                <td colspan="6" style="white-space: pre-line" th:text="
+                ${compensationClaim.compensationClaimStatus.name()}+' on '+
+                ${#temporals.format(compensationClaim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}+' by '+
+                ${compensationClaim.approvingManager.getName()}"></td>
+            </tr>
+            <tr>
+                <td>Comments:</td>
+            </tr>
+            <tr th:if="${compensationClaim.comments != null}">
+                <td colspan="6" style="white-space: pre-line" th:text="${compensationClaim.comments}"></td>
+            </tr>
+            <tr th:unless="${compensationClaim.comments != null}">
+                <td> <em>N.A.</em> </td>
+            </tr>
+            <tr>
+                <td>
+                    <a th:href="@{/compensation-claims/history}" class="button is-primary">Back</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </body>
+</html>

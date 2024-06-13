@@ -79,9 +79,20 @@ public class CompensationClaimService implements ICompensationClaim {
     @Transactional
     public CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee) {
         CompensationClaim compensationClaim = findCompensationClaimById(id);
-        // Ensure an employee only accesses his own compensationClaim
+        // Ensure that the CompensationClaim is only accessed by its ClaimingEmployee.
         if (!compensationClaim.getClaimingEmployee().getId().equals(employee.getId())) {
-            throw new CompensationClaimNotFoundException(employee.getName());
+            throw new CompensationClaimNotFoundException("Claim does not belong to "+employee.getName()+".");
+        }
+        return compensationClaim;
+    }
+
+    @Override
+    @Transactional
+    public CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager) {
+        CompensationClaim compensationClaim = findCompensationClaimById(id);
+        // Ensure that the CompensationClaim is only accessed by its ApprovingManager.
+        if (!compensationClaim.getApprovingManager().getId().equals(manager.getId())) {
+            throw new CompensationClaimNotFoundException("Claim is not assigned to "+manager.getName()+" for review.");
         }
         return compensationClaim;
     }
