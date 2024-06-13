@@ -104,4 +104,15 @@ public class CompensationClaimService implements ICompensationClaim {
         return compensationClaims;
     }
 
+    @Override
+    @Transactional
+    public List<Integer> allApprovingManagersIds()  {
+        return compensationClaimRepository.findApprovingManagersIds();
+    }
+
+    @Override
+    @Transactional
+    public List<Integer> allClaimingEmployees()  {
+        return compensationClaimRepository.findClaimingEmployeesIds();
+    }
 }

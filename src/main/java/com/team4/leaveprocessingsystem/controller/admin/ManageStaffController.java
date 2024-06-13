@@ -20,15 +20,19 @@ public class ManageStaffController {
     private final ManagerService managerService;
     private final LeaveBalanceService leaveBalanceService;
     private final UserService userService;
+    private final CompensationClaimService compensationClaimService;
+    private final LeaveApplicationService leaveApplicationService;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
-                                 ManagerService managerService, LeaveBalanceService leaveBalanceService, UserService userService) {
+                                 ManagerService managerService, LeaveBalanceService leaveBalanceService, UserService userService, CompensationClaimService compensationClaimService, LeaveApplicationService leaveApplicationService) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
         this.userService = userService;
+        this.compensationClaimService = compensationClaimService;
+        this.leaveApplicationService = leaveApplicationService;
     }
 
     @GetMapping("/")
@@ -128,7 +132,6 @@ public class ManageStaffController {
         return "admin/manage-staff/create-new-employee-form";
     }
 
-    // todo: fix bug, cannot save employee
     @PostMapping("/create")
     public String createNewEmployee(@Valid @ModelAttribute("employee") Employee employee,
                                     BindingResult bindingResult,
@@ -136,7 +139,7 @@ public class ManageStaffController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
-            model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
+            //model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
             //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
             model.addAttribute("isEditMode", false);
@@ -156,12 +159,20 @@ public class ManageStaffController {
     }
 
     // todo: add popup to confirm if want to delete
-    // todo: fix bug, see commit msg
+
     @GetMapping("/delete/{employeeId}")
     public String deleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
                                  Model model) {
         Employee employee = employeeService.findEmployeeById(employeeId);
 
+        // todo: fix bug, soft delete works, but always see error page before the
+        //  the employee disappears
+
+        employee.setDeleted(true);
+
+        // TESTING - without soft delete, only able to remove Mikasa
+        /*
+        // delete user accounts, before removing employee
         List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
 
         for (User user : employeeUserAccounts) {
@@ -169,8 +180,34 @@ public class ManageStaffController {
         }
 
         employeeService.removeEmployee(employee);
+        */
+
+        /*
+        // check if employee is approving or claiming existing compensation claims
+        List<Integer> allApprovingManagers = compensationClaimService.allApprovingManagersIds();
+        List<Integer> allClaimingEmployees = compensationClaimService.allClaimingEmployees();
+
+        // check if employee is approving or submitting application leaves
+        List<Integer> allReviewingManagers = leaveApplicationService.allReviewingManagersIds();
+        List<Integer> allSubmittingEmployees = leaveApplicationService.allClaimingEmployees();
+
+        if (allApprovingManagers.contains(employeeId) || allClaimingEmployees.contains(employeeId)
+        || allReviewingManagers.contains(employeeId) || allSubmittingEmployees.contains(employeeId)) {
+            //employee.setDeleted(true);
+            employeeService.removeEmployee(employee);
+        }
+        else {
+            // delete user accounts, before removing employee
+            List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
+
+            for (User user : employeeUserAccounts) {
+                //user.setDeleted(true);
+                userService.removeUser(user);
+            }
+        }
+         */
+
         return "redirect:/admin/manage-staff/";
     }
-
 
 }

@@ -61,4 +61,32 @@ public class LeaveApplicationService implements ILeaveApplication {
     public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
         return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
     }
+
+
+    @Override
+    @Transactional
+    public List<Integer> allReviewingManagersIds()  {
+        return leaveApplicationRepository.findReviewingManagersIds();
+    }
+
+    @Override
+    @Transactional
+    public List<Integer> allClaimingEmployees()  {
+        return leaveApplicationRepository.findSubmittingEmployeesIds();
+    }
+
+        /*
+
+    @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
+    List<Employee> findEmployeesByName(@Param("k") String keyword);
+
+    @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
+    List<Employee> findEmployeesByJobDesignation(@Param("k") String keyword);
+
+    @Query("Select e from Employee e " +
+            "JOIN User u ON e.id = u.employee.id " +
+            "where CAST(u.role as String) like CONCAT('%', :k, '%')")
+    List<Employee> findUsersByRoleType(@Param("k") String keyword);
+
+    * */
 }

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +21,8 @@ import java.util.Collections;
 @Getter
 @Entity
 @Table(name = "users") // cause 'user' reserved in sql
+@SQLDelete(sql = "update users set deleted = true where id=?") // changes deleted field into true rather than deleting data permanently
+@Where(clause = "deleted=false") // read only employees where deleted=false
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +50,8 @@ public class User implements UserDetails {
 
     private LocalDateTime createDateTime;
     private LocalDateTime updateDateTime;
+
+    private boolean deleted = Boolean.FALSE;
 
     public User() {}
 
