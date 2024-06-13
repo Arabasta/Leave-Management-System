@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+<title>Pending Leave Applications</title>
+
+<table>
+    <tr>
+        <!-- TODO: to implement save as CSV function-->
+        <td><a class="button is-primary">Save as CSV</a></td>
+    </tr>
+</table>
+<br>
+
+<h3 th:if="${#maps.isEmpty(pendingLeaveApplications)}">There are no pending Leave Applications.</h3>
+
+<!-- Loop through employees -->
+<th:block th:each="employee:${pendingLeaveApplications}">
+    <table>
+        <tr>
+            <td colspan="6" th:text="${employee.key}"></td>
+        </tr>
+        <tr>
+            <td>Leave Application Id</td>
+            <td>Start Date</td>
+            <td>End Date</td>
+            <td>Submission Reason</td>
+            <td>Status</td>
+            <td>Details</td>
+        </tr>
+        <!-- Loop through leave -->
+        <th:block th:each="application:${employee.value}">
+            <th:block ${application.id} th:if="${application.leaveStatus =='APPLIED'}
+            or ${application.leaveStatus == 'UPDATED'}">
+
+                <tr>
+                    <td th:text="${application.id}"></td>
+                    <td th:text="${#temporals.format(application.startDate, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(application.endDate, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${application.submissionReason}"></td>
+                    <td th:text="${application.leaveStatus}"></td>
+                    <td th:if="${application.leaveStatus}=='APPLIED' or
+                                ${application.leaveStatus}=='UPDATED'">
+                        <a th:href="@{/pendingleaveapplications/review/{id}(id=${application.id})}" class="button is-primary">Details</a></td>
+                </tr>
+            </th:block>
+        </th:block>
+    </table>
+    <br>
+
+</th:block>
+
+</body>
+</html>

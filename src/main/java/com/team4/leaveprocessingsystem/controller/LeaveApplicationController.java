@@ -1,8 +1,8 @@
 package com.team4.leaveprocessingsystem.controller;
 
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
-import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.AuthenticationService;
@@ -11,13 +11,17 @@ import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 // todo: add and refactor into a LeaveHistoryController
 @RequestMapping("leave")
@@ -166,4 +170,42 @@ public class LeaveApplicationController {
         model.addAttribute("personalLeaveApplications", personalLeaveApplications);
         return "leaveApplication/personalViewLeave";
     }
+
+    // MANAGER - GET - PENDING LEAVE APPLICATIONS
+    @GetMapping("/pendingleaveapplications")
+    public String pendingleaveapplications(Model model) {
+        Manager currentManager = (Manager) employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        Map<String, List<LeaveApplication>> pendingLeaveApplications = leaveApplicationService.findLeaveApplicationsPendingApprovalByManager(currentManager);
+        model.addAttribute("pendingLeaveApplications", pendingLeaveApplications);
+        return "leaveApplication/pendingleaveapplications";
+    }
+
+    // MANAGER - GET - REVIEW LEAVE APPLICATIONS DETAILS
+    @GetMapping("/review/{id}")
+    public String leaveapplicationsDetails(@PathVariable Integer id, Model model) {
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/reviewLeave";
+    }
+
+    // MANAGER - POST - REVIEW LEAVE APPLICATION
+    @PostMapping("/submitLeaveApplication")
+    public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave, BindingResult bindingResult, Model model) {
+        // Return back to page if validation has errors
+        if (bindingResult.hasErrors()) {
+            return "leaveApplication/reviewLeave";
+        }
+
+        // Check if the leave is rejected and ensure the rejection reason is provided
+        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED && (leave.getRejectionReason() == null || leave.getRejectionReason().trim().isEmpty())) {
+            bindingResult.rejectValue("rejectionReason", "error.leave", "Rejection reason must be provided if the leave is rejected");
+            return "leaveApplication/reviewLeave";
+        }
+
+        // Save the leave application status
+        leaveApplicationService.save(leave);
+        return "redirect:/pendingleaveapplications";
+    }
+
+
 }
