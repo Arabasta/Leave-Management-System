@@ -9,4 +9,6 @@ public interface IJobDesignation {
     JobDesignation findByName(String name);
 
     List<JobDesignation> listAllJobDesignations();
+
+    JobDesignation findJobDesignationById(Integer id);
 }

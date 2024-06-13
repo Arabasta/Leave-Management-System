@@ -14,14 +14,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByManager(Manager manager);
 
     @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
-    List<Employee> SearchEmployeeByName(@Param("k") String keyword);
+    List<Employee> findEmployeesByName(@Param("k") String keyword);
 
     @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
-    List<Employee> findEmployeeByJobDesignation(@Param("k") String keyword);
+    List<Employee> findEmployeesByJobDesignation(@Param("k") String keyword);
 
     @Query("Select e from Employee e " +
-            "join e.users u " +
+            "JOIN User u ON e.id = u.employee.id " +
             "where CAST(u.role as String) like CONCAT('%', :k, '%')")
-    List<Employee> findUserByRoleType(@Param("k") String keyword);
+    List<Employee> findUsersByRoleType(@Param("k") String keyword);
 
 }

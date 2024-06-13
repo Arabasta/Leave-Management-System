@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.interfacemethods;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -13,8 +14,14 @@ public interface IEmployee {
     long count();
 
     List<Employee> findAll();
-    List<Employee> SearchEmployeeByName(String keyword);
-    List<Employee> findEmployeeByJobDesignation(String jobDesignation);
-    List<Employee> findUserByRoleType(String roleType);
+
+    List<Employee> findEmployeesByName(String keyword);
+
+    List<Employee> findEmployeesByJobDesignation(String jobDesignation);
+
+    List<Employee> findUsersByRoleType(String roleType);
     Employee findEmployeeById(int id);
+
+    @Transactional
+    void removeEmployee(Employee employee);
 }

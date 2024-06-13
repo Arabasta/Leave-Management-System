@@ -2,8 +2,10 @@ package com.team4.leaveprocessingsystem.interfacemethods;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.Manager;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ICompensationClaim {
     boolean save(CompensationClaim compensationClaim);
@@ -12,13 +14,15 @@ public interface ICompensationClaim {
 
     long count();
 
-    CompensationClaim findCompensationClaim(Integer id);
+    CompensationClaim findCompensationClaimById(Integer id);
 
-    CompensationClaim changeCompensationClaim(CompensationClaim compensationClaim);
+    CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee);
 
-    Long countCalendarHours(CompensationClaim compensationClaim);
+    CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager);
 
-    float overtimeHours(CompensationClaim compensationClaim);
+    float calculateOvertimeHours(CompensationClaim compensationClaim);
 
-    float compensationLeaveRequested(float overtimeHours);
+    float calculateLeaveRequested(CompensationClaim compensationClaim);
+
+    Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager);
 }

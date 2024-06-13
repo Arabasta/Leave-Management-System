@@ -22,30 +22,44 @@
 
                 <!-- Admin Only -->
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    <a class="nav-link" th:href="@{/home/admin}">Home</a>
+                    <a class="nav-link" th:href="@{/admin/home}">Home</a>
+                <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/manage-staff/}">Manage Staff</a>
                 </li>
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <a class="nav-link" th:href="@{/admin/leave-entitlement/}">Leave Entitlement</a>
                 </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/manage-leave-types/}">Manage Leave Types</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/manage-hierarchy/}">Manage Hierarchy</a>
+                </li>
 
                 <!-- Manager Only -->
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/home/admin}">Home</a>
+                    <a class="nav-link" th:href="@{/manager/home}">Home</a>
                 </li>
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/home/employee}">Employee Home</a>
+                    <a class="nav-link" th:href="@{/employee/home}">Employee Home</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/leave/managerView}">View Subordinates Leaves</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/compensation-claims/pending}">Review Compensation Requests</a>
                 </li>
 
                 <!-- Employee Only -->
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''EMPLOYEE'')')}">
-                    <a class="nav-link" th:href="@{/home/employee}">Home</a>
+                    <a class="nav-link" th:href="@{/employee/home}">Home</a>
                     <a class="nav-link" th:href="@{/leave/create}">Apply Leave</a>
-                    <a class="nav-link" th:href="@{/leave/history}">View Leave History</a>
+                    <a class="nav-link" th:href="@{/leave/personalHistory}">View Leave History</a>
                 </li>
 
                 <!-- Employee + Manager -->
-                <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE, MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/your/employee/applyLeavePage}">Apply Leave</a>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/compensation-claims/history}">My Compensation Claims</a>
                 </li>
             </ul>
         </div>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+<h1>Review Compensation Claim Requests</h1>
+
+<table>
+    <tr>
+        <!-- TODO: to implement save as CSV function-->
+        <td><a class="button is-primary">Save as CSV</a></td>
+    </tr>
+</table>
+<br>
+
+<h3 th:if="${#maps.isEmpty(employeesPendingClaims)}">There are no pending Compensation Claims.</h3>
+
+<!-- Loop through employees -->
+<th:block th:each="employee:${employeesPendingClaims}">
+    <table>
+        <tr>
+            <td colspan="6" th:text="${employee.key}"></td>
+        </tr>
+        <tr>
+            <td>Claim Id</td>
+            <td>Overtime Start</td>
+            <td>Overtime End</td>
+            <td>Overtime Hours</td>
+            <td>Eligible Compensation Leave</td>
+            <td>Review</td>
+        </tr>
+        <!-- Loop through claims -->
+        <th:block th:each="claim:${employee.value}">
+            <th:block th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                        ${claim.compensationClaimStatus.name()}=='UPDATED'">
+
+                <tr>
+                    <td th:text="${claim.id}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${claim.overtimeHours}"></td>
+                    <td th:text="${claim.compensationLeaveRequested}"></td>
+                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
+                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
+                        <a th:href="@{/compensation-claims/review/{id}(id=${claim.id})}" class="button is-primary">Review</a></td>
+                </tr>
+            </th:block>
+        </th:block>
+    </table>
+    <br>
+
+</th:block>
+
+</body>
+</html>

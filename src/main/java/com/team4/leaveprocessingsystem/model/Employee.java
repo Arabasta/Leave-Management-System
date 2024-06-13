@@ -3,39 +3,32 @@ package com.team4.leaveprocessingsystem.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DiscriminatorOptions;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "EMP_TYPE")
+@DiscriminatorOptions(force = true)
+
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull(message = "Job Designation cannot be blank")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private JobDesignation jobDesignation;
-
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<User> users = new ArrayList<>();
 
     @ManyToOne
     private Manager manager;
 
     @OneToOne(orphanRemoval = true)
     private LeaveBalance leaveBalance;
-
-    @OneToMany(mappedBy = "submittingEmployee", orphanRemoval = true)
-    private List<LeaveApplication> leaveApplications;
-
-    @OneToMany(mappedBy = "claimingEmployee", orphanRemoval = true)
-    private List<CompensationClaim> compensationClaims;
 
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -48,22 +41,5 @@ public class Employee {
         this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
-        this.users = new ArrayList<>();
-    }
-
-    public void setManager(Manager manager) {
-        // remove from old manager
-        if (this.manager != null) {
-            this.manager.removeSubordinate(this);
-        }
-
-        this.manager = manager;
-        if (manager != null) {
-            manager.addSubordinate(this);
-        }
-    }
-
-    public void setUser(User user) {
-        users.add(user);
     }
 }

@@ -73,7 +73,7 @@ public class LeaveApplicationValidator implements Validator {
 
         // Get number of leave days pending approval (leave application status is APPLIED or UPDATED)
         Employee employee = leaveapplication.getSubmittingEmployee();
-        List<LeaveApplication> allLeaveApplications = employee.getLeaveApplications();
+        List<LeaveApplication> allLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
         Map<Object, Object> pendingLeaveMap = allLeaveApplications.stream()
                 .filter(x -> (x.getLeaveStatus() == LeaveStatusEnum.APPLIED || x.getLeaveStatus() == LeaveStatusEnum.UPDATED))
                 .collect(Collectors.toMap(x -> x.getLeaveType(), x -> DateTimeCounterUtils.numOfLeaveToBeCounted(x.getStartDate(), x.getEndDate(), x.getLeaveType(), publicHolidayService),
@@ -101,7 +101,7 @@ public class LeaveApplicationValidator implements Validator {
 
     private void ensureNoOverlap(LeaveApplication leaveApplication, LocalDate startDate, LocalDate endDate, Errors errors) {
         Employee employee = leaveApplication.getSubmittingEmployee();
-        List<LeaveApplication> allLeaveApplications = employee.getLeaveApplications();
+        List<LeaveApplication> allLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
 
         // When editing an existing application, it will not be invalidated
         if (leaveApplication.getId() != null) {

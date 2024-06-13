@@ -14,12 +14,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LeaveBalanceService implements ILeaveBalance {
+    private final LeaveBalanceRepository leaveBalanceRepository;
+    private final PublicHolidayService publicHolidayService;
+    private final EmployeeService employeeService;
     @Autowired
-    LeaveBalanceRepository leaveBalanceRepository;
-    @Autowired
-    PublicHolidayService publicHolidayService;
-    @Autowired
-    EmployeeService employeeService;
+    public LeaveBalanceService(LeaveBalanceRepository leaveBalanceRepository, PublicHolidayService publicHolidayService, EmployeeService employeeService) {
+        this.leaveBalanceRepository = leaveBalanceRepository;
+        this.publicHolidayService = publicHolidayService;
+        this.employeeService = employeeService;
+
+    }
 
     @Override
     @Transactional
@@ -85,5 +89,11 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Transactional
     public LeaveBalance findByEmployee(int employee_id) {
         return employeeService.findEmployeeById(employee_id).getLeaveBalance();
+    }
+
+    @Override
+    @Transactional
+    public LeaveBalance findLeaveBalanceById(int id) {
+        return leaveBalanceRepository.findById(id).orElseThrow();
     }
 }

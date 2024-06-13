@@ -1,0 +1,120 @@
+/*
+
+Used by Manage Hierarchy for styling the unordered list into a tree structure
+    css created due to https://dumptyd.github.io/treeflex/ css library not working on recursive fragments
+    css created with ChatGPT's assitance */
+.edit-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+}
+
+/* tree node */
+.tree li .node {
+    border: 2px solid #ccc;
+    padding: 5px 10px;
+    color: #404040;
+    background-color: #fff;
+    font-size: 20px;
+    display: inline-block;
+    border-radius: 10px;
+    transition: 0.4s;
+}
+
+/* hover node */
+.tree li .node:hover {
+    background-color: #fffbfb;
+    color: #4a4a4a;
+    border-color: #bdbdbd;
+}
+
+/* hover edit icon */
+.tree li .node:hover .edit-icon {
+    content: url('../icons/edit-icon-animated.gif');
+}
+
+/* child node when hovering parent */
+.tree li .node:hover + ul li .node {
+    background: #828282;
+    color: #fff;
+    border: 2px solid #828282;
+}
+
+/* node href */
+.tree li .node a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* hover lines */
+.tree li .node:hover + ul li::after,
+.tree li .node:hover + ul li::before,
+.tree li .node:hover + ul::before,
+.tree li .node:hover + ul ul::before {
+    border-color: #828282;
+}
+
+/* tree */
+.tree ul {
+    padding-top: 20px;
+    position: relative;
+}
+
+.tree li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+}
+
+/* Tree line stuff */
+/* horizontal lines */
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    border-top: 2px solid #ccc;
+    width: 50%;
+    height: 20px;
+}
+
+/* top vertical lines */
+.tree ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 2px solid #ccc;
+    width: 0;
+    height: 20px;
+}
+
+/* bottom vertical lines */
+.tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 2px solid #ccc;
+}
+
+/* vertical lines for child nodes */
+.tree li:last-child::before {
+    border-right: 2px solid #ccc;
+    border-radius: 0 5px 0 0;
+}
+
+/* remove padding to move nodes closer */
+.tree li:only-child {
+    padding-top: 0;
+}
+
+/* remove overlapping lines */
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+
+/* remove overlapping lines */
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}

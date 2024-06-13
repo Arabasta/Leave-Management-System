@@ -1,25 +1,34 @@
 package com.team4.leaveprocessingsystem.service;
 
+import com.team4.leaveprocessingsystem.exception.CompensationClaimNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ICompensationClaim;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.repository.CompensationClaimRepository;
-import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 @Service
 public class CompensationClaimService implements ICompensationClaim {
 
+    private final CompensationClaimRepository compensationClaimRepository;
+    private final EmployeeService employeeService;
+
     @Autowired
-    CompensationClaimRepository compensationClaimRepository;
+    public CompensationClaimService(CompensationClaimRepository compensationClaimRepository, EmployeeService employeeService) {
+        this.compensationClaimRepository = compensationClaimRepository;
+        this.employeeService = employeeService;
+    }
 
     @Override
     @Transactional
@@ -35,10 +44,9 @@ public class CompensationClaimService implements ICompensationClaim {
 
     public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
         try {
-            //TODO: to verify if this should call employeeService for the List instead of the model directly
-            return employee.getCompensationClaims();
-        } catch (NoSuchElementException e) {
-            return null;
+            return compensationClaimRepository.findByClaimingEmployee(employee);
+        } catch (CompensationClaimNotFoundException e) {
+            throw new CompensationClaimNotFoundException(employee.getName(), e);
         }
     }
 
@@ -48,35 +56,63 @@ public class CompensationClaimService implements ICompensationClaim {
 
     @Override
     @Transactional
-    public float overtimeHours(CompensationClaim compensationClaim) {
+    public float calculateOvertimeHours(CompensationClaim compensationClaim) {
         LocalDateTime start = compensationClaim.getOvertimeStartDateTime();
         LocalDateTime end = compensationClaim.getOvertimeEndDateTime();
+        if (start == null || end == null) return 0;
         return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) : 0;
     }
 
     @Override
     @Transactional
-    public float compensationLeaveRequested(float overtimeHours) {
-        return (int) (overtimeHours / 4) * 0.5f;
+    public float calculateLeaveRequested(CompensationClaim compensationClaim) {
+        return (int) (calculateOvertimeHours(compensationClaim) / 4) * 0.5f;
     }
 
     @Override
     @Transactional
-    public CompensationClaim findCompensationClaim(Integer id) {
+    public CompensationClaim findCompensationClaimById(Integer id) {
         return compensationClaimRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public CompensationClaim changeCompensationClaim(CompensationClaim compensationClaim) {
-        return compensationClaimRepository.saveAndFlush(compensationClaim);
+    public CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee) {
+        CompensationClaim compensationClaim = findCompensationClaimById(id);
+        // Ensure that the CompensationClaim is only accessed by its ClaimingEmployee.
+        if (!compensationClaim.getClaimingEmployee().getId().equals(employee.getId())) {
+            throw new CompensationClaimNotFoundException("Claim does not belong to "+employee.getName()+".");
+        }
+        return compensationClaim;
     }
 
     @Override
     @Transactional
-    public Long countCalendarHours(CompensationClaim compensationClaim) {
-        return DateTimeCounterUtils.countCalendarHours(
-                compensationClaim.getOvertimeStartDateTime(),
-                compensationClaim.getOvertimeEndDateTime());
+    public CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager) {
+        CompensationClaim compensationClaim = findCompensationClaimById(id);
+        // Ensure that the CompensationClaim is only accessed by its ApprovingManager.
+        if (!compensationClaim.getApprovingManager().getId().equals(manager.getId())) {
+            throw new CompensationClaimNotFoundException("Claim is not assigned to "+manager.getName()+" for review.");
+        }
+        return compensationClaim;
     }
+
+    @Override
+    @Transactional
+    public Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager) {
+        Map<String, List<CompensationClaim>> compensationClaims = new HashMap<>();
+        List<Employee> employeeList = employeeService.findEmployeesByManager(manager);
+        for (Employee employee : employeeList) {
+            List<CompensationClaim> claims = findCompensationClaimsByEmployee(employee)
+                    .stream()
+                    .filter(claim -> claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.APPLIED
+                        || claim.getCompensationClaimStatus() == CompensationClaimStatusEnum.UPDATED)
+                    .toList();
+            if (!claims.isEmpty()) {
+                compensationClaims.put(employee.getName(), claims);
+            }
+        }
+        return compensationClaims;
+    }
+
 }

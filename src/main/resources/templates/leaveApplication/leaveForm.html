@@ -11,6 +11,7 @@
     </h3>
 
     <form th:action="@{/leave/save}" method="post">
+        <input type="hidden" name="applicationStatus" th:value="${applicationStatus}" />
         <input type="hidden" name="applicationId" th:field="${leave.id}" />
         <input type="hidden" name="submittingEmployee" th:field="${leave.submittingEmployee}" />
         <input type="hidden" name="reviewingManager" th:field="${leave.reviewingManager}" />

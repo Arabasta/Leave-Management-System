@@ -39,13 +39,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/images/team_4_logo.png", "/auth/login", "/js/auth/loginValidation.js").permitAll()
 
                          // employee
-                        .requestMatchers("/", "/home/employee").hasAnyRole("EMPLOYEE", "MANAGER")
+                        .requestMatchers("/", "/employee/home").hasAnyRole("EMPLOYEE", "MANAGER")
 
                         // manager
-                        .requestMatchers("/", "/home/manager").hasRole("MANAGER")
+                        .requestMatchers("/", "/manager/home/").hasRole("MANAGER")
 
                         // admin
-                        .requestMatchers("/", "/home/admin").hasRole("ADMIN")
+                        .requestMatchers("/", "/admin/home").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
 

@@ -13,9 +13,12 @@ import java.util.List;
 
 @Service
 public class JobDesignationService implements IJobDesignation {
-    @Autowired
-    JobDesignationRepository jobDesignationRepository;
+    private final JobDesignationRepository jobDesignationRepository;
 
+    @Autowired
+    public JobDesignationService(JobDesignationRepository jobDesignationRepository) {
+        this.jobDesignationRepository = jobDesignationRepository;
+    }
     @Override
     @Transactional
     public boolean save(JobDesignation jobDesignation) {
@@ -38,5 +41,12 @@ public class JobDesignationService implements IJobDesignation {
     @Transactional
     public List<JobDesignation> listAllJobDesignations() {
         return jobDesignationRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public JobDesignation findJobDesignationById(Integer id) {
+        return jobDesignationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Job Designation " + id + " not found"));
     }
 }
