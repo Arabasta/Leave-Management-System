@@ -7,6 +7,15 @@
 <div th:replace="fragments/navbar :: menu"></div>
 
 <div class="container w-50 mt-5 text-center">
+    <!-- hidden fields -->
+    <input name="employeeId" th:value="${employeeId}" type="hidden"/>
+    <!--
+    <input name="leaveBalance" th:field="${autoAssignedLeaveBalance}" type="hidden"/>
+    -->
+
+    <input name="manager" th:field="${autoAssignedManager}" type="hidden"/>
+
+
     <h1 class="mb-3 mt-3 text-center">Create Employee</h1>
 
     <!-- todo: include validation for the respective fields -->
@@ -15,13 +24,6 @@
             <label class="col-4 col-form-label" for="employeeName">Name:</label>
             <div class="col-8">
                 <input class="form-control" id="employeeName" th:field="*{name}" type="text"/>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="employeeAssignedManager">Assigned Manager:</label>
-            <div class="col-8">
-                <input class="form-control" id="employeeAssignedManager" th:field="*{manager}" type="text"/>
             </div>
         </div>
 

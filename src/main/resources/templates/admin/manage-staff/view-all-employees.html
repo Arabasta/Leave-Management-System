@@ -8,21 +8,23 @@
 <div class="container">
     <h1>All Employees</h1>
     <br>
-    <form class="form-inline" th:action="@{/admin/manage-staff/}">
-        <div class="form-group"  >
+    <form class="form-inline" method="get" th:action="@{/admin/manage-staff/}">
+        <div class="form-group">
             <div class="input-group">
                 <span class="input-group-text" id="basic-addon2">Filter By</span>
                 <div class="input-group-btn">
                     <select class="form-control" name="searchType">
-                        <option selected th:value="name" th:selected="${searchtype == 'name'}">Name</option>
-                        <option th:value="jobDesignation" th:selected="${searchtype == 'jobDesignation'}">Job Designation</option>
-                        <option th:value="roleType" th:selected="${searchtype == 'roleType'}">Role Type</option>
+                        <option selected th:selected="${searchtype == 'name'}" th:value="name">Name</option>
+                        <option th:selected="${searchtype == 'jobDesignation'}" th:value="jobDesignation">Job
+                            Designation
+                        </option>
+                        <option th:selected="${searchtype == 'roleType'}" th:value="roleType">Role Type</option>
                     </select>
                 </div>
 
-                <input type="search" class="form-control rounded" placeholder="Keyword"
+                <input class="form-control rounded" name="query" placeholder="Keyword"
                        aria-label="Search" aria-describedby="search-addon"
-                       name="query" th:value="${keyword}"/>
+                       th:value="${keyword}" type="search"/>
                 <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
 
             </div>

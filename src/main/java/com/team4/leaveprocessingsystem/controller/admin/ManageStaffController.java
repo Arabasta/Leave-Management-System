@@ -1,13 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
-import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.JobDesignation;
-import com.team4.leaveprocessingsystem.model.LeaveBalance;
-import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.ManagerService;
+import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,14 +19,16 @@ public class ManageStaffController {
     private final JobDesignationService jobDesignationService;
     private final ManagerService managerService;
     private final LeaveBalanceService leaveBalanceService;
+    private final UserService userService;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
-                                 ManagerService managerService, LeaveBalanceService leaveBalanceService) {
+                                 ManagerService managerService, LeaveBalanceService leaveBalanceService, UserService userService) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
+        this.userService = userService;
     }
 
     @GetMapping("/")
@@ -57,7 +53,7 @@ public class ManageStaffController {
         model.addAttribute("employees", employees);
         model.addAttribute("query", query);
         model.addAttribute("searchType", searchType);
-        return "admin/manage-staff/view-all";
+        return "admin/manage-staff/view-all-employees";
     }
 
     @GetMapping("/edit/{employeeId}")
@@ -116,32 +112,61 @@ public class ManageStaffController {
         employeeService.save(employee);
 
         model.addAttribute("isEditMode", false);
+        model.addAttribute("updateSuccess", true);
         model.addAttribute("employee", employee);
         return "admin/manage-staff/edit-employee-details-form";
     }
 
-    @GetMapping("/create")
+
+    @GetMapping("/add/employee")
     public String createNewEmployeeForm(Model model) {
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
-
         model.addAttribute("employee", new Employee());
+        model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
         model.addAttribute("jobDesignationList", jobDesignationList);
+        model.addAttribute("isEditMode", true);
+        model.addAttribute("updateSuccess", false);
 
         return "admin/manage-staff/create-new-employee-form";
     }
 
-
+    // todo: fix bug, cannot save employee
     @PostMapping("/create")
     public String createNewEmployee(@Valid @ModelAttribute("employee") Employee employee,
                                     BindingResult bindingResult,
                                     Model model) {
+
         if (bindingResult.hasErrors()) {
-            System.out.println("There are validation errors.");
             model.addAttribute("employee", new Employee());
+            model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
+            //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
+            model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
+            model.addAttribute("isEditMode", false);
+            model.addAttribute("updateSuccess", true);
+            return "admin/manage-staff/create-new-employee-form";
         }
 
-        // todo: include logic for creating new user account
+        employeeService.save(employee);
 
-        return "admin/manage-staff/create-new-employee-form";
+        return "redirect:/admin/manage-staff/";
     }
+
+    // todo: add popup to confirm if want to delete
+    // todo: fix bug, see commit msg
+    @GetMapping("/delete/{employeeId}")
+    public String deleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
+                                 Model model) {
+        Employee employee = employeeService.findEmployeeById(employeeId);
+
+        List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
+
+        for (User user : employeeUserAccounts) {
+            userService.removeUser(user);
+        }
+
+        employeeService.removeEmployee(employee);
+        return "redirect:/admin/manage-staff/";
+    }
+
+
 }

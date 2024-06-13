@@ -66,4 +66,10 @@ public class UserService implements UserDetailsService, IUser {
     public List<User> findUserRolesByEmployeeId(Integer employeeId) {
         return userRepository.findUserRolesByEmployeeId(employeeId);
     }
+
+    @Override
+    @Transactional
+    public void removeUser(User user) {
+        userRepository.delete(user);
+    }
 }
