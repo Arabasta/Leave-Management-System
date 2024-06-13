@@ -3,64 +3,18 @@ package com.team4.leaveprocessingsystem.util;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
+import net.minidev.json.JSONObject;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EmailBuilderUtils {
-    // used for notifying manager when an employee applies/updates a leave application
-    public static Map<String, String> buildLeaveApplicationEmail(LeaveApplication leaveApplication){
-        Map<String, String> emailBuilder = new HashMap<>();
-
-        Employee employee = leaveApplication.getSubmittingEmployee();
-
-        String employeeName = employee.getName();
-        String managerName = employee.getManager().getName();
-        String managerEmail= employee.getManager().getUsers().get(0).getEmail();
-        String subject = "";
-        LocalDate startDate = leaveApplication.getStartDate();
-        LocalDate endDate = leaveApplication.getEndDate();
-        String leaveType = leaveApplication.getLeaveType().toString();
-        String reason= leaveApplication.getSubmissionReason();
-        String applicationUrl = "http://localhost:8080/leave/managerView/" + leaveApplication.getId();
-
-        LeaveStatusEnum leaveStatus = leaveApplication.getLeaveStatus();
-        if (leaveStatus == LeaveStatusEnum.APPLIED){
-            subject = "New Leave Application: " + employeeName +
-                    " - Duration: " + startDate + " to " + endDate;
-        }
-        else if (leaveStatus == LeaveStatusEnum.UPDATED){
-            subject = "Updated Leave Application: " + employeeName +
-                    " - Duration: " + startDate + " to " + endDate;
-        }
-
-        String text = "Dear " + managerName + ",<br>" +
-                "<br>" +
-                "You have a new leave application pending your approval.<br>" +
-                "<br>" +
-                "Employee Name: " + employeeName + "<br>" +
-                "<br>" +
-                "Leave Details:<br>" +
-                "- Start Date: " + startDate + "<br>" +
-                "- End Date: " + endDate + "<br>" +
-                "- Leave Type: " + leaveType + "<br>" +
-                "- Reason: " + reason + "<br>" +
-                "<br>" +
-                "To review the leave application:<br>" +
-                "<a href=\"" + applicationUrl + "\">View Leave Application</a>";
-
-        String escapedText = text.replace("\"", "\\\"").replace("\n", "\\n");
-
-        emailBuilder.put("recipient", managerEmail);
-        emailBuilder.put("subject", subject);
-        emailBuilder.put("text", escapedText);
-
-        return emailBuilder;
-    }
-
-    // used for notifying employee when a manager approves/rejects a leave application
-    public static Map<String, String> buildLeaveApplicationResultEmail(LeaveApplication leaveApplication){
+    public static Map<String, String> buildNotificationEmail(LeaveApplication leaveApplication){
         Map<String, String> emailBuilder = new HashMap<>();
 
         Employee employee = leaveApplication.getSubmittingEmployee();
@@ -69,8 +23,8 @@ public class EmailBuilderUtils {
         String managerName = employee.getManager().getName();
         String employeeEmail= employee.getUsers().get(0).getEmail();
         String subject = "";
-        LocalDate startDate = leaveApplication.getStartDate();
-        LocalDate endDate = leaveApplication.getEndDate();
+        String startDate = leaveApplication.getStartDate().toString();
+        String endDate = leaveApplication.getEndDate().toString();
         String leaveType = leaveApplication.getLeaveType().toString();
         String reason= leaveApplication.getSubmissionReason();
         String rejectionReason= leaveApplication.getRejectionReason();
@@ -78,34 +32,62 @@ public class EmailBuilderUtils {
         if (rejectionReason != null && rejectionReason != ""){
             rejectionReasonStr = "- Rejection Reason: " + rejectionReason + "<br>";
         }
-        String applicationUrl = "http://localhost:8080/leave/view/" + leaveApplication.getId();
+        String applicationUrlForEmployee = "http://localhost:8080/leave/view/" + leaveApplication.getId();
+        // TODO: Change the url to the manager's view once implemented
+        String applicationUrlForManager = "http://localhost:8080/leave/view/" + leaveApplication.getId();
 
         String leaveStatus = leaveApplication.getLeaveStatus().toString();
-        subject = "Leave Application " + leaveStatus + ": " + employeeName +
-                " - Duration: " + startDate + " to " + endDate;
 
-        String text = "Dear " + employeeName + ",<br>" +
-                "<br>" +
-                "Your leave application has been " + leaveStatus + ".<br>" +
-                "<br>" +
-                "Employee Name: " + employeeName + "<br>" +
-                "Manager Name: " + managerName + "<br>" +
-                "<br>" +
-                "Leave Details:<br>" +
-                "- Start Date: " + startDate + "<br>" +
-                "- End Date: " + endDate + "<br>" +
-                "- Leave Type: " + leaveType + "<br>" +
-                "- Reason: " + reason + "<br>" +
-                rejectionReasonStr +
-                "<br>" +
-                "To view your leave application:<br>" +
-                "<a href=\"" + applicationUrl + "\">View Leave Application</a>";
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("${managerName}", managerName);
+        placeholders.put("${employeeName}", employeeName);
+        placeholders.put("${startDate}", startDate);
+        placeholders.put("${endDate}", endDate);
+        placeholders.put("${leaveType}", leaveType);
+        placeholders.put("${reason}", reason);
 
-        String escapedText = text.replace("\"", "\\\"").replace("\n", "\\n");
+        placeholders.put("${leaveStatus}", leaveStatus);
+        placeholders.put("${rejectionReasonStr}", rejectionReasonStr);
+
+        Path path;
+
+        if (leaveStatus.equals("APPLIED") || leaveStatus.equals("UPDATED")){
+            path = Path.of("src/main/resources/templates/leaveApplication/emailToManagerTemplate.html");
+            placeholders.put("${applicationUrl}", applicationUrlForManager);
+            if (leaveStatus.equals("APPLIED")){
+                subject = "New Leave Application: " + employeeName +
+                        " - Duration: " + startDate + " to " + endDate;
+            }
+            else{
+                subject = "Updated Leave Application: " + employeeName +
+                        " - Duration: " + startDate + " to " + endDate;
+            }
+        }
+        else{
+            path = Path.of("src/main/resources/templates/leaveApplication/emailToEmployeeTemplate.html");
+            placeholders.put("${applicationUrl}", applicationUrlForEmployee);
+            subject = "Leave Application " + leaveStatus + ": " + employeeName +
+                    " - Duration: " + startDate + " to " + endDate;
+        }
+
+        String htmlContent = "";
+        try{
+            htmlContent = Files.readString(path, StandardCharsets.UTF_8);
+        }
+        catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            htmlContent = htmlContent.replace(entry.getKey(), entry.getValue());
+        }
+
+        String escapedHtmlContent = htmlContent.replaceAll("\\r?\\n", "\\\\n");
+        escapedHtmlContent = escapedHtmlContent.replace("\"", "\\\"");
 
         emailBuilder.put("recipient", employeeEmail);
         emailBuilder.put("subject", subject);
-        emailBuilder.put("text", escapedText);
+        emailBuilder.put("text", escapedHtmlContent);
 
         return emailBuilder;
     }

@@ -89,8 +89,8 @@ public class LeaveApplicationController {
         leaveApplicationService.save(leaveApplication);
 
         // Send email notification to the manager
-        Map<String, String> email =  EmailBuilderUtils.buildLeaveApplicationEmail(leaveApplication);
         try {
+            Map<String, String> email =  EmailBuilderUtils.buildNotificationEmail(leaveApplication);
             emailApiService.sendEmail(email.get("recipient"), email.get("subject"), email.get("text"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
