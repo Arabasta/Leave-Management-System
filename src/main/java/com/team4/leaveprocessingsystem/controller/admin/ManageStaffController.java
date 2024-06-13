@@ -1,5 +1,8 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
+import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
+import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.JobDesignation;
@@ -29,10 +32,13 @@ public class ManageStaffController {
     private final UserService userService;
     private final CompensationClaimService compensationClaimService;
     private final LeaveApplicationService leaveApplicationService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
-                                 ManagerService managerService, LeaveBalanceService leaveBalanceService, UserService userService, CompensationClaimService compensationClaimService, LeaveApplicationService leaveApplicationService) {
+                                 ManagerService managerService, LeaveBalanceService leaveBalanceService,
+                                 UserService userService, CompensationClaimService compensationClaimService,
+                                 LeaveApplicationService leaveApplicationService, AuthenticationService authenticationService) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
@@ -40,6 +46,7 @@ public class ManageStaffController {
         this.userService = userService;
         this.compensationClaimService = compensationClaimService;
         this.leaveApplicationService = leaveApplicationService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping("/")
@@ -174,12 +181,26 @@ public class ManageStaffController {
     @GetMapping("/delete/{employeeId}")
     public String deleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
                                  Model model) {
+        // Prevent admin from deleting own account. Prevent total loss of admin accounts.
+        if(employeeId == authenticationService.getLoggedInEmployeeId()){
+            throw new ServiceSaveException("Unable to delete your own account");
+        }
         Employee employee = employeeService.findEmployeeById(employeeId);
+        employee.setDeleted(true);
+        List<User> userList = userService.findUserRolesByEmployeeId(employeeId);
+        for (User user: userList){
+            user.setRole(RoleEnum.ROLE_LOCKED);
+        }
+        employeeService.save(employee);
+
+
+        // todo: to confirm if we want employeeRepository.findAll() to include "deleted" employees or not
+
 
         // todo: fix bug, soft delete works sometimes only.
 
         //employee.setDeleted(true);
-        employeeService.removeEmployee(employee);
+//        employeeService.removeEmployee(employee);
 
         // TESTING - without soft delete, only able to remove Mikasa
         /*

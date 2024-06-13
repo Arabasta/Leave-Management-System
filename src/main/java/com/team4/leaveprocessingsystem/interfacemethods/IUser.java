@@ -12,7 +12,4 @@ public interface IUser {
     long count();
 
     List<User> findUserRolesByEmployeeId(Integer employeeId);
-
-    @Transactional
-    void removeUser(User user);
 }

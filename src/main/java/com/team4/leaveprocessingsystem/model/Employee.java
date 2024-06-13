@@ -14,8 +14,6 @@ import org.hibernate.annotations.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "EMP_TYPE")
 @DiscriminatorOptions(force = true)
-@SQLDelete(sql = "update employee set deleted = true where id=?") // changes deleted field into true rather than deleting data permanently
-@Where(clause = "deleted=false") // read only employees where deleted=false; deprecated
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +32,7 @@ public class Employee {
     @NotBlank(message = "Name cannot be blank")
     private String name;
 
-    private boolean deleted = Boolean.FALSE;
+    private boolean isDeleted;
 
     public Employee() {}
 
@@ -44,5 +42,6 @@ public class Employee {
         this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
+        this.isDeleted = false;
     }
 }
