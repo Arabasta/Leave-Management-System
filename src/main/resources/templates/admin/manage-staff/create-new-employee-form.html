@@ -11,15 +11,15 @@
     <input name="employeeId" th:value="${employeeId}" type="hidden"/>
     <!--
     <input name="leaveBalance" th:field="${autoAssignedLeaveBalance}" type="hidden"/>
+    <input name="manager" th:field="${autoAssignedManager}" type="hidden"/>
     -->
 
-    <input name="manager" th:field="${autoAssignedManager}" type="hidden"/>
+    <h1 class="mb-3 mt-3 text-center"
+        th:text="${isEditMode} ? 'Create Employee' : 'View Updated Employee Details'"></h1>
 
-
-    <h1 class="mb-3 mt-3 text-center">Create Employee</h1>
-
+    <!-- Edit mode form -->
     <!-- todo: include validation for the respective fields -->
-    <form method="post" th:action="@{/admin/manage-staff/create}" th:object="${employee}">
+    <form th:if="${isEditMode}" method="post" th:action="@{/admin/manage-staff/create/employee}" th:object="${employee}">
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeName">Name:</label>
             <div class="col-8">
@@ -42,6 +42,67 @@
         </div>
 
     </form>
+
+    <!-- Success View-->
+    <div th:if="${!isEditMode}" th:object="${newEmployee}">
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeIdtext">ID:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="employeeIdtext" readonly="readonly"
+                       th:value="${newEmployee.id}"
+                       type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeNametext">Name:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="employeeNametext" readonly="readonly"
+                       th:value="${newEmployee.name}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="managerName">Assigned Manager:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="managerName" readonly="readonly"
+                       th:value="${newEmployee.manager != null ? existingEmployee.manager.name : 'No Manager'}"
+                       type="text"/>
+            </div>
+        </div>
+
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="jobDesignation">Job Designation:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="jobDesignation" readonly="readonly"
+                       th:value="${newEmployee.jobDesignation.name}" type="text"/>
+            </div>
+        </div>
+
+        <div>
+            <a th:href="@{/admin/manage-staff/edit/{id}(id=${newEmployee.id})}" class="btn btn-primary float-end">Edit</a>
+        </div>
+
+        <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
+
+        <div class="alert alert-primary" role="alert" th:if="${updateSuccess}">
+            Proceed to create new user account?
+            <!-- <a class="btn btn-primary" th:href="@{/admin/manage-staff/delete/{id}(id=${e.id})}">Delete</a> -->
+            <a class="alert-link" th:href="@{/admin/manage-staff/add/user/{id}(id=${newEmployee.id})}">Yes</a> /
+            <a class="alert-link" th:href="@{/admin/manage-staff/}">No</a>
+        </div>
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+            <span class="ms-3">
+                <a class="btn btn-primary text-decoration-none"
+                   th:href="@{/admin/manage-staff/}">Return</a>
+            </span>
+            </div>
+        </div>
+    </div>
 
 
 </div>

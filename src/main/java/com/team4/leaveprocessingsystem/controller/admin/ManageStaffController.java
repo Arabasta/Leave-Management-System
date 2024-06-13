@@ -1,9 +1,11 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.JobDesignation;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -62,6 +66,8 @@ public class ManageStaffController {
         model.addAttribute("searchType", searchType);
         return "admin/manage-staff/view-all-employees";
     }
+
+    /* ----------------------------------------- EMPLOYEES ------------------------------------------------------------*/
 
     @GetMapping("/edit/{employeeId}")
     public String editEmployeeDetails(@PathVariable(name = "employeeId") int employeeId,
@@ -135,7 +141,7 @@ public class ManageStaffController {
         return "admin/manage-staff/create-new-employee-form";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create/employee")
     public String createNewEmployee(@Valid @ModelAttribute("employee") Employee employee,
                                     BindingResult bindingResult,
                                     Model model) {
@@ -145,8 +151,7 @@ public class ManageStaffController {
             //model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
             //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
-            model.addAttribute("isEditMode", false);
-            model.addAttribute("updateSuccess", true);
+
             return "admin/manage-staff/create-new-employee-form";
         }
 
@@ -157,8 +162,11 @@ public class ManageStaffController {
         Employee newEmployee = new Employee(employee.getName(), jobDesignation, null, leaveBalance);
 
         employeeService.save(newEmployee);
+        model.addAttribute("newEmployee", newEmployee);
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("updateSuccess", true);
 
-        return "redirect:/admin/manage-staff/";
+        return "admin/manage-staff/create-new-employee-form";
     }
 
     // todo: add popup to confirm if want to delete
@@ -209,8 +217,66 @@ public class ManageStaffController {
             }
         }
          */
-
         return "redirect:/admin/manage-staff/";
     }
+    /* ----------------------------------------- USERS ------------------------------------------------------------*/
+
+    @GetMapping("/add/user/{employeeId}")
+    public String createNewUserForm(@PathVariable(name = "employeeId") Integer employeeId,
+                                    Model model) {
+        User user = new User();
+        Employee employee = employeeService.findEmployeeById(employeeId);
+        user.setEmployee(employee);
+
+        model.addAttribute("user", user);
+        model.addAttribute("roles", RoleEnum.values());
+
+        model.addAttribute("isEditMode", true);
+        model.addAttribute("updateSuccess", false);
+
+        return "admin/manage-staff/create-new-user-account-form";
+    }
+
+    @PostMapping("/create/user")
+    public String createNewUser(@Valid @ModelAttribute("user") User user,
+                                    BindingResult bindingResult,
+                                    Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("roles", RoleEnum.values());
+            return "admin/manage-staff/create-new-user-account-form";
+        }
+
+        // create a list to store new users based on selected role(s), up to 2 roles?
+        //List<User> newUsers = new ArrayList<>();
+
+        // todo: think of a way to save more than a single role,
+        //  I don't think I am able to save more than 1 role,
+
+        //  todo: also cannot save user, and the create-new-user-account-form.html throws an error
+        //   that I'm not sure why I'm getting.
+
+        /* Error: Caused by: org.thymeleaf.exceptions.TemplateProcessingException:
+        Exception evaluating SpringEL expression: "!isEditMode"
+         (template: "admin/manage-staff/create-new-user-account-form" - line 84, col 10)
+
+         Caused by: org.springframework.expression.spel.SpelEvaluationException: EL1001E: Type conversion problem, cannot convert from null to boolean
+
+         * */
+
+
+        User newUser = new User(user.getRole(),user.getUsername(),
+                user.getPassword(), user.getEmail(), user.getEmployee());
+
+        userService.save(newUser);
+        model.addAttribute("newUser", newUser);
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("updateSuccess", true);
+
+        return "admin/manage-staff/create-new-user-account-form";
+    }
+
+
 
 }

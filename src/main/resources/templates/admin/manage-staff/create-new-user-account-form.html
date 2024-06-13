@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: html_head"></head>
+
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container w-50 mt-5 text-center">
+    <h1 class="mb-3 mt-3 text-center"
+        th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
+
+    <!-- Edit mode form -->
+    <!-- todo: include validation for the respective fields -->
+    <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userName">Username:</label>
+            <div class="col-8">
+                <input class="form-control" id="userName" th:field="*{username}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userPassword">Password:</label>
+            <div class="col-8">
+                <input class="form-control" id="userPassword" th:field="*{password}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userEmail">Email:</label>
+            <div class="col-8">
+                <input class="form-control" id="userEmail" th:field="*{email}" type="text"/>
+            </div>
+        </div>
+        <!-- role -->
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label">Role(s) Given:</label>
+            <div class="col-8">
+                <div class="">
+                    <div class="form-check form-check-inline">
+
+                        <label class="checkbox" th:each="role: ${roles}">
+                            <input th:text="${role.name()}"
+                                   th:value="${role}"
+                                   type="checkbox"> <br>
+                        </label>
+
+                        <!--
+                        <input autocomplete="off" class="btn-check" id="roleEmployee" type="checkbox"
+                            th:value="${user.role.ROLE_EMPLOYEE}">
+                        <label class="btn btn-outline-secondary" for="roleEmployee">Employee</label>
+
+                        <input autocomplete="off" class="btn-check" id="roleManager" name="options" type="checkbox"
+                               th:value="${user.role.ROLE_MANAGER}">
+                        <label class="btn btn-outline-secondary" for="roleManager">Manager</label>
+
+                        <input autocomplete="off" class="btn-check" id="roleAdmin" name="options" type="checkbox"
+                               th:value="${user.role.ROLE_ADMIN}">
+                        <label class="btn btn-outline-secondary" for="roleAdmin">Admin</label>
+
+                        <input autocomplete="off" class="btn-check" id="roleLocked" name="options" type="checkbox"
+                               th:value="${user.role.ROLE_LOCKED}">
+                        <label class="btn btn-outline-secondary" for="roleLocked">Locked</label>
+
+                        <input autocomplete="off" class="btn-check" id="roleExpired" name="options" type="checkbox"
+                               th:value="${user.role.ROLE_EXPIRED}">
+                        <label class="btn btn-outline-secondary" for="roleExpired">Expired</label>
+                        -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div>
+            <input class="btn btn-primary float-end" type="submit" value="Create"/>
+        </div>
+
+    </form>
+
+    <!-- Success View -->
+    <div th:if="${!isEditMode}" th:object="${newUser}">
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeIdtext">ID:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="employeeIdtext" readonly="readonly"
+                       th:value="${newUser.employee.id}"
+                       type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeNametext">Name:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="employeeNametext" readonly="readonly"
+                       th:value="${newUser.employee.name}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="managerName">Assigned Manager:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="managerName" readonly="readonly"
+                       th:value="${newUser.employee.manager != null ? newUser.employee.manager.name : 'No Manager'}"
+                       type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="jobDesignation">Job Designation:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="jobDesignation" readonly="readonly"
+                       th:value="${newUser.employee.jobDesignation.name}" type="text"/>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col">
+                <hr class="bg-primary border-2 border-top border-primary">
+            </div>
+            <div class="col-auto">User Account Details</div>
+            <div class="col">
+                <hr class="bg-primary border-2 border-top border-primary">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="usernameSaved">User Name:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="usernameSaved" readonly="readonly"
+                       th:value="${newUser.username}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userPasswordSaved">User Password:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="userPasswordSaved" readonly="readonly"
+                       th:value="${newUser.password}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userEmailSaved">User Email:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="userEmailSaved" readonly="readonly"
+                       th:value="${newUser.email}" type="text"/>
+            </div>
+        </div>
+
+        <div class="alert alert-success mt-3" th:if="${updateSuccess}">User details updated successfully!</div>
+
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+            <span class="ms-3">
+                <a class="btn btn-primary text-decoration-none"
+                   th:href="@{/admin/manage-staff/}">Return</a>
+            </span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

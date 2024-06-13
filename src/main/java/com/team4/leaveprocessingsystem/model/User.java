@@ -55,6 +55,7 @@ public class User implements UserDetails {
 
     public User() {}
 
+
     public User(RoleEnum role, String username, String password, String email, Employee employee) {
         this.role = role;
         this.username = username;
