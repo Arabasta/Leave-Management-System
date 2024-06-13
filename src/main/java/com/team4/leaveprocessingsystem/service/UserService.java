@@ -3,6 +3,7 @@ package com.team4.leaveprocessingsystem.service;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IUser;
 import com.team4.leaveprocessingsystem.model.User;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -65,11 +66,5 @@ public class UserService implements UserDetailsService, IUser {
     @Transactional
     public List<User> findUserRolesByEmployeeId(Integer employeeId) {
         return userRepository.findUserRolesByEmployeeId(employeeId);
-    }
-
-    @Override
-    @Transactional
-    public void removeUser(User user) {
-        userRepository.delete(user);
     }
 }
