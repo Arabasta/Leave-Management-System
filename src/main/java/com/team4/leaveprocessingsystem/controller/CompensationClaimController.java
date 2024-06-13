@@ -67,6 +67,17 @@ public class CompensationClaimController {
     }
 
     /*
+    EMPLOYEE - GET - VIEW COMPENSATION CLAIM DETAILS
+*/
+    @GetMapping("/history/{id}")
+    public String viewCompensationClaimPage(@PathVariable Integer id, Model model) {
+        Employee currentEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        CompensationClaim compensationClaim = compensationClaimService.findCompensationClaimIfBelongsToEmployee(id, currentEmployee);
+        model.addAttribute("compensationClaim", compensationClaim);
+        return "compensation-claims/details";
+    }
+
+    /*
         EMPLOYEE - GET - CREATE COMPENSATION CLAIM
     */
     @ModelAttribute
