@@ -5,6 +5,7 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
@@ -134,11 +135,17 @@ public class LeaveApplicationController {
 
     //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
     //so i create a new method
-    @GetMapping("managerView/{id}")
-    public String managerViewLeave(Model model, @PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
-        model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/viewLeave";
+    @GetMapping("managerView")
+    public String managerViewLeave(Model model) throws IllegalAccessException {
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        RoleEnum role = authenticationService.getLoggedInRole();
+        if (role != RoleEnum.ROLE_MANAGER){
+            throw new IllegalAccessException();
+        }
+        int managerId = employee.getId();
+        List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+        model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
+        return "leaveApplication/managerViewLeave";
     }
 
     @GetMapping("personalHistory")

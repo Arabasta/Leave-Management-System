@@ -41,6 +41,9 @@
                     <a class="nav-link" th:href="@{/employee/home}">Employee Home</a>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/leave/managerView}">View Subordinates Leaves</a>
+                </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
                     <a class="nav-link" th:href="@{/compensation-claims/pending}">Review Compensation Requests</a>
                 </li>
 
