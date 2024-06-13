@@ -8,7 +8,6 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,7 @@ public class LeaveApplicationController {
 
         leaveApplicationService.save(leaveApplication);
 
-        return "redirect:/leave/history";
+        return "redirect:/leave/personalHistory";
     }
 
     @GetMapping("delete/{id}")
@@ -145,9 +144,7 @@ public class LeaveApplicationController {
     @GetMapping("personalHistory")
     public String personalHistory(Model model){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        int employeeId = employee.getId();
-
-        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findLeaveApplicationsById(employeeId);
+        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("personalLeaveApplications", personalLeaveApplications);
         return "leaveApplication/personalViewLeave";
     }
