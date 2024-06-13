@@ -95,6 +95,18 @@ public class LeaveApplicationService implements ILeaveApplication {
     }
 
 
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findByEmployeeName(String name){
+        return leaveApplicationRepository.findByName(name);
+    }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findByEmployeeId(int Id){
+        return leaveApplicationRepository.findById(Id);
+    }
 }
 
 

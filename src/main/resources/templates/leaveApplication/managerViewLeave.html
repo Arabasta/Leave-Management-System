@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <title>Subordinate Leave History</title>
@@ -10,12 +10,47 @@
 
 
 <br/>
-<h2 style="text-align: center;">Search Result</h2>
+<h2 style="text-align: center;">Subordinate Leave History</h2>
 
 <h3 style="text-align: center;"
     th:if="${#lists.isEmpty(subordinateLeaveApplications)}">No Results.</h3>
 
+<table style="margin-right: auto; margin-left: auto; width: 50%">
+    <tr>
 
+    </tr>
+    <tr>
+        <td>
+            <form action="#"
+                  th:action="@{/leave/searchingLeaveApplications}" method="post">
+                <div style="font-weight: bold">
+                    Search By:
+                </div>
+
+                <label>
+                    <select name="searchType">
+                        <option value="name">Name</option>
+                        <option
+                                value="id">Id</option>
+                    </select>
+                </label>
+                <div style="font-weight: bold">
+                    Enter keyword: <label>
+                    <input type="text"
+                           name="keyword" />
+                </label>
+                </div>
+                <div>
+                </div>
+                <fieldset>
+                    <input type="submit" value="Search"
+                    />
+                </fieldset>
+            </form>
+        </td>
+    </tr>
+</table>
+</br>
 <table th:if="${not #lists.isEmpty(subordinateLeaveApplications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
@@ -35,7 +70,7 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getEndDate()}">End Date</td>
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
-<!-- change link to the controller method for manager to view detail leave application for approval/reject-->
+        <!-- change link to the controller method for manager to view detail leave application for approval/reject-->
         <td><a th:href="@{/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
 
     </tr>
