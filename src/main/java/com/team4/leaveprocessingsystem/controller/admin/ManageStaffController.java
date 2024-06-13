@@ -89,31 +89,29 @@ public class ManageStaffController {
     @PostMapping("/update")
     public String updateEmployeeDetails(@ModelAttribute("employee") Employee employee,
                                         Model model) {
+        Employee existingEmployee = employeeService.findEmployeeById(employee.getId());
+
         if (employee.getManager() != null && employee.getManager().getId() != null) {
             Manager manager = managerService.findManagerById(employee.getManager().getId());
-            employee.setManager(manager);
+            existingEmployee.setManager(manager);
         } else {
-            employee.setManager(null);
+            existingEmployee.setManager(null);
         }
+
+        existingEmployee.setName(employee.getName());
+
         JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
-        employee.setJobDesignation(jd);
+        existingEmployee.setJobDesignation(jd);
 
         LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
-        employee.setLeaveBalance(leaveBalance);
+        existingEmployee.setLeaveBalance(leaveBalance);
 
-//        if (employee instanceof Manager) {
-//            ((Manager) employee).setSubordinates(((Manager) employee).getSubordinates());
-//            ((Manager) employee).setLeaveApplications(((Manager) employee).getLeaveApplications());
-//            ((Manager) employee).setCompensationClaims(((Manager) employee).getCompensationClaims());
-//            employeeService.save(employee);
-//        }
-        //else
-
-        employeeService.save(employee);
+        employeeService.save(existingEmployee);
 
         model.addAttribute("isEditMode", false);
+        model.addAttribute("existingEmployee", existingEmployee);
         model.addAttribute("updateSuccess", true);
-        model.addAttribute("employee", employee);
+
         return "admin/manage-staff/edit-employee-details-form";
     }
 
