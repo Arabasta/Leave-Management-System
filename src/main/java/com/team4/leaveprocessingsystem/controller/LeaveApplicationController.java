@@ -4,9 +4,8 @@ import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundExcepti
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
-import com.team4.leaveprocessingsystem.service.AuthenticationService;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
+import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +23,13 @@ import java.util.Map;
 @RequestMapping("leave")
 @Controller
 public class LeaveApplicationController {
+
     private final LeaveApplicationService leaveApplicationService;
     private final EmployeeService employeeService;
     private final LeaveApplicationValidator leaveApplicationValidator;
     private final AuthenticationService authenticationService;
+    private final EmailApiService emailApiService;
+    private final UserService userService;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -35,11 +38,14 @@ public class LeaveApplicationController {
 
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
-                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator) {
+                                      AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
+                                      EmailApiService emailApiService, UserService userService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
+        this.emailApiService = emailApiService;
+        this.userService = userService;
     }
 
     @GetMapping("create")
@@ -82,10 +88,19 @@ public class LeaveApplicationController {
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
             return "leaveApplication/leaveForm";
         }
-
         leaveApplicationService.save(leaveApplication);
 
+        // Send email notification to the manager
+        try {
+            String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
+            Map<String, String> email =  EmailBuilderUtils.buildNotificationEmail(leaveApplication);
+            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
         return "redirect:/leave/personalHistory";
+
     }
 
     @GetMapping("delete/{id}")

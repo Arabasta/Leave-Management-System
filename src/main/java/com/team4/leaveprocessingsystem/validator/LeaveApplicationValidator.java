@@ -115,7 +115,6 @@ public class LeaveApplicationValidator implements Validator {
                     errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot overlap with other leaves");
                     break;
                 }
-
             }
         }
     }
