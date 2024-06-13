@@ -57,12 +57,13 @@
     </form>
 
     <!-- Success View-->
-    <div th:if="${!isEditMode}">
+    <div th:if="${!isEditMode}" th:object="${existingEmployee}">
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeIdtext">ID:</label>
             <div class="col-8">
-                <input class="form-control-plaintext" id="employeeIdtext" readonly="readonly" th:value="${employee.id}"
+                <input class="form-control-plaintext" id="employeeIdtext" readonly="readonly"
+                       th:value="${existingEmployee.id}"
                        type="text"/>
             </div>
         </div>
@@ -71,7 +72,7 @@
             <label class="col-4 col-form-label" for="employeeNametext">Name:</label>
             <div class="col-8">
                 <input class="form-control-plaintext" id="employeeNametext" readonly="readonly"
-                       th:value="${employee.name}" type="text"/>
+                       th:value="${existingEmployee.name}" type="text"/>
             </div>
         </div>
 
@@ -79,20 +80,22 @@
             <label class="col-4 col-form-label" for="managerName">Assigned Manager:</label>
             <div class="col-8">
                 <input class="form-control-plaintext" id="managerName" readonly="readonly"
-                       th:value="${employee.manager.name}" type="text"/>
+                       th:value="${existingEmployee.manager != null ? existingEmployee.manager.name : 'No Manager'}"
+                       type="text"/>
             </div>
         </div>
+
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="jobDesignation">Job Designation:</label>
             <div class="col-8">
                 <input class="form-control-plaintext" id="jobDesignation" readonly="readonly"
-                       th:value="${employee.jobDesignation.name}" type="text"/>
+                       th:value="${existingEmployee.jobDesignation.name}" type="text"/>
             </div>
         </div>
 
         <div>
-            <a th:href="@{/admin/manage-staff/edit/{id}(id=${employee.id})}" class="btn btn-primary float-end">Edit</a>
+            <a th:href="@{/admin/manage-staff/edit/{id}(id=${existingEmployee.id})}" class="btn btn-primary float-end">Edit</a>
         </div>
 
         <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
