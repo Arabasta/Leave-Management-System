@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.interfacemethods;
 
 import com.team4.leaveprocessingsystem.model.User;
-import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -12,4 +12,7 @@ public interface IUser {
     long count();
 
     List<User> findUserRolesByEmployeeId(Integer employeeId);
+
+    @Transactional
+    void removeUser(User user);
 }

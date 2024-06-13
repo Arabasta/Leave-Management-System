@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: html_head"></head>
+
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container w-50 mt-5 text-center">
+    <!-- hidden fields -->
+    <input name="employeeId" th:value="${employeeId}" type="hidden"/>
+    <!--
+    <input name="leaveBalance" th:field="${autoAssignedLeaveBalance}" type="hidden"/>
+    -->
+
+    <input name="manager" th:field="${autoAssignedManager}" type="hidden"/>
+
+
+    <h1 class="mb-3 mt-3 text-center">Create Employee</h1>
+
+    <!-- todo: include validation for the respective fields -->
+    <form method="post" th:action="@{/admin/manage-staff/create}" th:object="${employee}">
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeName">Name:</label>
+            <div class="col-8">
+                <input class="form-control" id="employeeName" th:field="*{name}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeJobDesignation">Job Designation:</label>
+            <div class="col-8">
+                <select class="form-select" id="employeeJobDesignation" th:field="*{jobDesignation.name}">
+                    <option th:each="jd : ${jobDesignationList}"
+                            th:text="${jd.name}" th:value="${jd.name}"></option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div>
+            <input class="btn btn-primary float-end" type="submit" value="Create"/>
+        </div>
+
+    </form>
+
+
+</div>
+
+</body>
+</html>

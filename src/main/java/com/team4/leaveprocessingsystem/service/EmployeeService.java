@@ -89,4 +89,10 @@ public class EmployeeService implements IEmployee {
     public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
+
+    @Override
+    @Transactional
+    public void removeEmployee(Employee employee) {
+        employeeRepository.delete(employee);
+    }
 }

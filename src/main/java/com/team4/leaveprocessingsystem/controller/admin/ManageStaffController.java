@@ -1,16 +1,12 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
-import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.JobDesignation;
-import com.team4.leaveprocessingsystem.model.LeaveBalance;
-import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.ManagerService;
+import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.service.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,43 +19,41 @@ public class ManageStaffController {
     private final JobDesignationService jobDesignationService;
     private final ManagerService managerService;
     private final LeaveBalanceService leaveBalanceService;
+    private final UserService userService;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
-                                 ManagerService managerService, LeaveBalanceService leaveBalanceService) {
+                                 ManagerService managerService, LeaveBalanceService leaveBalanceService, UserService userService) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
+        this.userService = userService;
     }
 
     @GetMapping("/")
     public String search(@RequestParam(value = "query", required = false) String query,
                          @RequestParam(value = "searchType", required = false) String searchType,
                          Model model) {
+        List<Employee> employees;
+        if (query == null || query.isEmpty()) {
+            employees = employeeService.findAll();
+        } else {
+            if (searchType == null || searchType.isEmpty())
+                searchType = "name";
 
-        if (query == null) model.addAttribute("employees", employeeService.findAll());
-        if (searchType == null) searchType = "";
-
-        switch (searchType) {
-            case (""):
-                model.addAttribute("employees", employeeService.findAll());
-                break;
-            case ("name"):
-                model.addAttribute("employees", employeeService.findEmployeesByName(query));
-                break;
-            case ("jobDesignation"):
-                model.addAttribute("employees", employeeService.findEmployeesByJobDesignation(query));
-                break;
-            case ("roleType"):
-                model.addAttribute("employees", employeeService.findUsersByRoleType(query));
-                break;
-            default:
-                return "error/404-notfound";
+            employees = switch (searchType) {
+                case "name" -> employeeService.findEmployeesByName(query);
+                case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
+                case "roleType" -> employeeService.findUsersByRoleType(query);
+                default -> employeeService.findAll();
+            };
         }
-        model.addAttribute("keyword", query);
-        model.addAttribute("searchtype", searchType);
-        return "admin/manage-staff/view-all";
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+        model.addAttribute("searchType", searchType);
+        return "admin/manage-staff/view-all-employees";
     }
 
     @GetMapping("/edit/{employeeId}")
@@ -112,18 +106,71 @@ public class ManageStaffController {
         LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
         existingEmployee.setLeaveBalance(leaveBalance);
 
-//        if (employee instanceof Manager) {
-//            ((Manager) employee).setSubordinates(((Manager) employee).getSubordinates());
-//            ((Manager) employee).setLeaveApplications(((Manager) employee).getLeaveApplications());
-//            ((Manager) employee).setCompensationClaims(((Manager) employee).getCompensationClaims());
-//            employeeService.save(employee);
-//        }
-        //else
-
         employeeService.save(existingEmployee);
 
         model.addAttribute("isEditMode", false);
         model.addAttribute("existingEmployee", existingEmployee);
+        model.addAttribute("updateSuccess", true);
+
         return "admin/manage-staff/edit-employee-details-form";
     }
+
+
+    @GetMapping("/add/employee")
+    public String createNewEmployeeForm(Model model) {
+        List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
+        model.addAttribute("employee", new Employee());
+        model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
+        model.addAttribute("jobDesignationList", jobDesignationList);
+        model.addAttribute("isEditMode", true);
+        model.addAttribute("updateSuccess", false);
+
+        return "admin/manage-staff/create-new-employee-form";
+    }
+
+    // todo: fix bug, cannot save employee
+    @PostMapping("/create")
+    public String createNewEmployee(@Valid @ModelAttribute("employee") Employee employee,
+                                    BindingResult bindingResult,
+                                    Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("employee", new Employee());
+            model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
+            //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
+            model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
+            model.addAttribute("isEditMode", false);
+            model.addAttribute("updateSuccess", true);
+            return "admin/manage-staff/create-new-employee-form";
+        }
+
+        LeaveBalance leaveBalance = new LeaveBalance(employee.getJobDesignation().getDefaultAnnualLeaves());
+        leaveBalanceService.save(leaveBalance);
+
+        JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
+        Employee newEmployee = new Employee(employee.getName(), jobDesignation, null, leaveBalance);
+
+        employeeService.save(newEmployee);
+
+        return "redirect:/admin/manage-staff/";
+    }
+
+    // todo: add popup to confirm if want to delete
+    // todo: fix bug, see commit msg
+    @GetMapping("/delete/{employeeId}")
+    public String deleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
+                                 Model model) {
+        Employee employee = employeeService.findEmployeeById(employeeId);
+
+        List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
+
+        for (User user : employeeUserAccounts) {
+            userService.removeUser(user);
+        }
+
+        employeeService.removeEmployee(employee);
+        return "redirect:/admin/manage-staff/";
+    }
+
+
 }

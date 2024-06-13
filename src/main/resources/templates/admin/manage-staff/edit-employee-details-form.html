@@ -30,17 +30,6 @@
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="manager">Assigned Manager:</label>
-            <div class="col-8">
-                <select th:field="*{manager.id}" class="form-select" id="manager" name="manager">
-                    <option th:value="null" th:text="'No Manager'" th:selected="${employee.manager == null}"></option>
-                    <option th:each="manager : ${managerList}" th:text="${manager.name}" th:value="${manager.id}"
-                            th:selected="${employee.manager != null and employee.manager.id == manager.id}"></option>
-                </select>
-            </div>
-        </div>
-
-        <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="employeeJobDesignation">Job Designation:</label>
             <div class="col-8">
                 <select th:field="*{jobDesignation.id}" class="form-select" id="employeeJobDesignation"
@@ -100,6 +89,20 @@
 
         <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
 
+        <div class="alert alert-primary" role="alert" th:if="${updateSuccess}">
+            Proceed to edit user account details?
+            <a class="alert-link" href="#">Yes</a> /
+            <a class="alert-link" href="#">No</a>
+        </div>
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+            <span class="ms-3">
+                <a class="btn btn-primary text-decoration-none"
+                   th:href="@{/admin/manage-staff/}">Return</a>
+            </span>
+            </div>
+        </div>
     </div>
 </div>
 

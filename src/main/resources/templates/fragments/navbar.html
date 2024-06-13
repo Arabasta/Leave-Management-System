@@ -29,6 +29,9 @@
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <a class="nav-link" th:href="@{/admin/leave-entitlement/}">Leave Entitlement</a>
                 </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" th:href="@{/admin/manage-leave-types/}">Manage Leave Types</a>
+                </li>
 
                 <!-- Manager Only -->
                 <li class="nav-item pt-2 d-flex flex-row" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
