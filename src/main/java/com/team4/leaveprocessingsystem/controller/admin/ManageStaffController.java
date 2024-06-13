@@ -8,9 +8,11 @@ import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.ManagerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,28 +39,24 @@ public class ManageStaffController {
     public String search(@RequestParam(value = "query", required = false) String query,
                          @RequestParam(value = "searchType", required = false) String searchType,
                          Model model) {
+        List<Employee> employees;
+        if (query == null || query.isEmpty()) {
+            employees = employeeService.findAll();
+        } else {
+            if (searchType == null || searchType.isEmpty())
+                searchType = "name";
 
-        if (query == null) model.addAttribute("employees", employeeService.findAll());
-        if (searchType == null) searchType = "";
-
-        switch (searchType) {
-            case (""):
-                model.addAttribute("employees", employeeService.findAll());
-                break;
-            case ("name"):
-                model.addAttribute("employees", employeeService.findEmployeesByName(query));
-                break;
-            case ("jobDesignation"):
-                model.addAttribute("employees", employeeService.findEmployeesByJobDesignation(query));
-                break;
-            case ("roleType"):
-                model.addAttribute("employees", employeeService.findUsersByRoleType(query));
-                break;
-            default:
-                return "error/404-notfound";
+            employees = switch (searchType) {
+                case "name" -> employeeService.findEmployeesByName(query);
+                case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
+                case "roleType" -> employeeService.findUsersByRoleType(query);
+                default -> employeeService.findAll();
+            };
         }
-        model.addAttribute("keyword", query);
-        model.addAttribute("searchtype", searchType);
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+        model.addAttribute("searchType", searchType);
         return "admin/manage-staff/view-all";
     }
 
@@ -120,5 +118,30 @@ public class ManageStaffController {
         model.addAttribute("isEditMode", false);
         model.addAttribute("employee", employee);
         return "admin/manage-staff/edit-employee-details-form";
+    }
+
+    @GetMapping("/create")
+    public String createNewEmployeeForm(Model model) {
+        List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
+
+        model.addAttribute("employee", new Employee());
+        model.addAttribute("jobDesignationList", jobDesignationList);
+
+        return "admin/manage-staff/create-new-employee-form";
+    }
+
+
+    @PostMapping("/create")
+    public String createNewEmployee(@Valid @ModelAttribute("employee") Employee employee,
+                                    BindingResult bindingResult,
+                                    Model model) {
+        if (bindingResult.hasErrors()) {
+            System.out.println("There are validation errors.");
+            model.addAttribute("employee", new Employee());
+        }
+
+        // todo: include logic for creating new user account
+
+        return "admin/manage-staff/create-new-employee-form";
     }
 }

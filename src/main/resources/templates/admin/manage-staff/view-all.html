@@ -4,11 +4,38 @@
 
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
-<h1>Manage Staff</h1>
 
 <div class="container">
+    <h1>Manage Employees</h1>
+    <br>
 
+    <!-- Search Employee -->
+    <form class="form-inline" th:action="@{/admin/manage-staff/}" method="get">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon2">Filter By</span>
+                <div class="input-group-btn">
+                    <select class="form-control" name="searchtype">
+                        <option selected th:value="name" th:selected="${searchType == 'name'}">Name</option>
+                        <option th:value="jobDesignation" th:selected="${searchType == 'jobDesignation'}">Job
+                            Designation
+                        </option>
+                        <option th:value="roleType" th:selected="${searchType == 'roleType'}">Role Type</option>
+                    </select>
+                </div>
 
+                <input type="search" class="form-control rounded" placeholder="search..."
+                       aria-label="Search" aria-describedby="search-addon"
+                       name="query" th:value="${query}"/>
+                <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+
+            </div>
+        </div>
+    </form>
+    <br><br>
+    <h3 th:if="${#lists.isEmpty(employees)}">No Results.</h3>
+
+    <!-- Employee Table -->
     <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(employees)}">
         <thead class="bg-primary">
         <tr>
@@ -28,13 +55,23 @@
             <td th:if="${e.manager == null}">No Manager</td>
 
             <td>
-                <a class="btn btn-primary" th:href="@{/admin/manage-staff/edit/{id}(id=${e.id})}">Edit</a>
-                <a class="btn btn-primary" th:href="@{/admin/manage-staff/delete/{id}(id=${e.id})}">Delete</a>
+                <a class="btn btn-secondary" th:href="@{/admin/manage-staff/edit/{id}(id=${e.id})}">Edit</a>
+                <a class="btn btn-light" th:href="@{/admin/manage-staff/delete/{id}(id=${e.id})}">Delete</a>
             </td>
         </tr>
         </tbody>
     </table>
 
+    <!-- Create Employee -->
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">
+                <span class="ms-3">
+                    <a class="btn btn-primary text-decoration-none"
+                       th:href="@{/admin/manage-staff/create}">Add Employee</a>
+                </span>
+
+        </div>
+    </div>
 
 </div>
 
