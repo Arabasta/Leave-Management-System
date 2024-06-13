@@ -61,4 +61,16 @@ public class LeaveApplicationService implements ILeaveApplication {
     public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
         return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
     }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId){
+        return leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+    }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findLeaveApplicationsById(int id){
+        return leaveApplicationRepository.findLeaveApplicationsById(id);
+    }
 }
