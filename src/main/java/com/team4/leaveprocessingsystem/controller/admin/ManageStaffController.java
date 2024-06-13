@@ -103,6 +103,9 @@ public class ManageStaffController {
         } else {
             existingEmployee.setManager(null);
         }
+
+        existingEmployee.setName(employee.getName());
+
         JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
         existingEmployee.setJobDesignation(jd);
 
@@ -120,7 +123,7 @@ public class ManageStaffController {
         employeeService.save(existingEmployee);
 
         model.addAttribute("isEditMode", false);
-        model.addAttribute("employee", employee);
+        model.addAttribute("existingEmployee", existingEmployee);
         return "admin/manage-staff/edit-employee-details-form";
     }
 }
