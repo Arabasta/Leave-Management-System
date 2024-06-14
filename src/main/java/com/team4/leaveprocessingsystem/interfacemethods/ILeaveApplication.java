@@ -2,9 +2,11 @@ package com.team4.leaveprocessingsystem.interfacemethods;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.Manager;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ILeaveApplication {
     boolean save(LeaveApplication leaveApplication);

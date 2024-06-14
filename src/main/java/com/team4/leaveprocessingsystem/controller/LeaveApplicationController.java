@@ -133,6 +133,14 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeave";
     }
 
+    //manager view details of his subordinate
+    @GetMapping("viewSubordinateDetails/{id}")
+    public String viewLeaveDetails(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
+
     //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
     //so i create a new method
     @GetMapping("managerView")
@@ -192,7 +200,7 @@ public class LeaveApplicationController {
     }
 
 
-    //manger view subordinates history search function
+    //Add view subordinates history searching function
     @RequestMapping(value="searchingLeaveApplications")
     public String search(@RequestParam("keyword")
                          String k, @RequestParam("searchType") String t, Model
