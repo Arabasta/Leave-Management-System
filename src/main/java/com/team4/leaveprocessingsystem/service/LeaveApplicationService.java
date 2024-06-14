@@ -6,22 +6,27 @@ import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
     private final LeaveApplicationRepository leaveApplicationRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository) {
+    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository, EmployeeRepository employeeRepository) {
         this.leaveApplicationRepository = leaveApplicationRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -52,11 +57,6 @@ public class LeaveApplicationService implements ILeaveApplication {
             throw new LeaveApplicationNotFoundException("Leave Application Not Found");
         }
         return leaveApplication;
-    }
-
-    @Override
-    public Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager) {
-        return null;
     }
 
     @Override
@@ -99,4 +99,21 @@ public class LeaveApplicationService implements ILeaveApplication {
         return applicationsBelongToManagerSubordinates;
     }
 
+    @Override
+    @Transactional
+    public Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager) {
+        Map<String, List<LeaveApplication>> pendingLeaveApplications = new HashMap<>();
+        List<Employee> employeeList = employeeRepository.findByManager(manager);
+        for (Employee employee : employeeList) {
+            List<LeaveApplication> employeePendingLeaveApplications = findBySubmittingEmployee(employee)
+                    .stream()
+                    .filter(application -> application.getLeaveStatus() == LeaveStatusEnum.APPLIED
+                            || application.getLeaveStatus() == LeaveStatusEnum.UPDATED)
+                    .toList();
+            if (!employeePendingLeaveApplications.isEmpty()) {
+                pendingLeaveApplications.put(employee.getName(), employeePendingLeaveApplications);
+            }
+        }
+        return pendingLeaveApplications;
+    }
 }
