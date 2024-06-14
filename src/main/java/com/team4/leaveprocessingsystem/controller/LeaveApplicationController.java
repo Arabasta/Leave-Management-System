@@ -153,7 +153,7 @@ public class LeaveApplicationController {
     public String viewLeaveDetails(Model model, @PathVariable int id){
         LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
         model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/viewLeave";
+        return "leaveApplication/managerViewLeaveDetails";
     }
 
     //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"

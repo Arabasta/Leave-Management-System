@@ -82,7 +82,7 @@ public class LeaveApplicationService implements ILeaveApplication {
     }
 
     @Override
-    public List<LeaveApplication> findByEmployeeId(int Id) {
-        return leaveApplicationRepository.findById(Id);
+    public List<LeaveApplication> findByEmployeeId(int id) {
+        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
     }
 }
