@@ -222,24 +222,6 @@ public class EmployeeSeeder {
         userService.save(cleaningUser1);
 
 
-        //test
-        // cleaning staff 1
-//        Manager manager2 = employeeService.findManagerByName("Nezuko");
-//        LeaveBalance cleaningLeaveBalance1 = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
-//        leaveBalanceService.save(cleaningLeaveBalance1);
-//
-//        Employee cleaningEmployee2 = new Employee("test",
-//                cleaningJobDesignation,
-//                manager2,
-//                cleaningLeaveBalance1);
-//        employeeService.save(cleaningEmployee2);
-//
-//        User cleaningUser2 = new User(RoleEnum.ROLE_EMPLOYEE,
-//                "cleaning2",
-//                passwordEncoder.encode("cleaning"),
-//                "test@gmail.com",
-//                cleaningEmployee2);
-//        userService.save(cleaningUser2);
 
 
     }

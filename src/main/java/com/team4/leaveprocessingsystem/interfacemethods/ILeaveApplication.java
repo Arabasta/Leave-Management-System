@@ -18,4 +18,5 @@ public interface ILeaveApplication {
     LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee);
     Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager);
     long count();
+    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId);
 }

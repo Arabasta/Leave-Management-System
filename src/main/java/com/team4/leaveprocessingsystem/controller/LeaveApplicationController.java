@@ -224,16 +224,19 @@ public class LeaveApplicationController {
         String name=new String("name");
         String id = new String("id");
 
+        //have error here, should make sure these subordinates belong to the manager
         if(t.equals(name))
         {
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(k);
             model.addAttribute("subordinateLeaveApplications",
-                    leaveApplicationService.findByEmployeeName(k));
+                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
         }
         else if(t.equals(id))
         {
             int k_num = Integer.parseInt(k);
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeId(k_num);
             model.addAttribute("subordinateLeaveApplications",
-                   leaveApplicationService.findByEmployeeId(k_num));
+                   leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
         }
         else
         {

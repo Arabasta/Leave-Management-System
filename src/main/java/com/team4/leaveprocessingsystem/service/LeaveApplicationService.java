@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,4 +86,26 @@ public class LeaveApplicationService implements ILeaveApplication {
     public List<LeaveApplication> findByEmployeeId(int id) {
         return leaveApplicationRepository.findBySubmittingEmployeeId(id);
     }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
+        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
+        for (LeaveApplication application : applications) {
+            if (application.getReviewingManager().getId() == managerId) {
+                applicationsBelongToManagerSubordinates.add(application);
+            }
+        }
+        return applicationsBelongToManagerSubordinates;
+    }
+
+
+//    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee) {
+//        LeaveApplication leaveApplication = findLeaveApplicationById(id);
+//        // Ensure an employee only accesses his own leave applications
+//        if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())) {
+//            throw new LeaveApplicationNotFoundException("Leave Application Not Found");
+//        }
+//        return leaveApplication;
+//    }
 }
