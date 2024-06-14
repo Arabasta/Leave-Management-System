@@ -4,6 +4,7 @@ import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundExcepti
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
@@ -30,6 +31,7 @@ public class LeaveApplicationController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
+    private final EmployeeRepository employeeRepository;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -39,13 +41,14 @@ public class LeaveApplicationController {
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService) {
+                                      EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.emailApiService = emailApiService;
         this.userService = userService;
+        this.employeeRepository = employeeRepository;
     }
 
     @GetMapping("create")
@@ -185,13 +188,26 @@ public class LeaveApplicationController {
         return "leaveApplication/reviewLeave";
     }
 
+    @Autowired
+    ManagerService managerService;
     // MANAGER - POST - REVIEW LEAVE APPLICATION
     @PostMapping("/submitLeaveApplication")
     public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave,
                                          BindingResult bindingResult, Model model) {
-        //leave.setLeaveStatus(LeaveStatusEnum.APPROVED);
+        LeaveApplication existingLeaveApplication = leaveApplicationService.findLeaveApplicationById(leave.getId());
+        existingLeaveApplication.setSubmittingEmployee(employeeService.findEmployeeById(leave.getSubmittingEmployee().getId()));
+        existingLeaveApplication.setReviewingManager(managerService.findManagerById(leave.getReviewingManager().getId()));
+        existingLeaveApplication.setLeaveStatus(leave.getLeaveStatus());
+        existingLeaveApplication.setLeaveType(leave.getLeaveType());
+        existingLeaveApplication.setStartDate(leave.getStartDate());
+        existingLeaveApplication.setEndDate(leave.getEndDate());
+        existingLeaveApplication.setSubmissionReason(leave.getSubmissionReason());
+        existingLeaveApplication.setReviewingManager(leave.getReviewingManager());
+        existingLeaveApplication.setWorkDissemination(leave.getWorkDissemination());
+        existingLeaveApplication.setContactDetails(leave.getContactDetails());
+        existingLeaveApplication.setRejectionReason(leave.getRejectionReason());
 
-        //leaveApplicationService.save(leave);
+
         // Return back to page if validation has errors
         if (bindingResult.hasErrors()) {
             return "leaveApplication/reviewLeave";
@@ -203,21 +219,19 @@ public class LeaveApplicationController {
             return "leaveApplication/reviewLeave";
         }
 
-        // Update leave application when APPROVED
-        if (leave.getLeaveStatus() == LeaveStatusEnum.APPROVED) {
-            leave.setLeaveStatus(LeaveStatusEnum.APPROVED);
-            Employee submittingemployee = employeeService.findEmployee;
-            return "redirect:/pendingLeaveApplications";
-        }
+        // Update to Approved
+        if (leave.getLeaveStatus() == LeaveStatusEnum.APPROVED){
+        existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.APPROVED);
+        leaveApplicationService.save(existingLeaveApplication);}
 
-        // Update leave application when REJECTED
-        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED) {
-            leave.setLeaveStatus(LeaveStatusEnum.REJECTED);
-            leaveApplicationService.save(leave);
-            return "redirect:/pendingLeaveApplications";
-        }
+        //Update to Rejected
+        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED){
+            existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.REJECTED);
+            leaveApplicationService.save(existingLeaveApplication);}
+
         // Redirect to pending leave applications with a success parameter
         return "redirect:/leave/pendingLeaves?updateSuccess=true";
-    }}
+    }
+}
 
 
