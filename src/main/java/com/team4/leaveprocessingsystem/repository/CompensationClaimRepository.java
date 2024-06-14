@@ -14,8 +14,8 @@ public interface CompensationClaimRepository extends JpaRepository<CompensationC
 
     @Query("Select c FROM CompensationClaim c " +
             "WHERE c.claimingEmployee.id = :employee_id " +
-            "AND c.compensationClaimStatus = 'APPLIED'" +
-            "AND c.compensationClaimStatus = 'UPDATED'" +
-            "AND c.compensationClaimStatus = 'APPROVED'")
-    List<CompensationClaim> findAppliedUpdatedApprovedByClaimingEmployeeId(@Param("employee_id") int employee_id);
+            "AND c.claimStatus = 'APPLIED'" +
+            "AND c.claimStatus = 'UPDATED'" +
+            "AND c.claimStatus = 'APPROVED'")
+    List<CompensationClaim> findExistingByClaimingEmployeeId(@Param("employee_id") int employee_id);
 }

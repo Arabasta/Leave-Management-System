@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveBalance;
+import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
@@ -83,6 +84,13 @@ public class LeaveBalanceService implements ILeaveBalance {
 
         System.out.println("UNPAID Leave Consumed:" + empLeaveBalance.getUnpaidLeaveConsumed());
         // For testing only. To delete
+    }
+
+    @Override
+    @Transactional
+    public void updateCompensationLeave(CompensationClaim claim) {
+        LeaveBalance employeeLeaveBalance = claim.getClaimingEmployee().getLeaveBalance();
+        employeeLeaveBalance.setCompensationLeave(employeeLeaveBalance.getCompensationLeave() + claim.getCompensationLeaveRequested());
     }
 
     @Override

@@ -18,15 +18,15 @@
         <tbody>
             <tr>
                 <td th:text="${compensationClaim.id}"></td>
-                <td th:text="${#temporals.format(compensationClaim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                <td th:text="${#temporals.format(compensationClaim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${#temporals.format(compensationClaim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
+                <td th:text="${#temporals.format(compensationClaim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
                 <td th:text="${compensationClaim.overtimeHours}"></td>
                 <td th:text="${compensationClaim.compensationLeaveRequested}"></td>
-                <td th:text="${compensationClaim.compensationClaimStatus}"></td>
+                <td th:text="${compensationClaim.claimStatus}"></td>
             </tr>
             <tr>
                 <td colspan="6" style="white-space: pre-line" th:text="
-                ${compensationClaim.compensationClaimStatus.name()}+' on '+
+                ${compensationClaim.claimStatus.name()}+' on '+
                 ${#temporals.format(compensationClaim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}+' by '+
                 ${compensationClaim.approvingManager.getName()}"></td>
             </tr>
@@ -41,7 +41,7 @@
             </tr>
             <tr>
                 <td>
-                    <a th:href="@{/compensation-claims/history}" class="button is-primary">Back</a>
+                    <a th:href="@{/compensation-claims/view-all}" class="button is-primary">Back to View</a>
                 </td>
             </tr>
         </tbody>

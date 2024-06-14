@@ -174,7 +174,22 @@ public class EmployeeSeeder {
                 administrativeEmployee1);
         userService.save(employeeAdminUser1);
 
+        // normal employee 1
+        LeaveBalance adminLeaveBalance2 = new LeaveBalance(administrativeJobDesignation.getDefaultAnnualLeaves());
+        leaveBalanceService.save(adminLeaveBalance2);
 
+        Employee administrativeEmployee2 = new Employee("Mob Psycho",
+                administrativeJobDesignation,
+                manager,
+                adminLeaveBalance2);
+        employeeService.save(administrativeEmployee2);
+
+        User employeeUser2 = new User(RoleEnum.ROLE_EMPLOYEE,
+                "employee2",
+                passwordEncoder.encode("employee2"),
+                "mobpsycho@example.com",
+                administrativeEmployee2);
+        userService.save(employeeUser2);
     }
 
     private void seedIntern() {

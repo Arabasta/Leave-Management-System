@@ -9,24 +9,30 @@ import java.util.Map;
 
 public interface ICompensationClaim {
 
-    boolean save(CompensationClaim compensationClaim);
+    CompensationClaim save(CompensationClaim claim);
 
-    boolean isClashWithExistingCompensationClaims(CompensationClaim compensationClaim);
+    boolean isClashWithExisting(CompensationClaim claim);
 
-    float calculateOvertimeHours(CompensationClaim compensationClaim);
+    float calculateOvertimeHours(CompensationClaim claim);
 
-    float calculateLeaveRequested(CompensationClaim compensationClaim);
+    float calculateLeaveRequested(CompensationClaim claim);
 
     long count();
 
-    CompensationClaim findCompensationClaimById(Integer id);
+    CompensationClaim findById(Integer id);
 
-    CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee);
+    CompensationClaim findIfBelongsToEmployee(Integer id, Employee employee);
 
-    CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager);
+    CompensationClaim findIfBelongsToManagerForReview(Integer id, Manager manager);
 
-    List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee);
+    CompensationClaim getNewClaimForEmployee(Employee employee);
 
-    Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager);
+    void setNewClaimAndSave(CompensationClaim claim);
+
+    void setUpdateClaimAndSave(CompensationClaim claim);
+
+    List<CompensationClaim> findByEmployee(Employee employee);
+
+    Map<String, List<CompensationClaim>> findPendingReviewByManager(Manager manager);
 
 }

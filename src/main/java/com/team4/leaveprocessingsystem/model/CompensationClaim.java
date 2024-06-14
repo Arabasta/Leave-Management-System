@@ -2,7 +2,6 @@ package com.team4.leaveprocessingsystem.model;
 
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Past;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,7 +19,7 @@ public class CompensationClaim {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CompensationClaimStatusEnum compensationClaimStatus;
+    private CompensationClaimStatusEnum claimStatus;
 
     @ManyToOne(optional = false)
     private Employee claimingEmployee;
@@ -30,11 +29,11 @@ public class CompensationClaim {
 
     @Column(nullable = false)
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime overtimeStartDateTime;
+    private LocalDateTime overtimeStart;
 
     @Column(nullable = false)
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime overtimeEndDateTime;
+    private LocalDateTime overtimeEnd;
 
     @Column(nullable = false)
     private float overtimeHours;
@@ -55,11 +54,11 @@ public class CompensationClaim {
     @Override
     public String toString() {
         return "Compensation Claim [Id: " + id + " ], "
-                + "[Status: " + compensationClaimStatus + " ], "
+                + "[Status: " + claimStatus + " ], "
                 + "[Claiming Employee: " + claimingEmployee + " ], "
                 + "[Claim Date: " + claimDateTime + " ], "
-                + "[Overtime Start DateTime: " + overtimeStartDateTime + " ], "
-                + "[Overtime End DateTime: " + overtimeEndDateTime + " ], "
+                + "[Overtime Start DateTime: " + overtimeStart + " ], "
+                + "[Overtime End DateTime: " + overtimeEnd + " ], "
                 + "[Overtime Hours: " + overtimeHours + " ], "
                 + "[Compensation Leave Requested: " + compensationLeaveRequested + " ], "
                 + "[Approving Manager: " + approvingManager + " ], "

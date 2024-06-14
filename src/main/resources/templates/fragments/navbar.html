@@ -47,7 +47,7 @@
                     <a class="nav-link" th:href="@{/leave/managerView}">View Subordinates Leaves</a>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/compensation-claims/pending}">Review Compensation Requests</a>
+                    <a class="nav-link" th:href="@{/compensation-claims/view-pending-approval}">Approve Compensation Requests</a>
                 </li>
 
                 <!-- Employee Only -->
@@ -59,7 +59,7 @@
 
                 <!-- Employee + Manager -->
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/compensation-claims/history}">My Compensation Claims</a>
+                    <a class="nav-link" th:href="@{/compensation-claims/view-all}">My Compensation Claims</a>
                 </li>
             </ul>
         </div>
