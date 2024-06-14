@@ -133,7 +133,7 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeave";
     }
 
-    //manager view details of his subordinate
+    //manager view details of his subordinate， shall we have an authentication for manager to make sure he can only view his subordinates details?
     @GetMapping("viewSubordinateDetails/{id}")
     public String viewLeaveDetails(Model model, @PathVariable int id){
         LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
