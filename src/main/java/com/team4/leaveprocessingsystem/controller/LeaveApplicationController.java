@@ -226,19 +226,19 @@ public class LeaveApplicationController {
 
         if(t.equals(name))
         {
-            model.addAttribute("applications",
+            model.addAttribute("subordinateLeaveApplications",
                     leaveApplicationService.findByEmployeeName(k));
         }
         else if(t.equals(id))
         {
             int k_num = Integer.parseInt(k);
-            model.addAttribute("applications",
+            model.addAttribute("subordinateLeaveApplications",
                    leaveApplicationService.findByEmployeeId(k_num));
         }
         else
         {
             return "redirect:404-notfound";
         }
-        return "leaveApplication/searchResult";
+        return "leaveApplication/managerViewLeave";
     }
 }
