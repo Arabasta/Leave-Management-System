@@ -206,7 +206,7 @@ public class LeaveApplicationController {
         // Update leave application when APPROVED
         if (leave.getLeaveStatus() == LeaveStatusEnum.APPROVED) {
             leave.setLeaveStatus(LeaveStatusEnum.APPROVED);
-            Employee submittingemployee = employeeService.findEmployee
+            Employee submittingemployee = employeeService.findEmployee;
             return "redirect:/pendingLeaveApplications";
         }
 
