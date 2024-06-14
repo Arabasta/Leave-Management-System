@@ -130,18 +130,6 @@ public class LeaveApplicationController {
         return "redirect:/leave/personalHistory";
     }
 
-    @GetMapping("history")
-    public String subordinatesLeaveHistory(Model model) {
-        // todo: note; kei changed to use authService
-        Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        int managerId = manager.getId();
-
-        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("leaveApplications", allLeavesbyManagerSubordinates);
-
-        return "leaveApplication/viewLeaveHistory";
-    }
-
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id) {
@@ -151,17 +139,6 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeave";
     }
 
-    @GetMapping("managerView")
-    public String managerViewLeave(Model model) throws IllegalAccessException {
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        if (!authenticationService.isLoggedInAManager()) {
-            throw new IllegalAccessException();
-        }
-        int managerId = employee.getId();
-        List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
-        return "leaveApplication/managerViewLeave";
-    }
 
     @GetMapping("personalHistory")
     public String personalHistory(Model model) {
@@ -171,67 +148,7 @@ public class LeaveApplicationController {
         return "leaveApplication/personalViewLeave";
     }
 
-    // MANAGER - GET - PENDING LEAVE APPLICATIONS
-    @GetMapping("pendingLeaves")
-    public String pendingLeaveApplications(Model model) {
-        Manager currentManager = (Manager) employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        Map<String, List<LeaveApplication>> pendingLeaveApplications = leaveApplicationService.findLeaveApplicationsPendingApprovalByManager(currentManager);
-        model.addAttribute("pendingLeaveApplications", pendingLeaveApplications);
-        return "leaveApplication/pendingLeaveApplications";
-    }
 
-    // MANAGER - GET - REVIEW LEAVE APPLICATIONS DETAILS
-    @GetMapping("review/{id}")
-    public String leaveApplicationsDetails(@PathVariable Integer id, Model model) {
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
-        model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/reviewLeave";
-    }
-
-    @Autowired
-    ManagerService managerService;
-    // MANAGER - POST - REVIEW LEAVE APPLICATION
-    @PostMapping("/submitLeaveApplication")
-    public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave,
-                                         BindingResult bindingResult, Model model) {
-        LeaveApplication existingLeaveApplication = leaveApplicationService.findLeaveApplicationById(leave.getId());
-        existingLeaveApplication.setSubmittingEmployee(employeeService.findEmployeeById(leave.getSubmittingEmployee().getId()));
-        existingLeaveApplication.setReviewingManager(managerService.findManagerById(leave.getReviewingManager().getId()));
-        existingLeaveApplication.setLeaveStatus(leave.getLeaveStatus());
-        existingLeaveApplication.setLeaveType(leave.getLeaveType());
-        existingLeaveApplication.setStartDate(leave.getStartDate());
-        existingLeaveApplication.setEndDate(leave.getEndDate());
-        existingLeaveApplication.setSubmissionReason(leave.getSubmissionReason());
-        existingLeaveApplication.setReviewingManager(leave.getReviewingManager());
-        existingLeaveApplication.setWorkDissemination(leave.getWorkDissemination());
-        existingLeaveApplication.setContactDetails(leave.getContactDetails());
-        existingLeaveApplication.setRejectionReason(leave.getRejectionReason());
-
-
-        // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {
-            return "leaveApplication/reviewLeave";
-        }
-
-        // Check if the leave is rejected and ensure the rejection reason is provided
-        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED && (leave.getRejectionReason() == null || leave.getRejectionReason().trim().isEmpty())) {
-            bindingResult.rejectValue("rejectionReason", "error.leave", "Rejection reason must be provided if the leave is rejected");
-            return "leaveApplication/reviewLeave";
-        }
-
-        // Update to Approved
-        if (leave.getLeaveStatus() == LeaveStatusEnum.APPROVED){
-        existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.APPROVED);
-        leaveApplicationService.save(existingLeaveApplication);}
-
-        //Update to Rejected
-        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED){
-            existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.REJECTED);
-            leaveApplicationService.save(existingLeaveApplication);}
-
-        // Redirect to pending leave applications with a success parameter
-        return "redirect:/leave/pendingLeaves?updateSuccess=true";
-    }
 }
 
 
