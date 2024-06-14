@@ -11,15 +11,9 @@
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
-
-    <!-- hidden fields -->
-    <input type="hidden" name="employee" th:field="${user.role}"/>
-    <input type="hidden" name="employee" th:field="${user.username}"/>
-    <input type="hidden" name="employee" th:field="${user.password}"/>
-    <input type="hidden" name="employee" th:field="${user.email}"/>
-
     <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
+        <input type="hidden" name="employee" th:field="*{employee}"/>
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userName">Username:</label>
             <div class="col-8">
@@ -42,16 +36,13 @@
         </div>
         <!-- role -->
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label">Role(s) Given:</label>
+            <label class="col-4 col-form-label" for="role">Role Given:</label>
             <div class="col-8">
                 <div class="">
                     <div class="form-check form-check-inline">
-
-                        <label class="checkbox" th:each="role: ${roles}">
-                            <input th:text="${role.name()}"
-                                   th:value="${role}"
-                                   type="checkbox"> <br>
-                        </label>
+                            <select id="role" th:field="*{role}">
+                                <option th:each="role: ${roles}" th:value="${role}" th:text="${role}"></option>
+                            </select>
 
                         <!--
                         <input autocomplete="off" class="btn-check" id="roleEmployee" type="checkbox"
