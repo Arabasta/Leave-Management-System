@@ -8,9 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 public interface ICompensationClaim {
+
     boolean save(CompensationClaim compensationClaim);
 
-    List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee);
+    boolean isClashWithExistingCompensationClaims(CompensationClaim compensationClaim);
+
+    float calculateOvertimeHours(CompensationClaim compensationClaim);
+
+    float calculateLeaveRequested(CompensationClaim compensationClaim);
 
     long count();
 
@@ -20,9 +25,8 @@ public interface ICompensationClaim {
 
     CompensationClaim findCompensationClaimIfBelongsToManagerForReview(Integer id, Manager manager);
 
-    float calculateOvertimeHours(CompensationClaim compensationClaim);
-
-    float calculateLeaveRequested(CompensationClaim compensationClaim);
+    List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee);
 
     Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager);
+
 }

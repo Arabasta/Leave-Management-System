@@ -42,16 +42,24 @@ public class CompensationClaimService implements ICompensationClaim {
         }
     }
 
-    public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
-        try {
-            return compensationClaimRepository.findByClaimingEmployee(employee);
-        } catch (CompensationClaimNotFoundException e) {
-            throw new CompensationClaimNotFoundException(employee.getName(), e);
+    @Override
+    @Transactional
+    public boolean isClashWithExistingCompensationClaims(CompensationClaim targetClaim) {
+        List<CompensationClaim> appliedUpdatedApprovedClaims =
+                compensationClaimRepository.findAppliedUpdatedApprovedByClaimingEmployeeId
+                        (targetClaim.getClaimingEmployee().getId());
+        // Remove target claim from list if it is being edited, so it will not be invalidated
+        if (targetClaim.getId() != null) {
+            appliedUpdatedApprovedClaims.remove(targetClaim);
         }
-    }
-
-    public long count() {
-        return compensationClaimRepository.count();
+        // Loop through each existingClaim and check for timing clashes
+        for (CompensationClaim existingClaim : appliedUpdatedApprovedClaims) {
+            if (existingClaim.getOvertimeStartDateTime().compareTo(targetClaim.getOvertimeEndDateTime())
+                    <= 0 && existingClaim.getOvertimeEndDateTime().compareTo(existingClaim.getOvertimeStartDateTime()) >= 0){
+                return true;
+            };
+        }
+        return false;
     }
 
     @Override
@@ -68,6 +76,11 @@ public class CompensationClaimService implements ICompensationClaim {
     public float calculateLeaveRequested(CompensationClaim compensationClaim) {
         return (int) (calculateOvertimeHours(compensationClaim) / 4) * 0.5f;
     }
+
+    public long count() {
+        return compensationClaimRepository.count();
+    }
+
 
     @Override
     @Transactional
@@ -95,6 +108,14 @@ public class CompensationClaimService implements ICompensationClaim {
             throw new CompensationClaimNotFoundException("Claim is not assigned to "+manager.getName()+" for review.");
         }
         return compensationClaim;
+    }
+
+    public List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee) {
+        try {
+            return compensationClaimRepository.findByClaimingEmployee(employee);
+        } catch (CompensationClaimNotFoundException e) {
+            throw new CompensationClaimNotFoundException(employee.getName(), e);
+        }
     }
 
     @Override

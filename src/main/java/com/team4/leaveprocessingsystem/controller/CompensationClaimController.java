@@ -205,18 +205,14 @@ public class CompensationClaimController {
             model.addAttribute("compensationClaim", compensationClaim);
             return "compensation-claims/review";
         }
+        // Get Employee's current Compensation Leave Balance
         if (compensationClaim.getCompensationClaimStatus()==CompensationClaimStatusEnum.APPROVED) {
-            float employeeCurrentCompensationLeaveBalance = compensationClaim
-                    .getClaimingEmployee()
-                    .getLeaveBalance().getCompensationLeave();
+            LeaveBalance employeeLeaveBalance =  compensationClaim.getClaimingEmployee().getLeaveBalance();
+            float employeeCurrentCompensationLeaveBalance = employeeLeaveBalance.getCompensationLeave();
             // TODO: to refactor Update Employee's CompensationLeave
-            // Update Employee's CompensationLeave
-            compensationClaim.getClaimingEmployee()
-                    .getLeaveBalance()
-                    .setCompensationLeave(
-                            employeeCurrentCompensationLeaveBalance +
-                            compensationClaim.getCompensationLeaveRequested()
-                    );
+            // Update Employee's Compensation Leave Balance
+            employeeLeaveBalance.setCompensationLeave(employeeCurrentCompensationLeaveBalance +
+                            compensationClaim.getCompensationLeaveRequested());
         } else {
             compensationClaim.setCompensationClaimStatus(CompensationClaimStatusEnum.REJECTED);
         }

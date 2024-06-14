@@ -42,6 +42,8 @@ public class CompensationClaimValidator implements Validator {
 
         if (overtimeStartDateTime !=null && overtimeEndDateTime!=null) {
 
+            // TODO: Ensure claim does not clash with existing claims
+
             // Ensure end date is before claim date
             if (claimDate.isBefore(overtimeEndDateTime)) {
                 errors.rejectValue("overtimeEndDateTime", "error.compensationClaim.dates.3",
