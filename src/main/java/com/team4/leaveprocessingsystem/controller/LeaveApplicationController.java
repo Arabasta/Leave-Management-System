@@ -134,7 +134,7 @@ public class LeaveApplicationController {
         int managerId = manager.getId();
 
         List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("leaveApplications",allLeavesbyManagerSubordinates);
+        model.addAttribute("applications",allLeavesbyManagerSubordinates);
 
         return "leaveApplication/viewLeaveHistory";
     }
@@ -148,6 +148,16 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeave";
     }
 
+    //manager view details of his subordinate
+    @GetMapping("viewSubordinateDetails/{id}")
+    public String viewLeaveDetails(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/viewLeave";
+    }
+
+    //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
+    //so i create a new method
     @GetMapping("managerView")
     public String managerViewLeave(Model model) throws IllegalAccessException {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
@@ -202,5 +212,33 @@ public class LeaveApplicationController {
         // Save the leave application status
         leaveApplicationService.save(leave);
         return "redirect:/pendingLeaveApplications";
+    }
+
+
+    //Add view subordinates history searching function
+    @RequestMapping(value="searchingLeaveApplications")
+    public String search(@RequestParam("keyword")
+                         String k, @RequestParam("searchType") String t, Model
+                                 model)
+    {
+        String name=new String("name");
+        String id = new String("id");
+
+        if(t.equals(name))
+        {
+            model.addAttribute("applications",
+                    leaveApplicationService.findByEmployeeName(k));
+        }
+        else if(t.equals(id))
+        {
+            int k_num = Integer.parseInt(k);
+            model.addAttribute("applications",
+                   leaveApplicationService.findByEmployeeId(k_num));
+        }
+        else
+        {
+            return "redirect:404-notfound";
+        }
+        return "leaveApplication/searchResult";
     }
 }
