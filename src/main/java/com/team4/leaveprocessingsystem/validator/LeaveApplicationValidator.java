@@ -21,9 +21,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class LeaveApplicationValidator implements Validator {
-    @Autowired
-    private PublicHolidayService publicHolidayService;
-    @Autowired LeaveApplicationService leaveApplicationService;
+
+    private final PublicHolidayService publicHolidayService;
+    private final LeaveApplicationService leaveApplicationService;
+
+    public LeaveApplicationValidator(PublicHolidayService publicHolidayService, LeaveApplicationService leaveApplicationService) {
+        this.publicHolidayService = publicHolidayService;
+        this.leaveApplicationService = leaveApplicationService;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
