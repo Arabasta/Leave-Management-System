@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,9 +7,6 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>Team 4 Leave Management System</title>
     <link rel="stylesheet" href="/css/hierarchy-tree.css">
-    <style>
-
-    </style>
 </head>
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
@@ -25,7 +22,7 @@
                 <div th:fragment="subtree(rootEmployee, managerSubordinatesMap)">
                     <!-- root employee -->
                     <div class="node">
-                        <a th:href="'/admin/manage-hierarchy/edit/' + ${rootEmployee.id}">
+                        <a th:href=" @{/admin/manage-hierarchy/edit/{id}(id=${rootEmployee.id})} ">
                             <span th:text="${rootEmployee.name} + ' (' + ${rootEmployee.jobDesignation.name} + ')'"></span>
                             <img src="/icons/edit-icon.png" alt="Edit" class="edit-icon">
                         </a>
@@ -34,7 +31,7 @@
                     <ul th:if="${managerSubordinatesMap[rootEmployee.id] != null}">
                         <!-- for each child node -->
                         <li th:each="employee : ${managerSubordinatesMap[rootEmployee.id]}">
-                            <!-- recursively call subtree fragment -->
+                            <!-- call subtree fragment -->
                             <div th:replace="::subtree(${employee}, ${managerSubordinatesMap})">
                             </div>
                         </li>
