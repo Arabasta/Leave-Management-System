@@ -127,18 +127,6 @@ public class LeaveApplicationController {
         return "redirect:/leave/personalHistory";
     }
 
-    @GetMapping("history")
-    public String subordinatesLeaveHistory(Model model){
-        // todo: note; kei changed to use authService
-        Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        int managerId = manager.getId();
-
-        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("leaveApplications",allLeavesbyManagerSubordinates);
-
-        return "leaveApplication/viewLeaveHistory";
-    }
-
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
@@ -148,6 +136,16 @@ public class LeaveApplicationController {
         return "leaveApplication/viewLeave";
     }
 
+    //manager view details of his subordinate
+    @GetMapping("viewSubordinateDetails/{id}")
+    public String viewLeaveDetails(Model model, @PathVariable int id){
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "leaveApplication/managerViewLeaveDetails";
+    }
+
+    //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
+    //so i create a new method
     @GetMapping("managerView")
     public String managerViewLeave(Model model) throws IllegalAccessException {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
@@ -202,5 +200,36 @@ public class LeaveApplicationController {
         // Save the leave application status
         leaveApplicationService.save(leave);
         return "redirect:/pendingLeaveApplications";
+    }
+
+
+    //Add view subordinates history searching function
+    @RequestMapping(value="searchingLeaveApplications")
+    public String search(@RequestParam("keyword")
+                         String k, @RequestParam("searchType") String t, Model
+                                 model)
+    {
+        String name=new String("name");
+        String id = new String("id");
+
+        //have error here, should make sure these subordinates belong to the manager
+        if(t.equals(name))
+        {
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(k);
+            model.addAttribute("subordinateLeaveApplications",
+                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
+        }
+        else if(t.equals(id))
+        {
+            int k_num = Integer.parseInt(k);
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeId(k_num);
+            model.addAttribute("subordinateLeaveApplications",
+                   leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
+        }
+        else
+        {
+            return "redirect:404-notfound";
+        }
+        return "leaveApplication/managerViewLeave";
     }
 }

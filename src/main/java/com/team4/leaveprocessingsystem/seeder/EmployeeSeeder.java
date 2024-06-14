@@ -204,13 +204,13 @@ public class EmployeeSeeder {
         JobDesignation cleaningJobDesignation = jobDesignationService.findByName("cleaning");
 
         // cleaning staff 1
-        Manager manager = employeeService.findManagerByName("Madara Uchiha");
+        Manager manager1 = employeeService.findManagerByName("Madara Uchiha");
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
         Employee cleaningEmployee1 = new Employee("Andrew",
                 cleaningJobDesignation,
-                manager,
+                manager1,
                 cleaningLeaveBalance);
         employeeService.save(cleaningEmployee1);
 
@@ -220,6 +220,8 @@ public class EmployeeSeeder {
                 "andrew@gmail.com",
                 cleaningEmployee1);
         userService.save(cleaningUser1);
+
+
 
 
     }
