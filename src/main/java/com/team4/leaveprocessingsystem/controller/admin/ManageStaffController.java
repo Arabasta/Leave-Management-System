@@ -99,7 +99,6 @@ public class ManageStaffController {
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("managerList", managerList);
 
-
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
 
@@ -135,12 +134,10 @@ public class ManageStaffController {
         return "admin/manage-staff/edit-employee-details-form";
     }
 
-
     @GetMapping("/add/employee")
     public String createNewEmployeeForm(Model model) {
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
         model.addAttribute("employee", new Employee());
-        model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
@@ -176,11 +173,10 @@ public class ManageStaffController {
         return "admin/manage-staff/create-new-employee-form";
     }
 
-    // todo: add popup to confirm if want to delete
-
     @GetMapping("/delete/{employeeId}")
     public String deleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
                                  Model model) {
+
         // Prevent admin from deleting own account. Prevent total loss of admin accounts.
         if(employeeId == authenticationService.getLoggedInEmployeeId()){
             throw new ServiceSaveException("Unable to delete your own account");
@@ -193,51 +189,8 @@ public class ManageStaffController {
         }
         employeeService.save(employee);
 
-
         // todo: to confirm if we want employeeRepository.findAll() to include "deleted" employees or not
 
-
-        // todo: fix bug, soft delete works sometimes only.
-
-        //employee.setDeleted(true);
-//        employeeService.removeEmployee(employee);
-
-        // TESTING - without soft delete, only able to remove Mikasa
-        /*
-        // delete user accounts, before removing employee
-        List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
-
-        for (User user : employeeUserAccounts) {
-            userService.removeUser(user);
-        }
-
-        employeeService.removeEmployee(employee);
-        */
-
-        /*
-        // check if employee is approving or claiming existing compensation claims
-        List<Integer> allApprovingManagers = compensationClaimService.allApprovingManagersIds();
-        List<Integer> allClaimingEmployees = compensationClaimService.allClaimingEmployees();
-
-        // check if employee is approving or submitting application leaves
-        List<Integer> allReviewingManagers = leaveApplicationService.allReviewingManagersIds();
-        List<Integer> allSubmittingEmployees = leaveApplicationService.allClaimingEmployees();
-
-        if (allApprovingManagers.contains(employeeId) || allClaimingEmployees.contains(employeeId)
-        || allReviewingManagers.contains(employeeId) || allSubmittingEmployees.contains(employeeId)) {
-            //employee.setDeleted(true);
-            employeeService.removeEmployee(employee);
-        }
-        else {
-            // delete user accounts, before removing employee
-            List<User> employeeUserAccounts = userService.findUserRolesByEmployeeId(employeeId);
-
-            for (User user : employeeUserAccounts) {
-                //user.setDeleted(true);
-                userService.removeUser(user);
-            }
-        }
-         */
         return "redirect:/admin/manage-staff/";
     }
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
@@ -246,11 +199,13 @@ public class ManageStaffController {
     public String createNewUserForm(@PathVariable(name = "employeeId") Integer employeeId,
                                     Model model) {
         User user = new User();
+
         Employee employee = employeeService.findEmployeeById(employeeId);
-        user.setEmployee(employee);
+        //user.setEmployee(employee);
 
         model.addAttribute("user", user);
         model.addAttribute("roles", RoleEnum.values());
+        model.addAttribute("employee", employee);
 
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
@@ -263,32 +218,16 @@ public class ManageStaffController {
                                     BindingResult bindingResult,
                                     Model model) {
 
+        Employee employee = employeeService.findEmployeeById(user.getEmployee().getId());
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", user);
+            model.addAttribute("employee", employee);
             model.addAttribute("roles", RoleEnum.values());
             return "admin/manage-staff/create-new-user-account-form";
         }
 
-        // create a list to store new users based on selected role(s), up to 2 roles?
-        //List<User> newUsers = new ArrayList<>();
-
-        // todo: think of a way to save more than a single role,
-        //  I don't think I am able to save more than 1 role,
-
-        //  todo: also cannot save user, and the create-new-user-account-form.html throws an error
-        //   that I'm not sure why I'm getting.
-
-        /* Error: Caused by: org.thymeleaf.exceptions.TemplateProcessingException:
-        Exception evaluating SpringEL expression: "!isEditMode"
-         (template: "admin/manage-staff/create-new-user-account-form" - line 84, col 10)
-
-         Caused by: org.springframework.expression.spel.SpelEvaluationException: EL1001E: Type conversion problem, cannot convert from null to boolean
-
-         * */
-
-
-        User newUser = new User(user.getRole(),user.getUsername(),
-                user.getPassword(), user.getEmail(), user.getEmployee());
+        User newUser = new User(user.getRole(),user.getUsername(), user.getPassword(), user.getEmail(), employee);
 
         userService.save(newUser);
         model.addAttribute("newUser", newUser);
@@ -297,7 +236,5 @@ public class ManageStaffController {
 
         return "admin/manage-staff/create-new-user-account-form";
     }
-
-
 
 }

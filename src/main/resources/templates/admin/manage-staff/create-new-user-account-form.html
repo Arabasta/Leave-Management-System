@@ -11,6 +11,13 @@
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
+
+    <!-- hidden fields -->
+    <input type="hidden" name="employee" th:field="${user.role}"/>
+    <input type="hidden" name="employee" th:field="${user.username}"/>
+    <input type="hidden" name="employee" th:field="${user.password}"/>
+    <input type="hidden" name="employee" th:field="${user.email}"/>
+
     <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
         <div class="mb-3 row align-items-center">
