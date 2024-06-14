@@ -127,18 +127,6 @@ public class LeaveApplicationController {
         return "redirect:/leave/personalHistory";
     }
 
-    @GetMapping("history")
-    public String subordinatesLeaveHistory(Model model){
-        // todo: note; kei changed to use authService
-        Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        int managerId = manager.getId();
-
-        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("applications",allLeavesbyManagerSubordinates);
-
-        return "leaveApplication/viewLeaveHistory";
-    }
-
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
