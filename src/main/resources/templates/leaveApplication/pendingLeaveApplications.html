@@ -33,8 +33,8 @@
         </tr>
         <!-- Loop through leave -->
         <th:block th:each="leave:${employee.value}">
-            <th:block ${leave.id} th:if="${leave.leaveStatus =='APPLIED'}
-            or ${leave.leaveStatus == 'UPDATED'}">
+            <th:block ${leave.id} th:if="${leave.leaveStatus.name() =='APPLIED'}
+            or ${leave.leaveStatus.name() == 'UPDATED'}">
 
                 <tr>
                     <td th:text="${leave.id}"></td>
@@ -42,8 +42,8 @@
                     <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy, HH:mm')}"></td>
                     <td th:text="${leave.submissionReason}"></td>
                     <td th:text="${leave.leaveStatus}"></td>
-                    <td th:if="${leave.leaveStatus}=='APPLIED' or
-                                ${leave.leaveStatus}=='UPDATED'">
+                    <td th:if="${leave.leaveStatus.name()}=='APPLIED' or
+                                ${leave.leaveStatus.name()}=='UPDATED'">
                         <a th:href="@{/leave/review/{id}(id=${leave.id})}" class="button is-primary">Details</a></td>
                 </tr>
             </th:block>
