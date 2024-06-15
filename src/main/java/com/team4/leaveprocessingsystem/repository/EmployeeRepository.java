@@ -24,4 +24,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             "where CAST(u.role as String) like CONCAT('%', :k, '%')")
     List<Employee> findUsersByRoleType(@Param("k") String keyword);
 
+    @Query("Select emp from Employee emp where emp.isDeleted = false")
+    List<Employee> findAllExcludeDeleted();
+
+    @Query("Select emp from Employee emp where emp.isDeleted = true")
+    List<Employee> findOnlyDeleted();
+
 }

@@ -51,7 +51,7 @@ public class ManageStaffController {
                          Model model) {
         List<Employee> employees;
         if (query == null || query.isEmpty()) {
-            employees = employeeService.findAll();
+            employees = employeeService.findAllExcludeDeleted();
         } else {
             if (searchType == null || searchType.isEmpty())
                 searchType = "name";
@@ -67,6 +67,34 @@ public class ManageStaffController {
         model.addAttribute("employees", employees);
         model.addAttribute("query", query);
         model.addAttribute("searchType", searchType);
+        model.addAttribute("viewAllExcludeDeleted", true);
+        return "admin/manage-staff/view-all-employees";
+    }
+
+    @GetMapping("/view-all-include-deleted")
+    public String viewAllIncludeDeleted(@RequestParam(value = "query", required = false) String query,
+                                        @RequestParam(value = "searchType", required = false) String searchType,
+                                        Model model) {
+
+        List<Employee> employees;
+        if (query == null || query.isEmpty()) {
+            employees = employeeService.findOnlyDeleted(); // change this to findonlydeleted
+        } else {
+            if (searchType == null || searchType.isEmpty())
+                searchType = "name";
+            employees = switch (searchType) {
+                case "name" -> employeeService.findEmployeesByName(query);
+                case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
+                case "roleType" -> employeeService.findUsersByRoleType(query);
+                default -> employeeService.findAll();
+            };
+        }
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("viewAllExcludeDeleted", false);
+
         return "admin/manage-staff/view-all-employees";
     }
 

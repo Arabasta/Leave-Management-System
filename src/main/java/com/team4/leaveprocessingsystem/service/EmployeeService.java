@@ -92,7 +92,17 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public void removeEmployee(Employee employee) {
-        employeeRepository.delete(employee);
-    }
+    public List<Employee> findAllExcludeDeleted() { return employeeRepository.findAllExcludeDeleted();}
+
+    @Override
+    @Transactional
+    public List<Employee> findOnlyDeleted() { return employeeRepository.findOnlyDeleted();}
+
+    @Override
+    @Transactional
+    public void removeEmployee(Employee employee) { employeeRepository.delete(employee);}
+
+
+
+
 }
