@@ -12,14 +12,15 @@ public class DatabaseSeeder {
                                                PublicHolidaySeeder publicHolidaySeeder,
                                                JobDesignationSeeder jobDesignationSeeder,
                                                LeaveApplicationSeeder leaveApplicationSeeder,
-                                               CompensationClaimSeeder compensationClaimSeeder) {
+                                               CompensationClaimSeeder compensationClaimSeeder,
+                                               MetadataSeeder metadataSeeder) {
         return args -> {
             jobDesignationSeeder.seed();
             publicHolidaySeeder.seed();
             employeeSeeder.seed();
             leaveApplicationSeeder.seed();
             compensationClaimSeeder.seed();
-
+            metadataSeeder.seed();
         };
     }
 }
