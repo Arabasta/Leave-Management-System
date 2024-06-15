@@ -51,7 +51,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
 
                 )
-                .httpBasic(Customizer.withDefaults()) //For API consumption, allow http requests with Authorization header
+                .httpBasic(Customizer.withDefaults()) //For API consumption, allow http requests with authorization header
                 // successful login redirection path
                 .formLogin((form) -> form
                         .loginPage("/auth/login")
@@ -67,8 +67,10 @@ public class WebSecurityConfig {
                 )
                 .exceptionHandling((exceptions) -> exceptions
                         .accessDeniedHandler(accessDeniedHandler())
+                )
+                .csrf((csrf) -> csrf
+                        .ignoringRequestMatchers("/api/**") // For PUT, POST requests
                 );
-
         return http.build();
     }
 
