@@ -87,7 +87,7 @@ public class EmployeeCompensationClaimController {
     public String create(@Valid CompensationClaim claim,BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("compensationClaim", claim);
-            return "create-form";
+            return "employee/compensation-claims/create-form";
         } // Else
         compensationClaimService.setNewClaimAndSave(claim);
         return "redirect:/employee/compensation-claims/view";
