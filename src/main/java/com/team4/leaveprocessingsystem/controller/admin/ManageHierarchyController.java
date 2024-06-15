@@ -8,6 +8,7 @@ import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.ManagerService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,6 +94,7 @@ public class ManageHierarchyController {
         List<Manager> managers = managerService.findAllManagers();
 
         model.addAttribute("employee", employee);
+        model.addAttribute("oldManager", employee.getManager());
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignation", jobDesignation);
         model.addAttribute("managers", managers);
@@ -101,26 +103,49 @@ public class ManageHierarchyController {
     }
 
     @PostMapping("/update")
-    public String updateEmployee(@ModelAttribute("employee") Employee employee) {
-        Employee existingEmployee = employeeService.findEmployeeById(employee.getId());
+    public String updateEmployee(@ModelAttribute("employee") Employee employee,
+                                 @RequestParam("oldManager") Integer oldManagerId) {
+        Employee currEmployee = employeeService.findEmployeeById(employee.getId());
 
-        /* todo: prevent curr (if manager) from being assigned to curr.child (if manager)
-             or just set curr.child.manager to curr.manager or null if curr.manager null
-             and curr.manager to curr.child */
-        if (employee.getManager().getId() != null) {
-            Manager manager = managerService.findManagerById(employee.getManager().getId());
-            existingEmployee.setManager(manager);
-        } else if (existingEmployee instanceof Manager) {
-            existingEmployee.setManager(null);
+        try {
+            if (employee.getManager().getId() == null) {
+                currEmployee.setManager(null);
+            } else {
+                Manager newManager = managerService.findManagerById(employee.getManager().getId());
+
+                // check if new is in curr.subtree
+                List<Employee> currSubordinates = employeeService.findEmployeesByManager((Manager) currEmployee);
+                List<Employee> currPrevs = new ArrayList<>();
+                for (Employee e : currSubordinates) {
+                    // add all curr.prev to list only for Manager curr.prevs
+                    if (e.getManager() == currEmployee && e instanceof Manager) {
+                        currPrevs.add(e);
+                    }
+                }
+
+                // if curr.subtree
+                if (!currPrevs.isEmpty()) {
+                    // set curr.prevs to curr.next
+                    Manager currNext = oldManagerId != null ? managerService.findManagerById(oldManagerId) : null;
+                    for (Employee currPrev : currPrevs) {
+                        currPrev.setManager(currNext);
+                        employeeService.save(currPrev);
+                    }
+                }
+                // set curr.next = new
+                currEmployee.setManager(newManager);
+            }
+        } catch (Exception e) {
+            throw new ServiceException("Failed to update hierarchy", e);
         }
 
         JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
-        existingEmployee.setJobDesignation(jd);
+        currEmployee.setJobDesignation(jd);
 
         LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
-        existingEmployee.setLeaveBalance(leaveBalance);
+        currEmployee.setLeaveBalance(leaveBalance);
 
-        employeeService.save(existingEmployee);
+        employeeService.save(currEmployee);
         return "redirect:/admin/manage-hierarchy/tree";
     }
 }
