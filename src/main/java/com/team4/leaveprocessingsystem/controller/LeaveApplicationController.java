@@ -67,7 +67,7 @@ public class LeaveApplicationController {
     @GetMapping("edit/{id}")
     public String editLeave(@PathVariable int id, Model model){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
 
         // Only allow editing of leaves pending approval
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
@@ -106,7 +106,7 @@ public class LeaveApplicationController {
     @GetMapping("delete/{id}")
     public String deleteLeave(@PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveApplicationService.save(leaveApplication);
 
@@ -118,7 +118,7 @@ public class LeaveApplicationController {
     @GetMapping("cancel/{id}")
     public String cancelLeave(@PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
 
@@ -131,7 +131,7 @@ public class LeaveApplicationController {
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee);
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         model.addAttribute("leave", leaveApplication);
         return "leaveApplication/viewLeave";
     }
