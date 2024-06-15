@@ -5,6 +5,7 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
@@ -18,13 +19,15 @@ public class CompensationClaimSeeder {
     private final CompensationClaimService compensationClaimService;
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
+    private final EmployeeRepository employeeRepository;
 
     public CompensationClaimSeeder(CompensationClaimService compensationClaimService,
                                    EmployeeService employeeService,
-                                   LeaveBalanceService leaveBalanceService) {
+                                   LeaveBalanceService leaveBalanceService, EmployeeRepository employeeRepository) {
         this.compensationClaimService = compensationClaimService;
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
+        this.employeeRepository = employeeRepository;
     }
 
     public void seed() {
@@ -32,7 +35,7 @@ public class CompensationClaimSeeder {
             System.out.println("Start Compensation Claim Seeder");
 
             Employee employee = employeeService.findByName("Anya Forger");
-            Manager manager = employeeService.findManagerByName("Madara Uchiha");
+            Manager manager = employee.getManager();
             LeaveBalance employeeLeaveBalance = leaveBalanceService.findByEmployee(employee.getId());
 
             CompensationClaim compensationClaim1 = new CompensationClaim();

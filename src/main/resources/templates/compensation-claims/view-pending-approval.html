@@ -42,7 +42,7 @@
                     <td th:text="${claim.compensationLeaveRequested}"></td>
                     <td th:if="${claim.claimStatus.name()}=='APPLIED' or
                                 ${claim.claimStatus.name()}=='UPDATED'">
-                        <a th:href="@{/compensation-claims/approval/{id}(id=${claim.id})}" class="button is-primary">Approval Form</a></td>
+                        <a th:href="@{/compensation-claims/approvalForm/{id}(id=${claim.id})}" class="button is-primary">Approval Form</a></td>
                 </tr>
             </th:block>
         </th:block>

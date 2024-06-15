@@ -91,6 +91,7 @@ public class LeaveBalanceService implements ILeaveBalance {
     public void updateCompensationLeave(CompensationClaim claim) {
         LeaveBalance employeeLeaveBalance = claim.getClaimingEmployee().getLeaveBalance();
         employeeLeaveBalance.setCompensationLeave(employeeLeaveBalance.getCompensationLeave() + claim.getCompensationLeaveRequested());
+        leaveBalanceRepository.save(employeeLeaveBalance);
     }
 
     @Override

@@ -5,7 +5,7 @@
 <div th:replace="fragments/navbar :: menu"></div>
     <h1>Update Compensation Claim </h1>
 
-    <form action="#" th:action="@{/compensation-claims/update-submit}" th:object="${compensationClaim}" method="post">
+    <form action="#" th:action="@{/compensation-claims/updateForm}" th:object="${compensationClaim}" method="post">
         <input type="hidden" th:field="${compensationClaim.id}"/>
         <input type="hidden" th:field="${compensationClaim.claimingEmployee}"/>
         <input type="hidden" th:field="${compensationClaim.approvingManager}"/>
@@ -49,7 +49,7 @@
                     <td>
                         <input type="submit" value="Submit" />
                         <input type="reset" value="Reset" />
-                        <a th:href="@{/compensation-claims/view-all}" class="button is-primary">Back to View</a>
+                        <a th:href="@{/compensation-claims/view}" class="button is-primary">Back to View</a>
                     </td>
                 </tr>
             </tbody>

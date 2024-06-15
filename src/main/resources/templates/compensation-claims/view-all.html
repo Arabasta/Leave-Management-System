@@ -20,7 +20,7 @@
 
     <table>
         <tr>
-            <td><a href="/compensation-claims/create-form" class="button is-primary">New Compensation Claim</a></td>
+            <td><a th:href="@{/compensation-claims/create}" class="button is-primary">New Compensation Claim</a></td>
             <!-- TODO: to implement save as CSV function-->
             <td><a class="button is-primary">Save as CSV</a></td>
         </tr>
@@ -54,7 +54,7 @@
                         <td >
                             <span th:if="${claim.claimStatus.name()}=='APPLIED'
                                      or ${claim.claimStatus.name()}=='UPDATED'">
-                                <a th:href="@{/compensation-claims/update/{id}(id=${claim.id})}" class="button is-primary">Update</a>
+                                <a th:href="@{/compensation-claims/updateForm/{id}(id=${claim.id})}" class="button is-primary">Update</a>
                             </span>
                             <span> </span> <!-- whitespace to retain cell space -->
                         </td>
@@ -68,7 +68,7 @@
                         <td >
                             <span th:if="${claim.claimStatus.name()}=='APPROVED'
                                      or ${claim.claimStatus.name()}=='REJECTED'">
-                                <a th:href="@{/compensation-claims/view/{id}(id=${claim.id})}" class="button is-primary">Details</a>
+                                <a th:href="@{/compensation-claims/viewDetails/{id}(id=${claim.id})}" class="button is-primary">Details</a>
                             </span>
                             <span> </span> <!-- whitespace to retain cell space -->
                         </td>

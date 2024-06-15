@@ -48,14 +48,15 @@ public class CompensationClaimService implements ICompensationClaim {
         // Remove target claim from list if it is being edited, so it will not be invalidated
         if (targetClaim.getId() != null) existingClaims.remove(targetClaim);
         // ref: https://stackoverflow.com/questions/325933/determine-whether-two-date-ranges-overlap
-        // Return false if targetClaim clashes with other claims
+        // Return true if targetClaim clashes with other claims
         for (CompensationClaim claim : existingClaims) {
-            if (targetClaim.getOvertimeStart().compareTo(claim.getOvertimeEnd()) <= 0
-                    && targetClaim.getOvertimeEnd().compareTo(claim.getOvertimeStart()) >= 0) {
-                return false;
-            };
+            if (targetClaim.getOvertimeStart().isAfter(claim.getOvertimeEnd())
+                    || targetClaim.getOvertimeEnd().isBefore(claim.getOvertimeStart())) {
+            } else {
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -76,7 +77,6 @@ public class CompensationClaimService implements ICompensationClaim {
     public long count() {
         return compensationClaimRepository.count();
     }
-
 
     @Override
     @Transactional

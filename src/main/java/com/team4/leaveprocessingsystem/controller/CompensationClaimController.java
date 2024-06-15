@@ -52,7 +52,7 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - GET - VIEW COMPENSATION CLAIMS
     */
-    @GetMapping("/view-all")
+    @GetMapping("/view")
     public String view(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         model.addAttribute("employee", employee.getName());
@@ -64,7 +64,7 @@ public class CompensationClaimController {
     /*
     EMPLOYEE - GET - VIEW COMPENSATION CLAIM DETAILS
 */
-    @GetMapping("/view/{id}")
+    @GetMapping("/viewDetails/{id}")
     public String viewDetails(@PathVariable Integer id, Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToEmployee(id, employee);
@@ -75,8 +75,8 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - GET - CREATE COMPENSATION CLAIM
     */
-    @GetMapping(value = "/create-form")
-    public String viewCreateForm(Model model) {
+    @GetMapping("/create")
+    public String create(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.getNewClaimForEmployee(employee);
         model.addAttribute("compensationClaim", claim);
@@ -86,8 +86,8 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - POST - CREATE COMPENSATION CLAIM
     */
-    @PostMapping("/create-submit")
-    public String createForm(@Valid CompensationClaim claim,BindingResult result, Model model) {
+    @PostMapping("/create")
+    public String create(@Valid CompensationClaim claim,BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("compensationClaim", claim);
             return "compensation-claims/create-form";
@@ -99,8 +99,8 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - GET - UPDATE COMPENSATION CLAIM
     */
-    @GetMapping("/update/{id}")
-    public String viewUpdateForm(@PathVariable Integer id, Model model) {
+    @GetMapping("/updateForm/{id}")
+    public String updateForm(@PathVariable Integer id, Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToEmployee(id, employee);
         claim.setClaimDateTime(LocalDateTime.now());
@@ -112,7 +112,7 @@ public class CompensationClaimController {
         EMPLOYEE - POST - UPDATE COMPENSATION CLAIM
      */
     //TODO: style new overtimeStartDateTime and overtimeEnd to dd-MM-yyyy, hh-mm (verify format)
-    @PostMapping("/update-submit")
+    @PostMapping("/updateForm")
     public String updateForm(@Valid CompensationClaim claim, BindingResult result, Model model) {
         if (result.hasErrors()) { // Set back to original values, since they had errors
             claim.setOvertimeStart(claim.getOvertimeStart());
@@ -139,7 +139,7 @@ public class CompensationClaimController {
     /*
         MANAGER - GET - PENDING COMPENSATION CLAIMS
     */
-    @GetMapping("/view-pending-approval")
+    @GetMapping("/viewPendingApproval")
     public String viewPendingApproval(Model model) {
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         Map<String, List<CompensationClaim>> employeesPendingClaims = compensationClaimService.findPendingReviewByManager(manager);
@@ -150,8 +150,8 @@ public class CompensationClaimController {
     /*
         MANAGER - GET - REVIEW COMPENSATION CLAIM
     */
-    @GetMapping("approval/{id}")
-    public String viewApprovalForm(@PathVariable Integer id, Model model) {
+    @GetMapping("approvalForm/{id}")
+    public String approvalForm(@PathVariable Integer id, Model model) {
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToManagerForReview(id, manager);
         model.addAttribute("compensationClaim", claim);
@@ -161,7 +161,7 @@ public class CompensationClaimController {
     /*
         MANAGER - POST - REVIEW COMPENSATION CLAIM
     */
-    @PostMapping("/approval-submit")
+    @PostMapping("/approvalForm")
     public String approvalForm(@Valid @ModelAttribute("compensationClaim") CompensationClaim claim,
                                           BindingResult result,
                                           Model model) {
@@ -174,9 +174,10 @@ public class CompensationClaimController {
         } else {
             claim.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
         }
+
         claim.setComments(claim.getComments());
         claim.setReviewedDateTime(LocalDateTime.now());
         compensationClaimService.save(claim);
-        return "redirect:/compensation-claims/view-pending-approval";
+        return "redirect:/compensation-claims/viewPendingApproval";
     }
 }

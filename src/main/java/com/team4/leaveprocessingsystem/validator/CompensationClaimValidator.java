@@ -47,7 +47,8 @@ public class CompensationClaimValidator implements Validator {
 
         if (overtimeStart !=null && overtimeEnd !=null) {
 
-            if (compensationClaimService.isClashWithExisting(claim)) {
+            if (compensationClaimService.isClashWithExisting(claim)
+                    && claimStatus != CompensationClaimStatusEnum.REJECTED && claimStatus != CompensationClaimStatusEnum.APPROVED) {
                 errors.rejectValue("overtimeStart", "error.compensationClaim.dates.3",
                         "Overtime entered overlaps with existing compensation claims.");
                 errors.rejectValue("overtimeEnd", "error.compensationClaim.dates.4",
@@ -72,15 +73,10 @@ public class CompensationClaimValidator implements Validator {
                         "Must select Approve or Reject.");
             }
 
-            assert claimStatus != null;
-            // Ensure claim is not at APPLIED nor UPDATED state.
-            if (claimStatus != CompensationClaimStatusEnum.APPLIED && claimStatus != CompensationClaimStatusEnum.UPDATED) {
-
-                // Ensure rejection comment is valid if Manager rejects claim.
-                if (claimStatus == CompensationClaimStatusEnum.REJECTED && comments.isEmpty()) {
-                    errors.rejectValue("comments", "error.compensationClaim.comments.1",
-                            "Must include reason for Rejection.");
-                }
+            // Ensure rejection comment is valid if Manager rejects claim.
+            if (claimStatus == CompensationClaimStatusEnum.REJECTED && (comments.isBlank())) {
+                errors.rejectValue("comments", "error.compensationClaim.comments.1",
+                        "Must include reason for Rejection.");
             }
         }
     }
