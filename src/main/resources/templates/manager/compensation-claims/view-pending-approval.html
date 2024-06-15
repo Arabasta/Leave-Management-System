@@ -3,7 +3,7 @@
 <head th:replace="fragments/head :: html_head"></head>
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
-<h1>Review Compensation Claim Requests</h1>
+<h1>Approve Compensation Claim Requests</h1>
 
 <table>
     <tr>
@@ -31,18 +31,18 @@
         </tr>
         <!-- Loop through claims -->
         <th:block th:each="claim:${employee.value}">
-            <th:block th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
-                        ${claim.compensationClaimStatus.name()}=='UPDATED'">
+            <th:block th:if="${claim.claimStatus.name()}=='APPLIED' or
+                        ${claim.claimStatus.name()}=='UPDATED'">
 
                 <tr>
                     <td th:text="${claim.id}"></td>
-                    <td th:text="${#temporals.format(claim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                    <td th:text="${#temporals.format(claim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(claim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
                     <td th:text="${claim.overtimeHours}"></td>
                     <td th:text="${claim.compensationLeaveRequested}"></td>
-                    <td th:if="${claim.compensationClaimStatus.name()}=='APPLIED' or
-                                ${claim.compensationClaimStatus.name()}=='UPDATED'">
-                        <a th:href="@{/compensation-claims/review/{id}(id=${claim.id})}" class="button is-primary">Review</a></td>
+                    <td th:if="${claim.claimStatus.name()}=='APPLIED' or
+                                ${claim.claimStatus.name()}=='UPDATED'">
+                        <a th:href="@{/manager/compensation-claims/approvalForm/{id}(id=${claim.id})}" class="button is-primary">Approval Form</a></td>
                 </tr>
             </th:block>
         </th:block>

@@ -5,13 +5,13 @@
 <div th:replace="fragments/navbar :: menu"></div>
     <h1>Review Compensation Claim </h1>
 
-    <form action="#" th:action="@{/compensation-claims/review-submit}" th:object="${compensationClaim}" method="post">
+    <form action="#" th:action="@{/manager/compensation-claims/approvalForm}" th:object="${compensationClaim}" method="post">
         <input type="hidden" th:field="${compensationClaim.id}"/>
         <input type="hidden" th:field="${compensationClaim.claimingEmployee}"/>
         <input type="hidden" th:field="${compensationClaim.approvingManager}"/>
         <input type="hidden" th:field="${compensationClaim.claimDateTime}"/>
-        <input type="hidden" th:field="${compensationClaim.overtimeStartDateTime}"/>
-        <input type="hidden" th:field="${compensationClaim.overtimeEndDateTime}"/>
+        <input type="hidden" th:field="${compensationClaim.overtimeStart}"/>
+        <input type="hidden" th:field="${compensationClaim.overtimeEnd}"/>
         <input type="hidden" th:field="${compensationClaim.overtimeHours}"/>
         <input type="hidden" th:field="${compensationClaim.compensationLeaveRequested}"/>
 
@@ -28,12 +28,12 @@
 
                 <tr>
                     <td>Overtime Start</td>
-                    <td th:text="${#temporals.format(compensationClaim.overtimeStartDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(compensationClaim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
                 </tr>
 
                 <tr>
                     <td>Overtime End</td>
-                    <td th:text="${#temporals.format(compensationClaim.overtimeEndDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                    <td th:text="${#temporals.format(compensationClaim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
                 </tr>
 
                 <tr>
@@ -51,24 +51,23 @@
                     <td>
                         <fieldset>
                             <label for="approve" th:text="Approve"></label>
-                            <input type="radio" id="approve" th:field="*{compensationClaimStatus}" th:value="APPROVED" />
+                            <input type="radio" id="approve" th:field="${compensationClaim.claimStatus}" th:value="APPROVED" />
                             &nbsp;&nbsp;
                             <label for="reject" th:text="Reject"></label>
-                            <input type="radio" id="reject" th:field="*{compensationClaimStatus}" th:value="REJECTED" />
+                            <input type="radio" id="reject" th:field="${compensationClaim.claimStatus}" th:value="REJECTED" />
                         </fieldset>
                     </td>
-                    <td th:if="${#fields.hasErrors('compensationClaimStatus')}" th:errors="*{compensationClaimStatus}"></td>
+                    <td th:if="${#fields.hasErrors('claimStatus')}" th:errors="${compensationClaim.claimStatus}"></td>
                 </tr>
 
                 <tr>
                     <td>
                         <label for="comments">Reason</label>
                     </td>
-                    <!-- TODO: bug: compulsory rejection comment not working, to correct -->
                     <td>
-                        <textarea id="comments" rows="2" cols="50" th:field="*{comments}"></textarea>
+                        <textarea id="comments" rows="2" cols="50" th:field="${compensationClaim.comments}"></textarea>
                     </td>
-                    <td th:if="${#fields.hasErrors('comments')}" th:errors="*{comments}"></td>
+                    <td th:if="${#fields.hasErrors('comments')}" th:errors="${compensationClaim.comments}"></td>
                 </tr>
 
                 <tr>
@@ -76,7 +75,11 @@
                     <td>
                         <input type="submit" value="Submit" />
                         <input type="reset" value="Reset" />
-                        <a th:href="@{/compensation-claims/pending}" class="button is-primary">Back</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="#" onclick="history.go(-1); return false;">Back</a>
                     </td>
                 </tr>
             </tbody>
