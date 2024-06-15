@@ -1,50 +1,58 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: html_head"></head>
-    <body>
+<body>
     <div th:replace="fragments/navbar :: menu"></div>
-    <h1>View Compensation Claim Details</h1>
-    <table style="table-layout:fixed" th:object="${compensationClaim}">
-        <thead>
-            <tr>
-                <td>Claim Id</td>
-                <td>Overtime Start</td>
-                <td>Overtime End</td>
-                <td>Overtime Hours</td>
-                <td>Eligible Compensation Leave</td>
-                <td>Status</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td th:text="${compensationClaim.id}"></td>
-                <td th:text="${#temporals.format(compensationClaim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
-                <td th:text="${#temporals.format(compensationClaim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
-                <td th:text="${compensationClaim.overtimeHours}"></td>
-                <td th:text="${compensationClaim.compensationLeaveRequested}"></td>
-                <td th:text="${compensationClaim.claimStatus}"></td>
-            </tr>
-            <tr>
-                <td colspan="6" style="white-space: pre-line" th:text="
+    <h1 class="text-center">View Compensation Claim Details</h1>
+
+    <!--  Div to align body contents  -->
+    <div class="d-flex flex-column align-items-center">
+        <div>
+            <table class="table table-striped table-responsive-md w-auto" th:object="${compensationClaim}">
+                <thead>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Claim Id</td>
+                    <td th:text="${compensationClaim.id}"></td>
+                </tr>
+                <tr>
+                    <td>Overtime Start</td>
+                    <td th:text="${#temporals.format(compensationClaim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
+                </tr>
+                <tr>
+                    <td>Overtime End</td>
+                    <td th:text="${#temporals.format(compensationClaim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
+                </tr>
+                <tr>
+                    <td>Overtime Hours</td>
+                    <td th:text="${compensationClaim.overtimeHours}"></td>
+                </tr>
+                <tr>
+                    <td>Eligible Compensation Leave</td>
+                    <td th:text="${compensationClaim.compensationLeaveRequested}"></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td>
+                    <span style="white-space: pre-line" th:text="
                 ${compensationClaim.claimStatus.name()}+' on '+
                 ${#temporals.format(compensationClaim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}+' by '+
-                ${compensationClaim.approvingManager.getName()}"></td>
-            </tr>
-            <tr>
-                <td>Comments:</td>
-            </tr>
-            <tr th:if="${compensationClaim.comments != null}">
-                <td colspan="6" style="white-space: pre-line" th:text="${compensationClaim.comments}"></td>
-            </tr>
-            <tr th:unless="${compensationClaim.comments != null}">
-                <td> <em>N.A.</em> </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="#" onclick="history.go(-1); return false;">Back</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    </body>
+                ${compensationClaim.approvingManager.getName()}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Comments:</td>
+                    <td th:if="${compensationClaim.comments != null}" colspan="6" style="white-space: pre-line" th:text="${compensationClaim.comments}"></td>
+                    <td th:unless="${compensationClaim.comments != null}"> <em>N.A.</em> </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <a class="btn btn-primary" th:href="@{/employee/compensation-claims/view}">Back</a>
+        </div>
+    </div>
+
+</body>
 </html>
