@@ -37,6 +37,12 @@ public class SchemaMetadataService implements ISchemaMetadata {
 
     @Override
     @Transactional
+    public List<String> findAllEntityName() {
+        return schemaMetadataRepository.findAllEntityName();
+    }
+
+    @Override
+    @Transactional
     public List<Class<? extends Model>> getEntityList() {
         List<String> entityNames = schemaMetadataRepository.findAllEntityName();
 
