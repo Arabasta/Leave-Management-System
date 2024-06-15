@@ -13,6 +13,7 @@
     <!-- Edit mode form -->
     <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
+        <input type="hidden" name="employee" th:field="*{employee}"/>
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="${user.id}"/>
         <input type="hidden" name="employee" th:field="${user.employee}"/>
@@ -47,16 +48,13 @@
         </div>
         <!-- role -->
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label">Role(s) Given:</label>
+            <label class="col-4 col-form-label" for="role">Role Given:</label>
             <div class="col-8">
                 <div class="">
                     <div class="form-check form-check-inline">
-
-                        <label class="checkbox"  th:each="role: ${roles}">
-                            <input th:field="*{role}" th:text="${role.name()}"
-                                   th:value="${role}"
-                                   type="checkbox"> <br>
-                        </label>
+                            <select id="role" th:field="*{role}">
+                                <option th:each="role: ${roles}" th:value="${role}" th:text="${role}"></option>
+                            </select>
 
                         <!--
                         <input autocomplete="off" class="btn-check" id="roleEmployee" type="checkbox"
@@ -163,7 +161,7 @@
             <label class="col-4 col-form-label" for="userEmailSaved">User Email:</label>
             <div class="col-8">
                 <input class="form-control-plaintext" id="userEmailSaved" readonly="readonly"
-                       th:value="${newUser.email}" type="text"/>
+                       th:value="${newUser.email}" type="password"/>
             </div>
         </div>
 
@@ -182,6 +180,6 @@
 
 </div>
 
-<script src="/js/newUserForm.js"></script>
+
 </body>
 </html>
