@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.controller;
+package com.team4.leaveprocessingsystem.controller.employee;
 
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
@@ -13,13 +13,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
-// TODO: refactor Manager / Employee methods into different controller
+@RequestMapping("/employee/compensation-claims")
 @Controller
-@RequestMapping(value = "/compensation-claims")
-public class CompensationClaimController {
+public class EmployeeCompensationClaimController {
 
     private final LeaveBalanceService leaveBalanceService;
     private final CompensationClaimService compensationClaimService;
@@ -34,12 +31,12 @@ public class CompensationClaimController {
     }
 
     @Autowired
-    public CompensationClaimController(AuthenticationService authenticationService,
-                                       EmployeeService employeeService,
-                                       ManagerService managerService,
-                                       LeaveBalanceService leaveBalanceService,
-                                       CompensationClaimService compensationClaimService,
-                                       CompensationClaimValidator validator) {
+    public EmployeeCompensationClaimController(AuthenticationService authenticationService,
+                                               EmployeeService employeeService,
+                                               ManagerService managerService,
+                                               LeaveBalanceService leaveBalanceService,
+                                               CompensationClaimService compensationClaimService,
+                                               CompensationClaimValidator validator) {
 
         this.authenticationService = authenticationService;
         this.employeeService = employeeService;
@@ -52,132 +49,86 @@ public class CompensationClaimController {
     /*
         EMPLOYEE - GET - VIEW COMPENSATION CLAIMS
     */
-    @GetMapping("/view")
+    @GetMapping("view")
     public String view(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         model.addAttribute("employee", employee.getName());
         model.addAttribute("leaveBalance", leaveBalanceService.findByEmployee(employee.getId()).getCompensationLeave());
         model.addAttribute("compensationClaims", compensationClaimService.findByEmployee(employee));
-        return "compensation-claims/view-all";
+        return "employee/compensation-claims/view-all";
     }
 
     /*
     EMPLOYEE - GET - VIEW COMPENSATION CLAIM DETAILS
 */
-    @GetMapping("/viewDetails/{id}")
+    @GetMapping("viewDetails/{id}")
     public String viewDetails(@PathVariable Integer id, Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToEmployee(id, employee);
         model.addAttribute("compensationClaim", claim);
-        return "compensation-claims/view-details";
+        return "employee/compensation-claims/view-details";
     }
 
     /*
         EMPLOYEE - GET - CREATE COMPENSATION CLAIM
     */
-    @GetMapping("/create")
+    @GetMapping("create")
     public String create(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.getNewClaimForEmployee(employee);
         model.addAttribute("compensationClaim", claim);
-        return "compensation-claims/create-form";
+        return "employee/compensation-claims/create-form";
     }
 
     /*
         EMPLOYEE - POST - CREATE COMPENSATION CLAIM
     */
-    @PostMapping("/create")
+    @PostMapping("create")
     public String create(@Valid CompensationClaim claim,BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("compensationClaim", claim);
-            return "compensation-claims/create-form";
+            return "create-form";
         } // Else
         compensationClaimService.setNewClaimAndSave(claim);
-        return "redirect:/compensation-claims/view";
+        return "redirect:/employee/compensation-claims/view";
     }
 
     /*
         EMPLOYEE - GET - UPDATE COMPENSATION CLAIM
     */
-    @GetMapping("/updateForm/{id}")
+    @GetMapping("updateForm/{id}")
     public String updateForm(@PathVariable Integer id, Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToEmployee(id, employee);
         claim.setClaimDateTime(LocalDateTime.now());
         model.addAttribute("compensationClaim", claim);
-        return "compensation-claims/update-form";
+        return "employee/compensation-claims/update-form";
     }
 
     /*
         EMPLOYEE - POST - UPDATE COMPENSATION CLAIM
      */
-    //TODO: style new overtimeStartDateTime and overtimeEnd to dd-MM-yyyy, hh-mm (verify format)
-    @PostMapping("/updateForm")
+    @PostMapping("updateForm")
     public String updateForm(@Valid CompensationClaim claim, BindingResult result, Model model) {
         if (result.hasErrors()) { // Set back to original values, since they had errors
             claim.setOvertimeStart(claim.getOvertimeStart());
             claim.setOvertimeEnd(claim.getOvertimeEnd());
             model.addAttribute("compensationClaim", claim);
-            return "compensation-claims/update-form";
+            return "employee/compensation-claims/update-form";
         }
         compensationClaimService.setUpdateClaimAndSave(claim);
-        return "redirect:/compensation-claims/view";
+        return "redirect:/employee/compensation-claims/view";
     }
 
     /*
         EMPLOYEE - GET - WITHDRAW COMPENSATION CLAIM
      */
-    @GetMapping(value = "/withdraw/{id}")
+    @GetMapping(value = "withdraw/{id}")
     public String withdraw(@PathVariable Integer id) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         CompensationClaim claim = compensationClaimService.findIfBelongsToEmployee(id, employee);
         claim.setClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
         compensationClaimService.save(claim);
-        return "redirect:/compensation-claims/view";
-    }
-
-    /*
-        MANAGER - GET - PENDING COMPENSATION CLAIMS
-    */
-    @GetMapping("/viewPendingApproval")
-    public String viewPendingApproval(Model model) {
-        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        Map<String, List<CompensationClaim>> employeesPendingClaims = compensationClaimService.findPendingReviewByManager(manager);
-        model.addAttribute("employeesPendingClaims", employeesPendingClaims);
-        return "compensation-claims/view-pending-approval";
-    }
-
-    /*
-        MANAGER - GET - REVIEW COMPENSATION CLAIM
-    */
-    @GetMapping("approvalForm/{id}")
-    public String approvalForm(@PathVariable Integer id, Model model) {
-        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        CompensationClaim claim = compensationClaimService.findIfBelongsToManagerForReview(id, manager);
-        model.addAttribute("compensationClaim", claim);
-        return "compensation-claims/approval-form";
-    }
-
-    /*
-        MANAGER - POST - REVIEW COMPENSATION CLAIM
-    */
-    @PostMapping("/approvalForm")
-    public String approvalForm(@Valid @ModelAttribute("compensationClaim") CompensationClaim claim,
-                                          BindingResult result,
-                                          Model model) {
-        if (result.hasErrors()) {   // Return back to page if validation has errors
-            model.addAttribute("compensationClaim", claim);
-            return "compensation-claims/approval-form";
-        }
-        if (claim.getClaimStatus() == CompensationClaimStatusEnum.APPROVED) {
-            leaveBalanceService.updateCompensationLeave(claim);
-        } else {
-            claim.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
-        }
-
-        claim.setComments(claim.getComments());
-        claim.setReviewedDateTime(LocalDateTime.now());
-        compensationClaimService.save(claim);
-        return "redirect:/compensation-claims/viewPendingApproval";
+        return "redirect:/employee/compensation-claims/view";
     }
 }

@@ -5,7 +5,7 @@
 <div th:replace="fragments/navbar :: menu"></div>
     <h1>Review Compensation Claim </h1>
 
-    <form action="#" th:action="@{/compensation-claims/approvalForm}" th:object="${compensationClaim}" method="post">
+    <form action="#" th:action="@{/manager/compensation-claims/approvalForm}" th:object="${compensationClaim}" method="post">
         <input type="hidden" th:field="${compensationClaim.id}"/>
         <input type="hidden" th:field="${compensationClaim.claimingEmployee}"/>
         <input type="hidden" th:field="${compensationClaim.approvingManager}"/>
@@ -75,7 +75,11 @@
                     <td>
                         <input type="submit" value="Submit" />
                         <input type="reset" value="Reset" />
-                        <a th:href="@{/compensation-claims/view-pending-approval}" class="button is-primary">Back to Pending Claims</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="#" onclick="history.go(-1); return false;">Back</a>
                     </td>
                 </tr>
             </tbody>
