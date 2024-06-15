@@ -132,6 +132,7 @@ public class ManageStaffController {
 
     @GetMapping("/add/employee")
     public String createNewEmployeeForm(Model model) {
+
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
         model.addAttribute("employee", new Employee());
         model.addAttribute("jobDesignationList", jobDesignationList);
@@ -149,6 +150,8 @@ public class ManageStaffController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
+            model.addAttribute("isEditMode", true);
+            model.addAttribute("updateSuccess", false);
 
             return "admin/manage-staff/create-new-employee-form";
         }
