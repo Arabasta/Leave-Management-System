@@ -33,7 +33,7 @@
                     <a class="nav-link" th:href="@{/admin/manage-leave-types/}">Manage Leave Types</a>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    <a class="nav-link" th:href="@{/admin/manage-hierarchy/}">Manage Hierarchy</a>
+                    <a class="nav-link" th:href="@{/admin/manage-hierarchy/list}">Manage Hierarchy</a>
                 </li>
 
                 <!-- Manager Only -->
