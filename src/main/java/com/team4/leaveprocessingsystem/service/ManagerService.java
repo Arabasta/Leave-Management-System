@@ -1,6 +1,7 @@
 package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.interfacemethods.IManager;
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.repository.ManagerRepository;
 import jakarta.transaction.Transactional;
@@ -27,4 +28,8 @@ public class ManagerService implements IManager {
         return managerRepository.findAll();
     }
 
+    @Transactional
+    public List<Employee> findManagersByName(String name) {
+        return managerRepository.findManagerByName(name);
+    }
 }

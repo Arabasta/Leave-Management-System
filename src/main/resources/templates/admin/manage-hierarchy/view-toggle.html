@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head th:insert="fragments/head.html :: html_head"></head>
+
+<body>
+<div th:fragment="view-toggle" id="view-toggle" class="view-toggle">
+    <div class="btn-group mt-3">
+        <a th:href="@{/admin/manage-hierarchy/list}" class="btn btn-secondary"
+           th:classappend="${view == 'list'} ? 'active'">List</a>
+        <a th:href="@{/admin/manage-hierarchy/tree}" class="btn btn-secondary"
+           th:classappend="${view == 'tree'} ? 'active'">Tree</a>
+    </div>
+    <br>
+</div>
+</body>
+</html>

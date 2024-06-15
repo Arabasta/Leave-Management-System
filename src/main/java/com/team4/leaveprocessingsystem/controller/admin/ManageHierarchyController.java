@@ -35,8 +35,33 @@ public class ManageHierarchyController {
         this.leaveBalanceService = leaveBalanceService;
     }
 
-    @GetMapping("/")
-    public String getHierarchy(Model model) {
+    @GetMapping("/list")
+    public String viewList(@RequestParam(value = "query", required = false) String query,
+                           @RequestParam(value = "searchType", required = false) String searchType,
+                           Model model) {
+        List<Employee> employees;
+        if (query == null || query.isEmpty()) {
+            employees = employeeService.findAll();
+        } else {
+            if (searchType == null || searchType.isEmpty())
+                searchType = "name";
+
+            employees = switch (searchType) {
+                case "name" -> employeeService.findEmployeesByName(query);
+                case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
+                case "manager" -> managerService.findManagersByName(query);
+                default -> employeeService.findAll();
+            };
+        }
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+        model.addAttribute("searchType", searchType);
+        return "admin/manage-hierarchy/view-list";
+    }
+
+    @GetMapping("/tree")
+    public String viewTree(Model model) {
         Map<Integer, List<Employee>> managerSubordinatesMap = new HashMap<>();
         List<Employee> rootEmployees = new ArrayList<>();
 
@@ -57,7 +82,7 @@ public class ManageHierarchyController {
         model.addAttribute("rootEmployees", rootEmployees);
         model.addAttribute("managerSubordinatesMap", managerSubordinatesMap);
 
-        return "admin/manage-hierarchy/view";
+        return "admin/manage-hierarchy/view-tree";
     }
 
     @GetMapping("/edit/{employeeId}")
@@ -96,6 +121,6 @@ public class ManageHierarchyController {
         existingEmployee.setLeaveBalance(leaveBalance);
 
         employeeService.save(existingEmployee);
-        return "redirect:/admin/manage-hierarchy/";
+        return "redirect:/admin/manage-hierarchy/tree";
     }
 }

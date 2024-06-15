@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>Manage Hierarchy</h1>
+    <br>
+
+    <!-- View Toggle -->
+    <div th:replace="~{admin/manage-hierarchy/view-toggle :: view-toggle(view='list')}"></div>
+    <br>
+
+    <!-- Search bar -->
+    <form class="form-inline" method="get" th:action="@{/admin/manage-hierarchy/viewlist}">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon2">Filter By</span>
+                <!-- filter -->
+                <div class="input-group-btn">
+                    <select class="form-control" name="searchType">
+                        <option selected th:selected="${searchtype == 'name'}" th:value="name">Name</option>
+                        <option th:selected="${searchtype == 'jobDesignation'}" th:value="jobDesignation">Job
+                            Designation
+                        </option>
+                        <option th:selected="${searchtype == 'manager'}" th:value="manager">Manager</option>
+                    </select>
+                </div>
+                <!-- query -->
+                <input class="form-control rounded" name="query" placeholder="Keyword"
+                       aria-label="Search" aria-describedby="search-addon"
+                       th:value="${keyword}" type="search"/>
+                <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+
+            </div>
+        </div>
+    </form>
+
+    <!-- employee list -->
+    <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(employees)}">
+        <thead class="bg-primary">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Job Designation</th>
+            <th>Manager</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e:${employees}">
+            <td th:text="${e.id}">Id</td>
+            <td th:text="${e.name}">Name</td>
+            <td th:text="${e.jobDesignation.name}">Job Designation</td>
+            <td th:if="${e.manager != null}" th:text="${e.manager.name}">Manager</td>
+            <td th:if="${e.manager == null}">No Manager</td>
+
+            <td>
+                <a class="btn btn-primary" th:href="@{/admin/manage-hierarchy/edit/{id}(id=${e.id})}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
