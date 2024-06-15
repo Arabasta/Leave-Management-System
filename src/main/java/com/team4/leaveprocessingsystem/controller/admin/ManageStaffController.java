@@ -148,8 +148,6 @@ public class ManageStaffController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
-            //model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
-            //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
 
             return "admin/manage-staff/create-new-employee-form";
@@ -185,7 +183,7 @@ public class ManageStaffController {
         }
         employeeService.save(employee);
 
-        // todo: to confirm if we want employeeRepository.findAll() to include "deleted" employees or not
+        // todo: include two methods in employeeRepository: findAllIncludeDeleted() and findAllExcludeDeleted
 
         return "redirect:/admin/manage-staff/";
     }
@@ -225,7 +223,6 @@ public class ManageStaffController {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        //todo: in create-new-user-account-form, password should be password type instead of text. implement also a confirm password input
         userService.save(user);
         model.addAttribute("newUser", user);
         model.addAttribute("isEditMode", false);
