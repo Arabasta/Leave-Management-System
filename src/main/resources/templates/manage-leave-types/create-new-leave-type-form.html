@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: html_head"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container w-50 mt-5 text-center">
+    <div class="container w-50 mt-5 text-center">
+        <h1 class="mb-3 mt-3 text-center"
+            th:text="${isEditMode} ? 'Create Leave Type' : 'View Updated Leave Type Details'"></h1>
+
+        <!-- Edit mode form -->
+        <form th:if="${isEditMode}" method="post" th:action="@{/admin/manage-leave-types/save}" >
+
+            <!-- hidden fields -->
+            <input type="hidden" name="applicationId" th:field="${leaveType.id}" />
+
+            <div class="mb-3 row align-items-center">
+                <label class="col-4 col-form-label" for="leaveTypeName">Name:</label>
+                <div class="col-8">
+                    <input class="form-control" id="leaveTypeName" th:value="${leaveType.leaveType}"
+                           th:field="${leaveType.leaveType}" type="text"/>
+                </div>
+            </div>
+
+            <div class="mb-3 row ">
+                <label class="col-4 col-form-label" for="leaveTypeDescription">Description:</label>
+                <div class="col-8">
+                <textarea class="form-control" id="leaveTypeDescription" rows="3"
+                          th:value="${leaveType.description}"
+                          th:field="${leaveType.description}"></textarea>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col">
+                    <hr class="bg-primary border-2 border-top border-primary">
+                </div>
+                <div class="col-auto">Maximum Leave Period by Job Designation</div>
+                <div class="col">
+                    <hr class="bg-primary border-2 border-top border-primary">
+                </div>
+            </div>
+
+            <br>
+
+            <div class="mb-3 row align-items-center">
+                <label class="col-4 col-form-label" for="">Administrative</label>
+                <div class="col-8">
+                    <input class="form-control" id="" type="text" value="14"/>
+                </div>
+            </div>
+
+            <div class="mb-3 row align-items-center">
+                <label class="col-4 col-form-label" for="management">Management</label>
+                <div class="col-8">
+                    <input class="form-control" id="management" type="text" value="30"/>
+                </div>
+            </div>
+
+            <div class="mb-3 row align-items-center">
+                <label class="col-4 col-form-label" for="cleaning">Cleaning</label>
+                <div class="col-8">
+                    <input class="form-control" id="cleaning" type="text" value="5"/>
+                </div>
+            </div>
+
+            <div class="mb-3 row align-items-center">
+                <label class="col-4 col-form-label" for="intern">Intern</label>
+                <div class="col-8">
+                    <input class="form-control" id="intern" type="text" value="1"/>
+                </div>
+            </div>
+
+            <div>
+                <input class="btn btn-primary float-end" type="submit" value="Update"/>
+            </div>
+        </form>
+
+        <!-- Success View -->
+        <div th:if="${!isEditMode}">
+            <!-- todo: include saved details -->
+
+            <div class="alert alert-success mt-3" th:if="${updateSuccess}">Employee details updated successfully!</div>
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+</body>
+</html>

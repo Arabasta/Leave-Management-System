@@ -11,15 +11,12 @@
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
-
-    <!-- hidden fields -->
-    <input type="hidden" name="employee" th:field="${user.role}"/>
-    <input type="hidden" name="employee" th:field="${user.username}"/>
-    <input type="hidden" name="employee" th:field="${user.password}"/>
-    <input type="hidden" name="employee" th:field="${user.email}"/>
-
     <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
+        <!-- hidden fields -->
+        <input type="hidden" name="userId" th:field="${user.id}"/>
+        <input type="hidden" name="employee" th:field="${user.employee}"/>
+
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userName">Username:</label>
             <div class="col-8">
@@ -30,9 +27,17 @@
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userPassword">Password:</label>
             <div class="col-8">
-                <input class="form-control" id="userPassword" th:field="*{password}" type="text"/>
+                <input class="form-control" name="userPassword" id="userPassword" th:field="*{password}" onChange="onChange()" type="password"/>
             </div>
         </div>
+        <!-- reconfirm password -->
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userPassword">Confirm Password:</label>
+            <div class="col-8">
+                <input class="form-control" name="confirmPassword" id="confirmPassword" type="password" onChange="onChange()"/>
+            </div>
+        </div>
+
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userEmail">Email:</label>
@@ -47,8 +52,8 @@
                 <div class="">
                     <div class="form-check form-check-inline">
 
-                        <label class="checkbox" th:each="role: ${roles}">
-                            <input th:text="${role.name()}"
+                        <label class="checkbox"  th:each="role: ${roles}">
+                            <input th:field="*{role}" th:text="${role.name()}"
                                    th:value="${role}"
                                    type="checkbox"> <br>
                         </label>
@@ -150,7 +155,7 @@
             <label class="col-4 col-form-label" for="userPasswordSaved">User Password:</label>
             <div class="col-8">
                 <input class="form-control-plaintext" id="userPasswordSaved" readonly="readonly"
-                       th:value="${newUser.password}" type="text"/>
+                       th:value="${newUser.password}" type="password"/>
             </div>
         </div>
 
@@ -177,6 +182,6 @@
 
 </div>
 
-
+<script src="/js/newUserForm.js"></script>
 </body>
 </html>

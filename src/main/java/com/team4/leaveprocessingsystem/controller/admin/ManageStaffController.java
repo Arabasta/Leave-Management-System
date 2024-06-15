@@ -12,6 +12,7 @@ import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,12 +34,15 @@ public class ManageStaffController {
     private final CompensationClaimService compensationClaimService;
     private final LeaveApplicationService leaveApplicationService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
                                  ManagerService managerService, LeaveBalanceService leaveBalanceService,
                                  UserService userService, CompensationClaimService compensationClaimService,
-                                 LeaveApplicationService leaveApplicationService, AuthenticationService authenticationService) {
+                                 LeaveApplicationService leaveApplicationService, AuthenticationService authenticationService,
+                                 PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
@@ -47,6 +51,7 @@ public class ManageStaffController {
         this.compensationClaimService = compensationClaimService;
         this.leaveApplicationService = leaveApplicationService;
         this.authenticationService = authenticationService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
@@ -152,10 +157,7 @@ public class ManageStaffController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
-            //model.addAttribute("autoAssignedManager", managerService.findManagerById(1));
-            //model.addAttribute("autoAssignedLeaveBalance", new LeaveBalance(14));
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
-
             return "admin/manage-staff/create-new-employee-form";
         }
 
@@ -190,6 +192,7 @@ public class ManageStaffController {
         employeeService.save(employee);
 
         // todo: to confirm if we want employeeRepository.findAll() to include "deleted" employees or not
+        // todo: include two methods: viewAllExceptDeleted, viewAllIncludingDeleted
 
         return "redirect:/admin/manage-staff/";
     }
@@ -198,14 +201,13 @@ public class ManageStaffController {
     @GetMapping("/add/user/{employeeId}")
     public String createNewUserForm(@PathVariable(name = "employeeId") Integer employeeId,
                                     Model model) {
-        User user = new User();
 
+        User user = new User();
         Employee employee = employeeService.findEmployeeById(employeeId);
-        //user.setEmployee(employee);
+        user.setEmployee(employee);
 
         model.addAttribute("user", user);
         model.addAttribute("roles", RoleEnum.values());
-        model.addAttribute("employee", employee);
 
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
@@ -218,21 +220,17 @@ public class ManageStaffController {
                                     BindingResult bindingResult,
                                     Model model) {
 
-        Employee employee = employeeService.findEmployeeById(user.getEmployee().getId());
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", user);
-            model.addAttribute("employee", employee);
             model.addAttribute("roles", RoleEnum.values());
+            model.addAttribute("isEditMode", true);
+            model.addAttribute("updateSuccess", false);
             return "admin/manage-staff/create-new-user-account-form";
         }
 
-        User newUser = new User(user.getRole(),user.getUsername(), user.getPassword(), user.getEmail(), employee);
-
-        userService.save(newUser);
-        model.addAttribute("newUser", newUser);
-        model.addAttribute("isEditMode", false);
-        model.addAttribute("updateSuccess", true);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        model.addAttribute("newUser", user);
 
         return "admin/manage-staff/create-new-user-account-form";
     }
