@@ -16,7 +16,6 @@
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
-    <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
         <input name="employee" th:field="*{employee}" type="hidden"/>
         <!-- hidden fields -->

@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService, IUser {
 
     @Override
     @Transactional
-    public List<User> findUserRolesByEmployeeId(Integer employeeId) {
-        return userRepository.findUserRolesByEmployeeId(employeeId);
+    public List<User> findByEmployeeId(Integer employeeId) {
+        return userRepository.findByEmployeeId(employeeId);
     }
 }

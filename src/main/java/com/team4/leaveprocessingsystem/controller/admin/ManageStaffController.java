@@ -180,7 +180,7 @@ public class ManageStaffController {
         }
         Employee employee = employeeService.findEmployeeById(employeeId);
         employee.setDeleted(true);
-        List<User> userList = userService.findUserRolesByEmployeeId(employeeId);
+        List<User> userList = userService.findByEmployeeId(employeeId);
         for (User user: userList){
             user.setRole(RoleEnum.ROLE_LOCKED);
         }
@@ -233,5 +233,46 @@ public class ManageStaffController {
 
         return "admin/manage-staff/create-new-user-account-form";
     }
+
+    @GetMapping("/edit/user/{employeeId}")
+    public String editUserDetails(@PathVariable(name = "employeeId") int employeeId,
+                                  Model model) {
+
+        Employee employee = employeeService.findEmployeeById(employeeId);
+        List<User> existingUsers = userService.findByEmployeeId(employeeId);
+
+        model.addAttribute("employee", employee);
+        model.addAttribute("existingUsers", existingUsers);
+        model.addAttribute("roles", RoleEnum.values());
+
+        model.addAttribute("isEditMode", true);
+        model.addAttribute("updateSuccess", false);
+
+        return "admin/manage-staff/edit-user-account-details-form";
+    }
+
+    @PostMapping("/update/user")
+    public String updateEmployeeDetails(@ModelAttribute("user") User user,
+                                        BindingResult bindingResult,
+                                        Model model) {
+
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("roles", RoleEnum.values());
+
+            model.addAttribute("isEditMode", true);
+            model.addAttribute("updateSuccess", false);
+            return "admin/manage-staff/edit-user-account-details-form";
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        model.addAttribute("newUser", user);
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("updateSuccess", true);
+        return "admin/manage-staff/edit-user-account-details-form";
+    }
+
 
 }
