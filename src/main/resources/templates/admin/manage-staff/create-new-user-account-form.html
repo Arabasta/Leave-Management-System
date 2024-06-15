@@ -13,7 +13,7 @@
     <!-- Edit mode form -->
     <!-- todo: include validation for the respective fields -->
     <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
-        <input type="hidden" name="employee" th:field="*{employee}"/>
+        <input name="employee" th:field="*{employee}" type="hidden"/>
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="${user.id}"/>
         <input type="hidden" name="employee" th:field="${user.employee}"/>
@@ -52,9 +52,9 @@
             <div class="col-8">
                 <div class="">
                     <div class="form-check form-check-inline">
-                            <select id="role" th:field="*{role}">
-                                <option th:each="role: ${roles}" th:value="${role}" th:text="${role}"></option>
-                            </select>
+                        <select id="role" th:field="*{role}">
+                            <option th:each="role: ${roles}" th:text="${role}" th:value="${role}"></option>
+                        </select>
 
                         <!--
                         <input autocomplete="off" class="btn-check" id="roleEmployee" type="checkbox"
@@ -180,6 +180,6 @@
 
 </div>
 
-
+<script src="/js/newUserForm.js"></script>
 </body>
 </html>
