@@ -4,7 +4,6 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
-import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
@@ -26,27 +25,26 @@ public class ManagerLeaveController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
-    private final EmployeeRepository employeeRepository;
     private final LeaveApplicationService leaveApplicationService;
     private final ManagerService managerService;
 
-    public ManagerLeaveController(EmployeeService employeeService, LeaveApplicationValidator leaveApplicationValidator, AuthenticationService authenticationService, EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository, LeaveApplicationService leaveApplicationService, ManagerService managerService) {
+    public ManagerLeaveController(EmployeeService employeeService, LeaveApplicationValidator leaveApplicationValidator,
+                                  AuthenticationService authenticationService, EmailApiService emailApiService,
+                                  UserService userService, LeaveApplicationService leaveApplicationService,
+                                  ManagerService managerService) {
         this.employeeService = employeeService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.authenticationService = authenticationService;
         this.emailApiService = emailApiService;
         this.userService = userService;
-        this.employeeRepository = employeeRepository;
         this.leaveApplicationService = leaveApplicationService;
         this.managerService = managerService;
     }
 
     @GetMapping("managerView")
-    public String managerViewLeave(Model model, LeaveApplicationService leaveApplicationService) throws IllegalAccessException {
+    public String managerViewLeave(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        if (!authenticationService.isLoggedInAManager()) {
-            throw new IllegalAccessException();
-        }
+
         int managerId = employee.getId();
         List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
         model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
