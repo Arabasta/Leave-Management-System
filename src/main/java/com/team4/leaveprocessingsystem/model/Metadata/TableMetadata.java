@@ -14,15 +14,8 @@ public class TableMetadata {
     private int id;
 
     @Column(nullable = false)
-    private String attributeName;
+    private String entityName;
 
     @Column(nullable = false)
-    private String sqlColumnName;
-
-    @Column(nullable = false)
-    private String sqlColumnType;
-
-    @ManyToOne
-    @JoinColumn(name = "schema_metadata_id")
-    private SchemaMetadata schemaMetadata;
+    private String tableName;
 }

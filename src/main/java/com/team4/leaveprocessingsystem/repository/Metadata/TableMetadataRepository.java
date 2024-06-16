@@ -8,12 +8,10 @@ import java.util.List;
 
 public interface TableMetadataRepository extends JpaRepository<TableMetadata, Integer> {
 
-    @Query("SELECT t.attributeName FROM TableMetadata t " +
-            "WHERE t.schemaMetadata.entityName =: entityName")
-    List<String> findAllAttributeByEntityName(String entityName);
+    @Query("SELECT t.entityName FROM TableMetadata t")
+    List<String> findAllEntityName();
 
-    @Query("SELECT t FROM TableMetadata t " +
-            "WHERE t.schemaMetadata.entityName = :entityName")
-    List<TableMetadata> findAllByEntityName(String entityName);
+    @Query("SELECT t.tableName FROM TableMetadata t")
+    List<String> findAllTableName();
 
 }
