@@ -10,44 +10,64 @@ import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class LeaveApplicationSeeder {
 
     private final LeaveApplicationService leaveApplicationService;
     private final EmployeeService employeeService;
+    private final Random random;
+    private LeaveTypeEnum[] leaveTypes;
+    private LeaveStatusEnum[] leaveStatuses;
 
     public LeaveApplicationSeeder(LeaveApplicationService leaveApplicationService,
                                   EmployeeService employeeService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
+        this.random = new Random(42);
+        this.leaveTypes = LeaveTypeEnum.values();
+        this.leaveStatuses = LeaveStatusEnum.values();
     }
 
+    // Note: bypasses working days and entitlement validation
     public void seed() {
         if (leaveApplicationService.count() == 0) {
-            // todo : add a lot more and modularise
-            Employee employee = employeeService.findByName("Anya Forger");
-            Manager manager = employeeService.findManagerByName("Madara Uchiha");
 
-            LeaveApplication leaveApplication1 = new LeaveApplication();
-            leaveApplication1.setSubmittingEmployee(employee);
-            leaveApplication1.setReviewingManager(manager);
-            leaveApplication1.setLeaveStatus(LeaveStatusEnum.APPLIED);
-            leaveApplication1.setLeaveType(LeaveTypeEnum.ANNUAL);
-            leaveApplication1.setStartDate(LocalDate.now().plusDays(1));
-            leaveApplication1.setEndDate(LocalDate.now().plusDays(15));
-            leaveApplication1.setSubmissionReason("Japan trip");
-            leaveApplicationService.save(leaveApplication1);
+            List<LocalDate> dateList = new ArrayList<>();
+            int numOfLeaves = 3;
+            int durationBound = 3;
+            dateList.add(LocalDate.now());
+            dateList.add(LocalDate.now().plusDays(random.nextInt(durationBound)));
+            for (int i = 0; i < numOfLeaves; i++){
+                LocalDate startDate = dateList.get(dateList.size() - 1).plusDays(random.nextInt(durationBound) + 1);
+                LocalDate endDate = startDate.plusDays(random.nextInt(durationBound));
+                dateList.add(startDate);
+                dateList.add(endDate);
+            }
 
-            LeaveApplication leaveApplication2 = new LeaveApplication();
-            leaveApplication2.setSubmittingEmployee(employee);
-            leaveApplication2.setReviewingManager(manager);
-            leaveApplication2.setLeaveStatus(LeaveStatusEnum.APPLIED);
-            leaveApplication2.setLeaveType(LeaveTypeEnum.MEDICAL);
-            leaveApplication2.setStartDate(LocalDate.now().plusDays(10));
-            leaveApplication2.setEndDate(LocalDate.now().plusDays(12));
-            leaveApplication2.setSubmissionReason("broke leg");
-            leaveApplicationService.save(leaveApplication2);
+            List<Employee> employeeList = employeeService.findAll();
+            for (Employee employee : employeeList) {
+                for (int i = 0; i < dateList.size(); i = i + 2){
+                    leaveApplicationSeed(employee, dateList.get(i), dateList.get(i + 1),"test");
+                }
+            }
         }
+    }
+
+    private void leaveApplicationSeed(Employee employee, LocalDate startDate, LocalDate endDate, String reason) {
+        Manager manager = employee.getManager();
+
+        LeaveApplication leaveApplication = new LeaveApplication();
+        leaveApplication.setSubmittingEmployee(employee);
+        leaveApplication.setReviewingManager(manager);
+        leaveApplication.setLeaveStatus(leaveStatuses[random.nextInt(leaveStatuses.length)]);
+        leaveApplication.setLeaveType(leaveTypes[random.nextInt(leaveTypes.length)]);
+        leaveApplication.setStartDate(startDate);
+        leaveApplication.setEndDate(endDate);
+        leaveApplication.setSubmissionReason(reason);
+        leaveApplicationService.save(leaveApplication);
     }
 }

@@ -11,7 +11,6 @@
     </h3>
 
     <form th:action="@{/leave/save}" method="post">
-        <input type="hidden" name="applicationStatus" th:value="${applicationStatus}" />
         <input type="hidden" name="applicationId" th:field="${leave.id}" />
         <input type="hidden" name="submittingEmployee" th:field="${leave.submittingEmployee}" />
         <input type="hidden" name="reviewingManager" th:field="${leave.reviewingManager}" />
@@ -78,8 +77,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
-                    <a href="#" onclick="history.go(-1); return false;">Back</a>
+                <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
                 </td>
             </tr>
             </tbody>

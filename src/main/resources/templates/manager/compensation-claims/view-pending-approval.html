@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+<body>
+    <div th:replace="fragments/navbar :: menu"></div>
+
+    <div class="container">
+        <div class="d-flex flex-column align-items-center w-auto">
+            <h1>Approve Compensation Claims</h1>
+            <br>
+            <!-- Conditionally show contents -->
+            <h3 class="text-center" th:if="${#maps.isEmpty(employeesPendingClaims)}"><em>There are no Compensation Claims pending your approval.</em></h3>
+
+            <!-- Loop through employees -->
+            <th:block th:each="employee:${employeesPendingClaims}">
+                <table class="table table-hover table-striped table-responsive-md w-auto align-middle text-center">
+                    <thead>
+                    <tr>
+                        <th colspan="6">
+                            <h4 th:text="${employee.key}"></h4>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Claim Id</th>
+                        <th>Overtime Start</th>
+                        <th>Overtime End</th>
+                        <th>Overtime Hours</th>
+                        <th>Eligible Compensation Leave</th>
+                        <th>Review</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Loop through claims -->
+                    <th:block th:each="claim:${employee.value}">
+                        <th:block th:if="${claim.claimStatus.name()}=='APPLIED' or
+                            ${claim.claimStatus.name()}=='UPDATED'">
+
+                            <tr>
+                                <td th:text="${claim.id}"></td>
+                                <td th:text="${#temporals.format(claim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
+                                <td th:text="${#temporals.format(claim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
+                                <td th:text="${claim.overtimeHours}"></td>
+                                <td th:text="${claim.compensationLeaveRequested}"></td>
+                                <td th:if="${claim.claimStatus.name()}=='APPLIED' or
+                                    ${claim.claimStatus.name()}=='UPDATED'">
+                                    <a th:href="@{/manager/compensation-claims/approvalForm/{id}(id=${claim.id})}" class="btn btn-primary">Approval Form</a></td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
+                <br>
+            </th:block>
+        </div>
+    </div>
+</body>
+</html>

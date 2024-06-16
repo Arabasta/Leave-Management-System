@@ -7,25 +7,23 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
     private final LeaveApplicationRepository leaveApplicationRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeService employeeService;
-
-    @Autowired
-    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository) {
+    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository, EmployeeRepository employeeRepository) {
         this.leaveApplicationRepository = leaveApplicationRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -49,13 +47,9 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
-    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee) {
-        LeaveApplication leaveApplication = findLeaveApplicationById(id);
-        // Ensure an employee only accesses his own leave applications
-        if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())) {
-            throw new LeaveApplicationNotFoundException("Leave Application Not Found");
-        }
-        return leaveApplication;
+    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, int employeeId) {
+        return leaveApplicationRepository.findIfBelongsToEmployee(id, employeeId)
+                .orElseThrow(() -> new LeaveApplicationNotFoundException("Leave Application Not Found"));
     }
 
     @Override
@@ -77,10 +71,32 @@ public class LeaveApplicationService implements ILeaveApplication {
     }
 
     @Override
+    public List<LeaveApplication> findByEmployeeName(String name) {
+        return leaveApplicationRepository.findByName(name);
+    }
+
+    @Override
+    public List<LeaveApplication> findByEmployeeId(int id) {
+        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
+    }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
+        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
+        for (LeaveApplication application : applications) {
+            if (application.getReviewingManager().getId() == managerId) {
+                applicationsBelongToManagerSubordinates.add(application);
+            }
+        }
+        return applicationsBelongToManagerSubordinates;
+    }
+
+    @Override
     @Transactional
     public Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager) {
         Map<String, List<LeaveApplication>> pendingLeaveApplications = new HashMap<>();
-        List<Employee> employeeList = employeeService.findEmployeesByManager(manager);
+        List<Employee> employeeList = employeeRepository.findByManager(manager);
         for (Employee employee : employeeList) {
             List<LeaveApplication> employeePendingLeaveApplications = findBySubmittingEmployee(employee)
                     .stream()
@@ -93,9 +109,4 @@ public class LeaveApplicationService implements ILeaveApplication {
         }
         return pendingLeaveApplications;
     }
-
-
 }
-
-
-
