@@ -46,7 +46,7 @@ public class ManageStaffController {
     }
 
     @GetMapping("/")
-    public String search(@RequestParam(value = "query", required = false) String query,
+    public String searchAll(@RequestParam(value = "query", required = false) String query,
                          @RequestParam(value = "searchType", required = false) String searchType,
                          Model model) {
         List<Employee> employees;
@@ -301,6 +301,5 @@ public class ManageStaffController {
         model.addAttribute("updateSuccess", true);
         return "admin/manage-staff/edit-user-account-details-form";
     }
-
 
 }

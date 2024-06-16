@@ -3,7 +3,7 @@ package com.team4.leaveprocessingsystem.service;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IUser;
 import com.team4.leaveprocessingsystem.model.User;
-import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
@@ -66,5 +66,12 @@ public class UserService implements UserDetailsService, IUser {
     @Transactional
     public List<User> findByEmployeeId(Integer employeeId) {
         return userRepository.findByEmployeeId(employeeId);
+    }
+
+
+    @Override
+    public User findById(int id) {
+        User user = userRepository.findById(id);
+        return user;
     }
 }

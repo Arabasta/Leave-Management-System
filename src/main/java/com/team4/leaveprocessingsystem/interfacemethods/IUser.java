@@ -12,4 +12,6 @@ public interface IUser {
     long count();
 
     List<User> findByEmployeeId(Integer employeeId);
+
+    public User findById(int id);
 }
