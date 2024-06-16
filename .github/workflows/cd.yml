@@ -1,13 +1,19 @@
 name: CD with AWS
 
 on:
-  push:
-    branches: [ 'release/v[0-9]+.[0-9]+' ]
-
+  workflow_run:
+    workflows: [ "Java CI with Maven and Docker" ]
+    types:
+      - completed
+    branches:
+      - 'release/v[0-9]+.[0-9]+'
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: wait for docker image to be uploaded
+        run: sleep 60
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -32,4 +38,5 @@ jobs:
             -e RDS_USERNAME=${RDS_USERNAME} \
             -e RDS_PASSWORD=${RDS_PASSWORD} \
             ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
+          docker logs leave-processing-spring-boot
           EOF
