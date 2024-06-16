@@ -47,7 +47,7 @@ public class EmailBuilderUtils {
         Path path;
 
         if (leaveStatus.equals("APPLIED") || leaveStatus.equals("UPDATED")){
-            path = Path.of("src/main/resources/templates/leaveApplication/emailToManagerTemplate.html");
+            path = Path.of("src/main/resources/templates/email/emailToManagerTemplate.html");
             placeholders.put("${applicationUrl}", applicationUrlForManager);
             if (leaveStatus.equals("APPLIED")){
                 subject = "New Leave Application: " + employeeName +
@@ -59,7 +59,7 @@ public class EmailBuilderUtils {
             }
         }
         else{
-            path = Path.of("src/main/resources/templates/leaveApplication/emailToEmployeeTemplate.html");
+            path = Path.of("src/main/resources/templates/email/emailToEmployeeTemplate.html");
             placeholders.put("${applicationUrl}", applicationUrlForEmployee);
             subject = "Leave Application " + leaveStatus + ": " + employeeName +
                     " - Duration: " + startDate + " to " + endDate;

@@ -1,7 +1,8 @@
-package com.team4.leaveprocessingsystem.controller;
+package com.team4.leaveprocessingsystem.controller.employee;
 
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationUpdateException;
-import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
@@ -20,8 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-// todo: add and refactor into a LeaveHistoryController
-@RequestMapping("leave")
+@RequestMapping("employee/leave")
 @Controller
 public class LeaveApplicationController {
 
@@ -64,7 +64,7 @@ public class LeaveApplicationController {
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
 
-        return "leaveApplication/leaveForm";
+        return "employee/leave-application/leaveForm";
     }
 
     @GetMapping("edit/{id}")
@@ -73,14 +73,14 @@ public class LeaveApplicationController {
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
 
         // Only allow editing of leaves pending approval
-        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED) {
             throw new LeaveApplicationUpdateException("Leave application cannot be edited");
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
 
-        return "leaveApplication/leaveForm";
+        return "employee/leave-application/leaveForm";
     }
 
     @PostMapping("save")
@@ -88,7 +88,7 @@ public class LeaveApplicationController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
-            return "leaveApplication/leaveForm";
+            return "employee/leave-application/leaveForm";
         }
         leaveApplicationService.save(leaveApplication);
 
@@ -101,7 +101,7 @@ public class LeaveApplicationController {
             System.out.println(e.getMessage());
         }
 
-        return "redirect:/leave/personalHistory";
+        return "redirect:/employee/leave/personalHistory";
 
     }
 
@@ -110,13 +110,13 @@ public class LeaveApplicationController {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         // Only applied/updated leave can be deleted
-        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED) {
             throw new LeaveApplicationUpdateException("Leave application cannot be deleted");
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveApplicationService.save(leaveApplication);
 
-        return "redirect:/leave/personalHistory";
+        return "redirect:/employee/leave/personalHistory";
     }
 
     @GetMapping("cancel/{id}")
@@ -124,90 +124,28 @@ public class LeaveApplicationController {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         // Only approved leave can be cancelled
-        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPROVED){
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPROVED) {
             throw new LeaveApplicationUpdateException("Leave application cannot be cancelled");
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
 
-        return "redirect:/leave/personalHistory";
+        return "redirect:/employee/leave/personalHistory";
     }
-
 
     @GetMapping("view/{id}")
     public String viewLeave(Model model, @PathVariable int id) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/viewLeave";
+        return "employee/leave-application/viewLeave";
     }
 
-    //manager view details of his subordinate
-    @GetMapping("viewSubordinateDetails/{id}")
-    public String viewLeaveDetails(Model model, @PathVariable int id){
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
-        model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/managerViewLeaveDetails";
-    }
-
-    //manager can't view his subordinates leave applications history if i use "getLeaveApplicationIfBelongsToEmployee()"
-    //so i create a new method
-    @GetMapping("managerView")
-    public String managerViewLeave(Model model) throws IllegalAccessException {
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        if(!authenticationService.isLoggedInAManager()){
-            throw new IllegalAccessException();
-        }
-        int managerId = employee.getId();
-        List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
-        return "leaveApplication/managerViewLeave";
-    }
-
-    @GetMapping("personalHistory")
+        @GetMapping("personalHistory")
     public String personalHistory(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("personalLeaveApplications", personalLeaveApplications);
-        return "leaveApplication/personalViewLeave";
-    }
-
-
-}
-
-        // Save the leave application status
-        leaveApplicationService.save(leave);
-        return "redirect:/pendingLeaveApplications";
-    }
-
-
-    //Add view subordinates history searching function
-    @RequestMapping(value="searchingLeaveApplications")
-    public String search(@RequestParam("keyword")
-                         String k, @RequestParam("searchType") String t, Model
-                                 model)
-    {
-        String name=new String("name");
-        String id = new String("id");
-
-        //have error here, should make sure these subordinates belong to the manager
-        if(t.equals(name))
-        {
-            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(k);
-            model.addAttribute("subordinateLeaveApplications",
-                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
-        }
-        else if(t.equals(id))
-        {
-            int k_num = Integer.parseInt(k);
-            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeId(k_num);
-            model.addAttribute("subordinateLeaveApplications",
-                   leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
-        }
-        else
-        {
-            return "redirect:404-notfound";
-        }
-        return "leaveApplication/managerViewLeave";
+        return "employee/leave-application/personalViewLeave";
     }
 }
