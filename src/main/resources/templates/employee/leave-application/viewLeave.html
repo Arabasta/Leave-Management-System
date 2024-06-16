@@ -19,11 +19,11 @@
     </tr>
     <tr>
         <td>Start Date</td>
-        <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}">
+        <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
     </tr>
     <tr>
         <td>End Date</td>
-        <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}">
+        <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
     </tr>
     <tr>
         <td th:if="${leave.reviewingManager} != null">Approving Manager</td>
@@ -31,11 +31,11 @@
     </tr>
     <tr>
         <td>Reason</td>
-        <td th:text="${leave.submissionReason}">
+        <td th:text="${leave.submissionReason}"></td>
     </tr>
     <tr>
         <td>Work Dissemination (if any)</td>
-        <td th:text="${leave.workDissemination}">
+        <td th:text="${leave.workDissemination}"></td>
     </tr>
     <tr>
         <td>Contact Details (if on an overseas trip)</td>
@@ -43,7 +43,7 @@
     </tr>
     <tr>
         <td>Leave Status</td>
-        <td th:text="${leave.leaveStatus}">
+        <td th:text="${leave.leaveStatus}"></td>
     </tr>
     <tr>
         <td>
