@@ -13,10 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
@@ -50,13 +47,9 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
-    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee) {
-        LeaveApplication leaveApplication = findLeaveApplicationById(id);
-        // Ensure an employee only accesses his own leave applications
-        if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())) {
-            throw new LeaveApplicationNotFoundException("Leave Application Not Found");
-        }
-        return leaveApplication;
+    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, int employeeId) {
+        return leaveApplicationRepository.findIfBelongsToEmployee(id, employeeId)
+                .orElseThrow(() -> new LeaveApplicationNotFoundException("Leave Application Not Found"));
     }
 
     @Override

@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleLeaveApplicationNotFoundException(LeaveApplicationNotFoundException e) {
         return ResponseEntity.status(404).body(e.getMessage());
     }
+
+    @ExceptionHandler(LeaveApplicationUpdateException.class)
+    public ResponseEntity<Object> handleLeaveApplicationUpdateException(LeaveApplicationUpdateException e) {
+        return ResponseEntity.status(409).body(e.getMessage());
+    }
 }
