@@ -41,7 +41,6 @@ public class CompensationClaimService implements ICompensationClaim {
         }
     }
 
-    @Override
     @Transactional
     public boolean isClashWithExisting(CompensationClaim targetClaim) {
         List<CompensationClaim> existingClaims = compensationClaimRepository.findExistingByClaimingEmployeeId(targetClaim.getClaimingEmployee().getId());
@@ -59,7 +58,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return false;
     }
 
-    @Override
     @Transactional
     public float calculateOvertimeHours(CompensationClaim claim) {
         LocalDateTime start = claim.getOvertimeStart();
@@ -68,7 +66,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return (start.isBefore(end)) ? start.until(end, ChronoUnit.HOURS) : 0;
     }
 
-    @Override
     @Transactional
     public float calculateLeaveRequested(CompensationClaim claim) {
         return (int) (calculateOvertimeHours(claim) / 4) * 0.5f;
@@ -84,7 +81,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return compensationClaimRepository.findById(id).orElse(null);
     }
 
-    @Override
     @Transactional
     public CompensationClaim findIfBelongsToEmployee(Integer id, Employee employee) {
         CompensationClaim claim = findById(id);
@@ -95,7 +91,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return claim;
     }
 
-    @Override
     @Transactional
     public CompensationClaim findIfBelongsToManagerForReview(Integer id, Manager manager) {
         CompensationClaim claim = findById(id);
@@ -106,7 +101,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return claim;
     }
 
-    @Override
     @Transactional
     public CompensationClaim getNewClaimForEmployee(Employee employee) {
         CompensationClaim claim = new CompensationClaim();
@@ -117,7 +111,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return claim;
     }
 
-    @Override
     @Transactional
     public void setNewClaimAndSave(CompensationClaim claim) throws ServiceSaveException {
         try {
@@ -131,7 +124,6 @@ public class CompensationClaimService implements ICompensationClaim {
         }
     }
 
-    @Override
     @Transactional
     public void setUpdateClaimAndSave(CompensationClaim claim) throws ServiceSaveException {
         try {
@@ -153,7 +145,6 @@ public class CompensationClaimService implements ICompensationClaim {
         }
     }
 
-    @Override
     @Transactional
     public Map<String, List<CompensationClaim>> findPendingReviewByManager(Manager manager) {
         Map<String, List<CompensationClaim>> map = new HashMap<>();
@@ -173,4 +164,12 @@ public class CompensationClaimService implements ICompensationClaim {
         return map;
     }
 
+    @Transactional
+    public List<CompensationClaim> findByApprovingManager(Manager manager) {
+        try {
+            return compensationClaimRepository.findByApprovingManager(manager);
+        } catch (CompensationClaimNotFoundException e) {
+            throw new CompensationClaimNotFoundException("Approving Manager: "+manager.getName(), e);
+        }
+    }
 }
