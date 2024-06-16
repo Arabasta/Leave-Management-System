@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
+import com.team4.leaveprocessingsystem.exception.LeaveApplicationUpdateException;
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
@@ -71,9 +71,8 @@ public class LeaveApplicationController {
 
         // Only allow editing of leaves pending approval
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
-            throw new LeaveApplicationNotFoundException("Leave application cannot be updated");
+            throw new LeaveApplicationUpdateException("Leave application cannot be edited");
         }
-
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
@@ -107,10 +106,12 @@ public class LeaveApplicationController {
     public String deleteLeave(@PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        // Only applied/updated leave can be deleted
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
+            throw new LeaveApplicationUpdateException("Leave application cannot be deleted");
+        }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.DELETED);
         leaveApplicationService.save(leaveApplication);
-
-        //TODO: Only applied/updated leave can be deleted
 
         return "redirect:/leave/personalHistory";
     }
@@ -119,10 +120,12 @@ public class LeaveApplicationController {
     public String cancelLeave(@PathVariable int id){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        // Only approved leave can be cancelled
+        if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPROVED){
+            throw new LeaveApplicationUpdateException("Leave application cannot be cancelled");
+        }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
-
-        //TODO: Only approved leave can be cancelled
 
         return "redirect:/leave/personalHistory";
     }
