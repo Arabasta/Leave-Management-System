@@ -30,6 +30,9 @@ jobs:
           push: true
           tags: ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
 
+      - name: wait for docker image to be uploaded
+        run: sleep 60
+
       - name: Deploy to EC2
         env:
           EC2_SSH_KEY: ${{ secrets.KEI_EC2_SSH_KEY }}
