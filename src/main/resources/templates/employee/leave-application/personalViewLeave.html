@@ -36,7 +36,7 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
 
-        <td><a th:href="@{/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
+        <td><a th:href="@{/employee/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
 
     </tr>
 </table>
@@ -47,8 +47,7 @@ white;">
 
     </tr>
     <tr>
-        <td style="text-align: center; font-weight: bold;"><a href="#"
-                                                              onclick="history.go(-1); return false;">Back</a></td>
+        <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
     </tr>
 </table>
 

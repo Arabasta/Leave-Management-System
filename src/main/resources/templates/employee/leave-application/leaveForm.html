@@ -10,7 +10,7 @@
         <span th:if="${#strings.equals(leave.leaveStatus, 'UPDATED')}" th:text="'Edit Leave Application'"></span>
     </h3>
 
-    <form th:action="@{/leave/save}" method="post">
+    <form th:action="@{/employee/leave/save}" method="post">
         <input type="hidden" name="applicationId" th:field="${leave.id}" />
         <input type="hidden" name="submittingEmployee" th:field="${leave.submittingEmployee}" />
         <input type="hidden" name="reviewingManager" th:field="${leave.reviewingManager}" />

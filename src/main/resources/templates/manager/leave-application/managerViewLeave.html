@@ -22,7 +22,7 @@
     <tr>
         <td>
             <form action="#"
-                  th:action="@{/leave/searchingLeaveApplications}" method="post">
+                  th:action="@{/manager/leave/searchingLeaveApplications}" method="post">
                 <div style="font-weight: bold">
                     Search By:
                 </div>
@@ -72,7 +72,7 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
         <!-- change link to the controller method for manager to view detail leave application for approval/reject-->
-        <td><a th:href="@{/leave/viewSubordinateDetails/{id}(id=${leaveApplication.getId()})}">Details</a></td>
+        <td><a th:href="@{/manager/leave/viewSubordinateDetails/{id}(id=${leaveApplication.getId()})}">Details</a></td>
 
     </tr>
 </table>

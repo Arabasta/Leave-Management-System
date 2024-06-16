@@ -71,28 +71,6 @@ public class LeaveApplicationService implements ILeaveApplication {
     }
 
     @Override
-    public List<LeaveApplication> findByEmployeeName(String name) {
-        return leaveApplicationRepository.findByName(name);
-    }
-
-    @Override
-    public List<LeaveApplication> findByEmployeeId(int id) {
-        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
-    }
-
-    @Override
-    @Transactional
-    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
-        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
-        for (LeaveApplication application : applications) {
-            if (application.getReviewingManager().getId() == managerId) {
-                applicationsBelongToManagerSubordinates.add(application);
-            }
-        }
-        return applicationsBelongToManagerSubordinates;
-    }
-
-    @Override
     @Transactional
     public Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager) {
         Map<String, List<LeaveApplication>> pendingLeaveApplications = new HashMap<>();

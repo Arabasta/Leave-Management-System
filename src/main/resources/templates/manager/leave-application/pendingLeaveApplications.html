@@ -44,7 +44,7 @@
                     <td th:text="${leave.leaveStatus}"></td>
                     <td th:if="${leave.leaveStatus.name()}=='APPLIED' or
                                 ${leave.leaveStatus.name()}=='UPDATED'">
-                        <a th:href="@{/leave/review/{id}(id=${leave.id})}" class="button is-primary">Details</a></td>
+                        <a th:href="@{/manager/leave/review/{id}(id=${leave.id})}" class="button is-primary">Details</a></td>
                 </tr>
             </th:block>
         </th:block>
