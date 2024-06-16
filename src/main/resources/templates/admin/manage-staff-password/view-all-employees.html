@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>All Employees</h1>
+    <br>
+    <form class="form-inline" method="get" th:action="@{/admin/manage-staff-password/}">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon2">Filter By</span>
+                <div class="input-group-btn">
+                    <select class="form-control" name="searchType">
+                        <option selected th:selected="${searchType == 'name'}" th:value="name">Name</option>
+                        <option th:selected="${searchType == 'jobDesignation'}" th:value="jobDesignation">Job
+                            Designation
+                        </option>
+                        <option th:selected="${searchType == 'roleType'}" th:value="roleType">Role Type</option>
+                    </select>
+                </div>
+
+                <input class="form-control rounded" name="query" placeholder="Keyword"
+                       aria-label="Search" aria-describedby="search-addon"
+                       th:value="${keyword}" type="search"/>
+                <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+
+            </div>
+        </div>
+    </form>
+
+    <br>
+
+    <div class="d-flex justify-content-center" th:if="${viewAllExcludeDeleted}">
+        <div class="p-2">
+            <span class="ms-3">
+                <a class="btn btn-secondary text-decoration-none"
+                   th:href="@{/admin/manage-staff/view-all-include-deleted}">View Deleted</a>
+            </span>
+
+        </div>
+    </div>
+
+    <!-- View all employees exclude deleted ones mode -->
+    <span th:if="${viewAllExcludeDeleted}">
+        <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(employees)}">
+            <thead class="bg-primary">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Job Designation</th>
+                    <th>Manager</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e:${employees}">
+                    <td th:text="${e.id}">Id</td>
+                    <td th:text="${e.name}">Name</td>
+                    <td th:text="${e.jobDesignation.name}">Job Designation</td>
+                    <td th:if="${e.manager != null}" th:text="${e.manager.name}">Manager</td>
+                    <td th:if="${e.manager == null}">No Manager</td>
+
+                    <td>
+                        <a class="btn btn-primary" th:href="@{/admin/manage-staff-password/choose-account/{id}(id=${e.id})}">Select Account</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+    </span>
+
+    <!-- View only deleted employees mode -->
+    <span th:if="${!viewAllExcludeDeleted}">
+        <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(employees)}">
+            <thead class="bg-primary">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Job Designation</th>
+                    <th>Manager</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e:${employees}">
+                    <td th:text="${e.id}">Id</td>
+                    <td th:text="${e.name}">Name</td>
+                    <td th:text="${e.jobDesignation.name}">Job Designation</td>
+                    <td th:if="${e.manager != null}" th:text="${e.manager.name}">Manager</td>
+                    <td th:if="${e.manager == null}">No Manager</td>
+
+                    <td>
+                        <a class="btn btn-primary" th:href="@{/admin/manage-staff/edit/{id}(id=${e.id})}">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                <span class="ms-3">
+                    <a class="btn btn-primary text-decoration-none"
+                       th:href="@{/admin/manage-staff/}">Return</a>
+                </span>
+            </div>
+        </div>
+
+    </span>
+
+
+
+</div>
+
+</body>
+</html>
