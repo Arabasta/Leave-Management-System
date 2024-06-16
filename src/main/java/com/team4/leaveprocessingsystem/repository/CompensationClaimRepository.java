@@ -2,7 +2,7 @@ package com.team4.leaveprocessingsystem.repository;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
+import com.team4.leaveprocessingsystem.model.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +18,6 @@ public interface CompensationClaimRepository extends JpaRepository<CompensationC
             "OR c.claimStatus = 'UPDATED'" +
             "OR c.claimStatus = 'APPROVED'")
     List<CompensationClaim> findExistingByClaimingEmployeeId(@Param("employee_id") int employee_id);
+
+    List<CompensationClaim> findByApprovingManager(Manager manager);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RequestMapping("/manager/compensation-claims")
 @Controller
@@ -86,10 +87,33 @@ public class ManagerCompensationClaimController {
         } else {
             claim.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
         }
-
         claim.setComments(claim.getComments());
         claim.setReviewedDateTime(LocalDateTime.now());
         compensationClaimService.save(claim);
         return "redirect:/manager/compensation-claims/viewPendingApproval";
     }
+
+    /*
+        MANAGER - GET - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
+    */
+    @GetMapping("viewEmployees")
+    public String viewEmployees(Model model) {
+        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
+        List<CompensationClaim> claims = compensationClaimService.findByApprovingManager(manager);
+        model.addAttribute("claims", claims);
+        return "manager/compensation-claims/view-employee-claims";
+    }
+
+//    /*
+//        WIP: MANAGER - POST - VIEW EMPLOYEE COMPENSATION CLAIMS
+//    */
+//    @PostMapping("viewEmployees/{id}")
+//    public String viewEmployees(@PathVariable Integer id, Model model) {
+//        if (id.toString().isBlank()) { return "redirect:/manager/compensation-claims/viewEmployees"; }
+//        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
+//        List<CompensationClaim> claims = compensationClaimService.findByApprovingManager(manager)
+//                .stream().filter(c -> Objects.equals(c.getClaimingEmployee().getId(), id)).toList();
+//        model.addAttribute("claims", claims);
+//        return "manager/compensation-claims/view-employee-claims";
+//    }
 }
