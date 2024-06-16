@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: html_head"></head>
-<head>
-<div th:replace="fragments/navbar :: menu"></div>
+<head th:replace="fragments/head :: html_head">
+
+
 <title>Leave Application</title>
-<!--    <script src="/js/leaveForm.js"></script>-->
 </head>
 <body>
-
+<div th:replace="fragments/navbar :: menu"></div>
 <h3>Leave Application Details</h3>
 
 <script>
@@ -61,11 +60,11 @@
         </tr>
         <tr>
             <td>Start Date</td>
-            <td th:text="${leave.startDate}"></td>
+            <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
         </tr>
         <tr>
             <td>End Date</td>
-            <td th:text="${leave.endDate}"></td>
+            <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
         </tr>
         <tr>
             <td>Approving Manager</td>

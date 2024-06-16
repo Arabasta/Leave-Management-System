@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head>
-    <title>Employee Leave History</title>
-
+<head th:replace="fragments/head :: html_head">
+    <title>Personal Leave History</title>
 </head>
-
 <body>
-
+<div th:replace="fragments/navbar :: menu"></div>
 
 <br/>
 <h2 style="text-align: center;">Personal leave History</h2>
@@ -30,9 +28,9 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getId()}">Id</td>
 
         <td th:text="${leaveApplication.getSubmittingEmployee().getName()}">Name</td>
-        <td><a th:text="${leaveApplication.getStartDate()}">Start Date</a></td>
+        <td><a th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}">Start Date</a></td>
 
-        <td th:text="${leaveApplication.getEndDate()}">End Date</td>
+        <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}">End Date</td>
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
 
@@ -50,9 +48,5 @@ white;">
         <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
     </tr>
 </table>
-
 </body>
-
-</div>
-
 </html>

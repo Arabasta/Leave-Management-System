@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
 
-<head>
+<head th:replace="fragments/head :: html_head">
     <title>Subordinate Leave History</title>
-
 </head>
 
 <body>
-
+<div th:replace="fragments/navbar :: menu"></div>
 
 <br/>
 <h2 style="text-align: center;">Subordinate Leave History</h2>
@@ -50,7 +49,7 @@
         </td>
     </tr>
 </table>
-</br>
+<br>
 <table th:if="${not #lists.isEmpty(subordinateLeaveApplications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
@@ -66,9 +65,9 @@ margin-left: auto; margin-right: auto;">
         <td th:text="${leaveApplication.getId()}">Application Id</td>
         <td th:text="${leaveApplication.getSubmittingEmployee().id}">Employee id</td>
         <td th:text="${leaveApplication.getSubmittingEmployee().getName()}">Name</td>
-        <td><a th:text="${leaveApplication.getStartDate()}">Start Date</a></td>
+        <td><a th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}">Start Date</a></td>
 
-        <td th:text="${leaveApplication.getEndDate()}">End Date</td>
+        <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}">End Date</td>
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
 
         <!-- change link to the controller method for manager to view detail leave application for approval/reject-->
@@ -80,16 +79,13 @@ margin-left: auto; margin-right: auto;">
 <table style="width:50%; margin-left: auto; margin-right: auto; border:
 white;">
     <tr>
-
+        <td>
+            <a href="#" onclick="window.location.href='/home'; return false;">Back to Home</a>
+        </td>
     </tr>
-    <td>
-        <a href="#" onclick="window.location.href='/home'; return false;">Back to Home</a>
-    </td>
-
 </table>
 
 </body>
 
-</div>
 
 </html>
