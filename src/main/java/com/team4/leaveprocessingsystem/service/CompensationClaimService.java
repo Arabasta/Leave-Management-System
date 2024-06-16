@@ -145,6 +145,21 @@ public class CompensationClaimService implements ICompensationClaim {
         }
     }
 
+    public List<CompensationClaim> filterByEmployeeListAndManager(List<Employee> list, Manager manager) {
+        List<CompensationClaim> output = new java.util.ArrayList<>(List.of());
+        for (Employee employee : list) {
+            List<CompensationClaim> claims = findByEmployee(employee);
+            if (claims != null) {
+                for (CompensationClaim claim : claims) {
+                    if (claim.getApprovingManager().getId().equals(manager.getId())) {
+                        output.add(claim);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
     @Transactional
     public Map<String, List<CompensationClaim>> findPendingReviewByManager(Manager manager) {
         Map<String, List<CompensationClaim>> map = new HashMap<>();

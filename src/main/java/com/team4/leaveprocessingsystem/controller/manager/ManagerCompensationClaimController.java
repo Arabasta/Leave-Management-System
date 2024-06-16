@@ -1,6 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.manager;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
@@ -97,23 +98,17 @@ public class ManagerCompensationClaimController {
         MANAGER - GET - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
     */
     @GetMapping("viewEmployees")
-    public String viewEmployees(Model model) {
+    public String viewEmployees(@RequestParam(value = "query", required = false) String query,
+                                Model model) {
+        List<Employee> employees;
+        if (query == null || query.isBlank()) {
+            employees = employeeService.findAll();
+        } else {
+            employees = employeeService.findEmployeesByName(query);
+        }
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        List<CompensationClaim> claims = compensationClaimService.findByApprovingManager(manager);
+        List<CompensationClaim> claims = compensationClaimService.filterByEmployeeListAndManager(employees, manager);
         model.addAttribute("claims", claims);
         return "manager/compensation-claims/view-employee-claims";
     }
-
-//    /*
-//        WIP: MANAGER - POST - VIEW EMPLOYEE COMPENSATION CLAIMS
-//    */
-//    @PostMapping("viewEmployees/{id}")
-//    public String viewEmployees(@PathVariable Integer id, Model model) {
-//        if (id.toString().isBlank()) { return "redirect:/manager/compensation-claims/viewEmployees"; }
-//        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-//        List<CompensationClaim> claims = compensationClaimService.findByApprovingManager(manager)
-//                .stream().filter(c -> Objects.equals(c.getClaimingEmployee().getId(), id)).toList();
-//        model.addAttribute("claims", claims);
-//        return "manager/compensation-claims/view-employee-claims";
-//    }
 }
