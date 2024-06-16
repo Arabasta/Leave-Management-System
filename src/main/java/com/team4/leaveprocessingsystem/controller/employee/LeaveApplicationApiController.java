@@ -1,22 +1,17 @@
-package com.team4.leaveprocessingsystem.controller;
+package com.team4.leaveprocessingsystem.controller.employee;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
-import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Map;
 
 @RequestMapping("api/leave")
 @CrossOrigin()

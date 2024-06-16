@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RequestMapping("leave")
+@RequestMapping("manager/leave")
 @Controller
 public class ManagerLeaveController {
 
@@ -27,16 +27,18 @@ public class ManagerLeaveController {
     private final EmailApiService emailApiService;
     private final UserService userService;
     private final EmployeeRepository employeeRepository;
-    @Autowired
-    private LeaveApplicationService leaveApplicationService;
+    private final LeaveApplicationService leaveApplicationService;
+    private final ManagerService managerService;
 
-    public ManagerLeaveController(EmployeeService employeeService, LeaveApplicationValidator leaveApplicationValidator, AuthenticationService authenticationService, EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository) {
+    public ManagerLeaveController(EmployeeService employeeService, LeaveApplicationValidator leaveApplicationValidator, AuthenticationService authenticationService, EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository, LeaveApplicationService leaveApplicationService, ManagerService managerService) {
         this.employeeService = employeeService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.authenticationService = authenticationService;
         this.emailApiService = emailApiService;
         this.userService = userService;
         this.employeeRepository = employeeRepository;
+        this.leaveApplicationService = leaveApplicationService;
+        this.managerService = managerService;
     }
 
     @GetMapping("managerView")
@@ -48,19 +50,7 @@ public class ManagerLeaveController {
         int managerId = employee.getId();
         List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
         model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
-        return "leaveApplication/managerViewLeave";
-    }
-
-    @GetMapping("history")
-    public String subordinatesLeaveHistory(Model model) {
-        // todo: note; kei changed to use authService
-        Employee manager = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        int managerId = manager.getId();
-
-        List<LeaveApplication> allLeavesbyManagerSubordinates = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("leaveApplications", allLeavesbyManagerSubordinates);
-
-        return "leaveApplication/viewLeaveHistory";
+        return "manager/leave-application/managerViewLeave";
     }
 
     // MANAGER - GET - PENDING LEAVE APPLICATIONS
@@ -69,7 +59,15 @@ public class ManagerLeaveController {
         Manager currentManager = (Manager) employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         Map<String, List<LeaveApplication>> pendingLeaveApplications = leaveApplicationService.findLeaveApplicationsPendingApprovalByManager(currentManager);
         model.addAttribute("pendingLeaveApplications", pendingLeaveApplications);
-        return "leaveApplication/pendingLeaveApplications";
+        return "manager/leave-application/pendingLeaveApplications";
+    }
+
+    //manager view details of his subordinate
+    @GetMapping("viewSubordinateDetails/{id}")
+    public String viewLeaveDetails(Model model, @PathVariable int id) {
+        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
+        model.addAttribute("leave", leaveApplication);
+        return "manager/leave-application/managerViewLeaveDetails";
     }
 
     // MANAGER - GET - REVIEW LEAVE APPLICATIONS DETAILS
@@ -77,11 +75,9 @@ public class ManagerLeaveController {
     public String leaveApplicationsDetails(@PathVariable Integer id, Model model) {
         LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
         model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/reviewLeave";
+        return "manager/leave-application/reviewLeave";
     }
 
-    @Autowired
-    ManagerService managerService;
     // MANAGER - POST - REVIEW LEAVE APPLICATION
     @PostMapping("/submitLeaveApplication")
     public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave,
@@ -102,13 +98,13 @@ public class ManagerLeaveController {
 
         // Return back to page if validation has errors
         if (bindingResult.hasErrors()) {
-            return "leaveApplication/reviewLeave";
+            return "manager/leave-application/reviewLeave";
         }
 
         // Check if the leave is rejected and ensure the rejection reason is provided
         if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED && (leave.getRejectionReason() == null || leave.getRejectionReason().trim().isEmpty())) {
             bindingResult.rejectValue("rejectionReason", "error.leave", "Rejection reason must be provided if the leave is rejected");
-            return "leaveApplication/reviewLeave";
+            return "manager/leave-application/reviewLeave";
         }
 
         // Update to Approved
@@ -122,6 +118,6 @@ public class ManagerLeaveController {
             leaveApplicationService.save(existingLeaveApplication);}
 
         // Redirect to pending leave applications with a success parameter
-        return "redirect:/leave/pendingLeaves?updateSuccess=true";
+        return "redirect:/manager/leave/pendingLeaves?updateSuccess=true";
     }
 }
