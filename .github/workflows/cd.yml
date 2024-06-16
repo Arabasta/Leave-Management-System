@@ -32,4 +32,5 @@ jobs:
             -e RDS_USERNAME=${RDS_USERNAME} \
             -e RDS_PASSWORD=${RDS_PASSWORD} \
             ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
+          docker logs leave-processing-spring-boot
           EOF
