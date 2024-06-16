@@ -19,7 +19,6 @@
 
     <!-- Iterate through employee user account(s). Same employee might have more than 1 account -->
 
-
         <form method="post" th:action="@{/admin/manage-staff/update/user}" th:if="${isEditMode}" th:object="${user}">
             <div th:each="userAccount: ${existingUsers}">
             <!-- hidden fields -->

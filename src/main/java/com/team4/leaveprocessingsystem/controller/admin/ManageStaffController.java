@@ -118,10 +118,13 @@ public class ManageStaffController {
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
         List<Manager> managerList = managerService.findAllManagers();
 
+        List<User> userListForEmployee = userService.findByEmployeeId(employeeId);
+
         model.addAttribute("employee", employee);
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("managerList", managerList);
+        model.addAttribute("userListForEmployee", userListForEmployee);
 
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
@@ -214,8 +217,6 @@ public class ManageStaffController {
         }
         employeeService.save(employee);
 
-        // todo: include two methods in employeeRepository: findAllIncludeDeleted() and findAllExcludeDeleted
-
         return "redirect:/admin/manage-staff/";
     }
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
@@ -267,10 +268,10 @@ public class ManageStaffController {
                                   Model model) {
 
         Employee employee = employeeService.findEmployeeById(employeeId);
-        List<User> existingUsers = userService.findByEmployeeId(employeeId);
+        List<User> userListForEmployee = userService.findByEmployeeId(employeeId);
 
         model.addAttribute("employee", employee);
-        model.addAttribute("existingUsers", existingUsers);
+        model.addAttribute("userListForEmployee", userListForEmployee);
         model.addAttribute("roles", RoleEnum.values());
 
         model.addAttribute("isEditMode", true);
@@ -283,7 +284,6 @@ public class ManageStaffController {
     public String updateEmployeeDetails(@ModelAttribute("user") User user,
                                         BindingResult bindingResult,
                                         Model model) {
-
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", user);
