@@ -4,6 +4,7 @@ import com.team4.leaveprocessingsystem.exception.LeaveApplicationUpdateException
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
@@ -30,6 +31,7 @@ public class LeaveApplicationController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
+    private final EmployeeRepository employeeRepository;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -39,17 +41,18 @@ public class LeaveApplicationController {
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService) {
+                                      EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.emailApiService = emailApiService;
         this.userService = userService;
+        this.employeeRepository = employeeRepository;
     }
 
     @GetMapping("create")
-    public String createLeave(Model model){
+    public String createLeave(Model model) {
         LeaveApplication leaveApplication = new LeaveApplication();
         // todo: note; kei changed to use authService
 
@@ -65,7 +68,7 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("edit/{id}")
-    public String editLeave(@PathVariable int id, Model model){
+    public String editLeave(@PathVariable int id, Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
 
@@ -81,7 +84,7 @@ public class LeaveApplicationController {
     }
 
     @PostMapping("save")
-    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model){
+    public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
@@ -92,7 +95,7 @@ public class LeaveApplicationController {
         // Send email notification to the manager
         try {
             String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
-            Map<String, String> email =  EmailBuilderUtils.buildNotificationEmail(leaveApplication);
+            Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
             emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -103,7 +106,7 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("delete/{id}")
-    public String deleteLeave(@PathVariable int id){
+    public String deleteLeave(@PathVariable int id) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         // Only applied/updated leave can be deleted
@@ -117,7 +120,7 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("cancel/{id}")
-    public String cancelLeave(@PathVariable int id){
+    public String cancelLeave(@PathVariable int id) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         // Only approved leave can be cancelled
@@ -132,7 +135,7 @@ public class LeaveApplicationController {
 
 
     @GetMapping("view/{id}")
-    public String viewLeave(Model model, @PathVariable int id){
+    public String viewLeave(Model model, @PathVariable int id) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
         model.addAttribute("leave", leaveApplication);
@@ -162,43 +165,15 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("personalHistory")
-    public String personalHistory(Model model){
+    public String personalHistory(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
         model.addAttribute("personalLeaveApplications", personalLeaveApplications);
         return "leaveApplication/personalViewLeave";
     }
 
-    // MANAGER - GET - PENDING LEAVE APPLICATIONS
-    @GetMapping("pendingLeaves")
-    public String pendingLeaveApplications(Model model) {
-        Manager currentManager = (Manager) employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        Map<String, List<LeaveApplication>> pendingLeaveApplications = leaveApplicationService.findLeaveApplicationsPendingApprovalByManager(currentManager);
-        model.addAttribute("pendingLeaveApplications", pendingLeaveApplications);
-        return "leaveApplication/pendingLeaveApplications";
-    }
 
-    // MANAGER - GET - REVIEW LEAVE APPLICATIONS DETAILS
-    @GetMapping("review/{id}")
-    public String leaveApplicationsDetails(@PathVariable Integer id, Model model) {
-        LeaveApplication leaveApplication = leaveApplicationService.findLeaveApplicationById(id);
-        model.addAttribute("leave", leaveApplication);
-        return "leaveApplication/reviewLeave";
-    }
-
-    // MANAGER - POST - REVIEW LEAVE APPLICATION
-    @PostMapping("submitLeaveApplication")
-    public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave, BindingResult bindingResult, Model model) {
-        // Return back to page if validation has errors
-        if (bindingResult.hasErrors()) {
-            return "leaveApplication/reviewLeave";
-        }
-
-        // Check if the leave is rejected and ensure the rejection reason is provided
-        if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED && (leave.getRejectionReason() == null || leave.getRejectionReason().trim().isEmpty())) {
-            bindingResult.rejectValue("rejectionReason", "error.leave", "Rejection reason must be provided if the leave is rejected");
-            return "leaveApplication/reviewLeave";
-        }
+}
 
         // Save the leave application status
         leaveApplicationService.save(leave);

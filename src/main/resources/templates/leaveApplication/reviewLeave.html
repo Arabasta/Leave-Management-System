@@ -1,28 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
 <head>
-    <meta charset="UTF-8">
-    <title>Leave Application</title>
-    <script src="/js/leaveForm.js"></script>
+<div th:replace="fragments/navbar :: menu"></div>
+<title>Leave Application</title>
+<!--    <script src="/js/leaveForm.js"></script>-->
 </head>
 <body>
-<div th:replace="fragments/navbar :: menu"></div>
+
 <h3>Leave Application Details</h3>
 
 <script>
+    //Ensure either Approve or Reject selected
     function validateForm() {
-        const leaveStatus = document.querySelector('input[name="leaveStatus"]:checked').value;
+        const leaveStatusChecked = document.querySelector('input[name="leaveStatus"]:checked');
+        if (!leaveStatusChecked) {
+            alert("Please select either Approve or Reject.");
+            return false;
+        }
+        const leaveStatus = leaveStatusChecked.value;
         const rejectionReason = document.getElementById('rejectionReason').value;
 
+        //Ensure rejection reason given
         if (leaveStatus === 'REJECTED' && rejectionReason.trim() === '') {
             alert("Please provide a reason for rejection.");
             return false;
         }
         return true;
     }
+
+    // Check for the success parameter in the URL
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('updateSuccess') === 'true') {
+            alert("Leave status has been updated successfully.");
+        }
+    };
 </script>
 
-<form th:object="${leave}" method="post" th:action="@{/submitLeaveApplication}">
+<form th:object="${leave}" method="post" th:action="@{/leave/submitLeaveApplication}" onsubmit="return validateForm();">
+    <input type="hidden" th:field="${leave.id}"/>
+    <input type="hidden" th:field="${leave.submittingEmployee}"/>
+    <input type="hidden" th:field="${leave.reviewingManager}"/>
+    <input type="hidden" th:field="${leave.leaveType}"/>
+    <input type="hidden" th:field="${leave.startDate}"/>
+    <input type="hidden" th:field="${leave.endDate}"/>
+    <input type="hidden" th:field="${leave.submissionReason}"/>
+    <input type="hidden" th:field="${leave.workDissemination}"/>
+    <input type="hidden" th:field="${leave.contactDetails}"/>
+
     <table>
         <tbody>
         <tr>
@@ -87,17 +113,17 @@
         <tr>
             <td></td>
             <td>
-                <input type="submit" value="Submit" />
-                <input type="reset" value="Reset" />
+                <input th:type="submit" th:value="Confirm" class="blcass" />
             </td>
         </tr>
         <tr>
             <td>
-                <a href="#" onclick="history.go(-1); return false;">Back</a>
+                <a href="#" onclick="window.location.href='/leave/pendingLeaves'; return false;">Back</a>
             </td>
         </tr>
         </tbody>
     </table>
 </form>
 </body>
+
 </html>
