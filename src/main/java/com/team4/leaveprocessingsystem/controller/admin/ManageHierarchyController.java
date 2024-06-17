@@ -8,10 +8,14 @@ import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.JobDesignationService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import com.team4.leaveprocessingsystem.service.ManagerService;
+import com.team4.leaveprocessingsystem.validator.HierarchyValidator;
+import jakarta.validation.Valid;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,14 +30,22 @@ public class ManageHierarchyController {
     private final EmployeeService employeeService;
     private final JobDesignationService jobDesignationService;
     private final LeaveBalanceService leaveBalanceService;
+    private final HierarchyValidator hierarchyValidator;
+
+    @InitBinder("employee")
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(hierarchyValidator);
+    }
 
     @Autowired
     public ManageHierarchyController(ManagerService managerService, EmployeeService employeeService,
-                                     JobDesignationService jobDesignationService, LeaveBalanceService leaveBalanceService) {
+                                     JobDesignationService jobDesignationService, LeaveBalanceService leaveBalanceService,
+                                     HierarchyValidator hierarchyValidator) {
         this.managerService = managerService;
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.leaveBalanceService = leaveBalanceService;
+        this.hierarchyValidator = hierarchyValidator;
     }
 
     @GetMapping("/list")
@@ -91,7 +103,9 @@ public class ManageHierarchyController {
         Employee employee = employeeService.findEmployeeById(employeeId);
         LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
         JobDesignation jobDesignation = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
-        List<Manager> managers = managerService.findAllManagers();
+        List<Manager> managers = managerService.findAllManagers().stream()
+                .filter(manager -> manager.getId() != employeeId)
+                .toList();
 
         model.addAttribute("employee", employee);
         model.addAttribute("oldManager", employee.getManager());
@@ -103,8 +117,13 @@ public class ManageHierarchyController {
     }
 
     @PostMapping("/update")
-    public String updateEmployee(@ModelAttribute("employee") Employee employee,
+    public String updateEmployee(@Valid @ModelAttribute("employee") Employee employee,
+                                 BindingResult bindingResult, Model model,
                                  @RequestParam("oldManager") Integer oldManagerId) {
+        if (bindingResult.hasErrors()) {
+            return editEmployee(employee.getId(), model);
+        }
+
         Employee currEmployee = employeeService.findEmployeeById(employee.getId());
 
         try {
@@ -121,7 +140,7 @@ public class ManageHierarchyController {
                 List<Employee> currChilds = employeeService.findEmployeesByManager((Manager) currEmployee);
                 List<Employee> currMChilds = new ArrayList<>();
                 for (Employee e : currChilds) {
-                    // add all curr.prev to list only for Manager curr.prevs
+                    // add all curr.prev to list only for Managcer curr.prevs
                     if (e.getManager() == currEmployee && e instanceof Manager) {
                         currMChilds.add(e);
                     }
@@ -136,20 +155,16 @@ public class ManageHierarchyController {
                         employeeService.save(currPrev);
                     }
                 }
-                Manager newManager = managerService.findManagerById(employee.getManager().getId());
-                System.out.println(newManager.getName());
+
                 // set curr.next = new
-                currEmployee.setManager(newManager);
+                currEmployee.setManager(managerService.findManagerById(employee.getManager().getId()));
             }
         } catch (Exception e) {
             throw new ServiceException("Failed to update hierarchy", e);
         }
 
-        JobDesignation jd = jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId());
-        currEmployee.setJobDesignation(jd);
-
-        LeaveBalance leaveBalance = leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId());
-        currEmployee.setLeaveBalance(leaveBalance);
+        currEmployee.setJobDesignation(jobDesignationService.findJobDesignationById(employee.getJobDesignation().getId()));
+        currEmployee.setLeaveBalance(leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId()));
 
         employeeService.save(currEmployee);
         return "redirect:/admin/manage-hierarchy/tree";
