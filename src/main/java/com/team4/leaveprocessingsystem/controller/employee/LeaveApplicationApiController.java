@@ -2,6 +2,8 @@ package com.team4.leaveprocessingsystem.controller.employee;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.dataTransferObjects.LeaveApplicationResponse;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
@@ -13,7 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("api/leave")
+import java.util.List;
+
+@RequestMapping("api/employee/leave")
 @CrossOrigin()
 @RestController
 public class LeaveApplicationApiController {
@@ -24,6 +28,7 @@ public class LeaveApplicationApiController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
+    private final LeaveBalanceService leaveBalanceService;
 
     @InitBinder
     private void initLeaveApplicationApiBinder(WebDataBinder binder) {
@@ -33,13 +38,14 @@ public class LeaveApplicationApiController {
     @Autowired
     public LeaveApplicationApiController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService) {
+                                      EmailApiService emailApiService, UserService userService, LeaveBalanceService leaveBalanceService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.emailApiService = emailApiService;
         this.userService = userService;
+        this.leaveBalanceService = leaveBalanceService;
     }
 
     @PostMapping("create")
@@ -55,13 +61,15 @@ public class LeaveApplicationApiController {
 
         leaveApplicationService.save(leaveApplication);
 
-//        // Send email notification to the manager
-//        try {
-//            String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
-//            Map<String, String> email =  EmailBuilderUtils.buildNotificationEmail(leaveApplication);
-//            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
-//        } catch (IOException e) {
-//            System.out.println(e.getMessage());
+        // Send email notification to the manager
+//        if (leaveApplication.getReviewingManager() != null){
+//            try {
+//                String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
+//                Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
+//                emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+//            } catch (IOException e) {
+//                System.out.println(e.getMessage());
+//            }
 //        }
 
         return new ResponseEntity<> (leaveApplication, HttpStatus.CREATED);
@@ -127,5 +135,16 @@ public class LeaveApplicationApiController {
         LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
 
         return new ResponseEntity<> (leaveApplication, HttpStatus.OK);
+    }
+
+    @GetMapping("personalHistory")
+    public ResponseEntity<Object> personalHistory() {
+        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
+        LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employee.getId());
+
+        LeaveApplicationResponse response = new LeaveApplicationResponse(employee, personalLeaveApplications, leaveBalance);
+
+        return new ResponseEntity<> (response, HttpStatus.OK);
     }
 }

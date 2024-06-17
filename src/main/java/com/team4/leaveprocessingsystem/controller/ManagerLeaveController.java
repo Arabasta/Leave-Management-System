@@ -7,7 +7,6 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,19 +20,16 @@ import java.util.Map;
 public class ManagerLeaveController {
 
     private final EmployeeService employeeService;
-    private final LeaveApplicationValidator leaveApplicationValidator;
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
     private final LeaveApplicationService leaveApplicationService;
     private final ManagerService managerService;
 
-    public ManagerLeaveController(EmployeeService employeeService, LeaveApplicationValidator leaveApplicationValidator,
-                                  AuthenticationService authenticationService, EmailApiService emailApiService,
-                                  UserService userService, LeaveApplicationService leaveApplicationService,
-                                  ManagerService managerService) {
+    public ManagerLeaveController(EmployeeService employeeService, AuthenticationService authenticationService,
+                                  EmailApiService emailApiService, UserService userService,
+                                  LeaveApplicationService leaveApplicationService, ManagerService managerService) {
         this.employeeService = employeeService;
-        this.leaveApplicationValidator = leaveApplicationValidator;
         this.authenticationService = authenticationService;
         this.emailApiService = emailApiService;
         this.userService = userService;
@@ -48,6 +44,35 @@ public class ManagerLeaveController {
         int managerId = employee.getId();
         List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
         model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
+        return "manager/leave-application/managerViewLeave";
+    }
+
+    @RequestMapping(value="searchingLeaveApplications")
+    public String search(@RequestParam("keyword")
+                         String k, @RequestParam("searchType") String t, Model
+                                 model)
+    {
+        String name=new String("name");
+        String id = new String("id");
+
+        //have error here, should make sure these subordinates belong to the manager
+        if(t.equals(name))
+        {
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(k);
+            model.addAttribute("subordinateLeaveApplications",
+                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
+        }
+        else if(t.equals(id))
+        {
+            int k_num = Integer.parseInt(k);
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeId(k_num);
+            model.addAttribute("subordinateLeaveApplications",
+                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
+        }
+        else
+        {
+            return "redirect:404-notfound";
+        }
         return "manager/leave-application/managerViewLeave";
     }
 

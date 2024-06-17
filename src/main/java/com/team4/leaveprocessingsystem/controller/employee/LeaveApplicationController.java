@@ -142,7 +142,7 @@ public class LeaveApplicationController {
         return "employee/leave-application/viewLeave";
     }
 
-        @GetMapping("personalHistory")
+    @GetMapping("personalHistory")
     public String personalHistory(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
