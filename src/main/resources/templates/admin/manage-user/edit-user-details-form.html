@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head.html :: html_head"></head>
-
 <style>
     .error {
         color: red;
@@ -10,7 +9,6 @@
         color: green;
     }
 </style>
-
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
 
@@ -23,7 +21,7 @@
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="*{id}"/>
         <input type="hidden" name="employee" th:field="*{employee.id}"/>
-        <input type="hidden" name="employee" th:field="*{createDateTime}"/>
+        <input type="hidden" name="createDateTime" th:field="*{createDateTime}"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" th:for="'userName' + ${user.id}">Username:</label>
@@ -36,7 +34,7 @@
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" th:for="'userPassword' + ${user.id}">Password:</label>
             <div class="col-8">
-                <input class="form-control" name="userPassword" th:id="'userPassword' + ${user.id}" th:field="*{password}" type="password" onChange="check()" />
+                <input class="form-control" name="password" th:id="'userPassword' + ${user.id}" th:field="*{password}" type="password" oninput="check()" />
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:class="${#fields.hasErrors('password')} ? 'error'"></span>
             </div>
         </div>
@@ -44,7 +42,7 @@
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" th:for="'confirmPassword' + ${user.id}">Confirm Password:</label>
             <div class="col-8">
-                <input class="form-control" name="confirmPassword" th:id="'confirmPassword' + ${user.id}" type="password" onChange="check()"/>
+                <input class="form-control" name="confirmPassword" th:id="'confirmPassword' + ${user.id}" type="password" oninput="check()"/>
                 <span id='message'></span>
             </div>
         </div>
@@ -61,7 +59,7 @@
             <label class="col-4 col-form-label" th:for="'role' + ${user.id}">Role Given:</label>
             <div class="col-8">
                 <div class="form-check form-check-inline">
-                    <select th:id="'role' + ${user.id}" th:field="*{role}">
+                    <select class="form-select" th:id="'role' + ${user.id}" th:field="*{role}">
                         <option th:each="role : ${roles}" th:text="${role}" th:value="${role}" th:selected="${role == user.role}"></option>
                     </select>
                 </div>
@@ -79,7 +77,6 @@
 
     <!-- Success view -->
     <div th:if="${!isEditMode}" th:object="${updatedUser}">
-
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userId">User ID:</label>
             <div class="col-8">
@@ -127,5 +124,23 @@
     </div>
 </div>
 
+<script>
+    function check() {
+        var passwordField = document.querySelector('[name="password"]');
+        var confirmPasswordField = document.querySelector('[name="confirmPassword"]');
+        var message = document.getElementById('message');
+
+        if (passwordField && confirmPasswordField && message) {
+            if (passwordField.value === confirmPasswordField.value) {
+                message.textContent = 'Passwords match';
+                message.style.color = 'green';
+            } else {
+                message.textContent = 'Passwords do not match';
+                message.style.color = 'red';
+            }
+        }
+    }
+</script>
 </body>
 </html>
+
