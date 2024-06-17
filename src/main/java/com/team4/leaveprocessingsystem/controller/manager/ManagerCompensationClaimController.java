@@ -6,6 +6,7 @@ import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.dataTransferObjects.DataExportDTO;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ public class ManagerCompensationClaimController {
         } else {
             claim.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
         }
-        claim.setComments(claim.getComments());
+        claim.setComments(StringCleaningUtil.forDatabase(claim.getComments()));
         claim.setReviewedDateTime(LocalDateTime.now());
         compensationClaimService.save(claim);
         return "redirect:/manager/compensation-claims/viewPendingApproval";
