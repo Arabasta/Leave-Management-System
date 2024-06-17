@@ -48,7 +48,6 @@
             <td th:text="${u.role.name()}">Role</td>
             <td>
                 <a class="btn btn-primary" th:href="@{/admin/manage-user/edit/{id}(id=${u.id})}">Edit</a>
-                <a class="btn btn-danger" th:href="@{/admin/manage-user/delete/{id}(id=${u.id})}">Delete</a>
             </td>
         </tr>
         </tbody>
