@@ -87,4 +87,28 @@ public class LeaveApplicationService implements ILeaveApplication {
         }
         return pendingLeaveApplications;
     }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findByEmployeeName(String name) {
+        return leaveApplicationRepository.findByName(name);
+    }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> findByEmployeeId(int id) {
+        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
+    }
+
+    @Override
+    @Transactional
+    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
+        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
+        for (LeaveApplication application : applications) {
+            if (application.getReviewingManager().getId() == managerId) {
+                applicationsBelongToManagerSubordinates.add(application);
+            }
+        }
+        return applicationsBelongToManagerSubordinates;
+    }
 }
