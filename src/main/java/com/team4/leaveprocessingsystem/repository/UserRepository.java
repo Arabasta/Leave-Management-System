@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.repository;
 
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.User;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,8 +21,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findById(int id);
 
-    @Query("SELECT u FROM User u WHERE u.role = :role")
-    List<User> findByRole(@Param("role") RoleEnum role);
+
+    @Query("Select u from User u " +
+        "where CAST(u.role as String) like CONCAT('%', :k, '%')")
+    List<User> findUsersByRoleType(@Param("k") String keyword);
+
 
     @Query("select u from User u where u.username like CONCAT('%', :k, '%')")
     List<User> findUsersByUsername(@Param("k") String keyword);

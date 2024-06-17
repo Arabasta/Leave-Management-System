@@ -60,30 +60,9 @@ public class ManageUserController {
                 case "username" -> userService.findUsersByUsername(query);
                 case "userid" -> userService.findUsersById(query);
                 case "email" -> userService.findUsersByEmail(query);
-                case "role" -> userService.findByRole(query);
+                case "role" -> userService.findUsersByRoleType(query);
                 default -> userService.findAll();
             };
-//            users = switch (searchType) {
-//                case "userid" -> {
-//                    try {
-//                        int userId = Integer.parseInt(query);
-//                        User user = userService.findById(userId);
-//                        yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-//                    } catch (NumberFormatException e) {
-//                        yield Collections.emptyList(); // or handle the error as needed
-//                    }
-//                }
-//                case "email" -> {
-//                    User user = userService.findByEmail(query);
-//                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-//                }
-//                case "username" -> {
-//                    User user = userService.findByUsername(query);
-//                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-//                }
-//                case "role" -> userService.findByRole(RoleEnum.valueOf(query.toUpperCase()));
-//                default -> userService.findAll();
-//            };
         }
 
         model.addAttribute("users", users);

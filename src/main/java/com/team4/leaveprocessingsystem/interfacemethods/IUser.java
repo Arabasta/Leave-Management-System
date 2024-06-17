@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.interfacemethods;
 
+import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,5 @@ public interface IUser {
     List<User> findUsersByEmail(String email);
 
     List<User> findUsersById(String id);
+    List<User> findUsersByRoleType(String keyword);
 }
