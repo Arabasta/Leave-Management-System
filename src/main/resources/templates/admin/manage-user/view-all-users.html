@@ -13,10 +13,10 @@
                 <span class="input-group-text" id="basic-addon2">Filter By</span>
                 <div class="input-group-btn">
                     <select class="form-control" name="searchType">
-                        <option selected th:selected="${searchType == 'name'}" th:value="name">Name</option>
                         <option th:selected="${searchType == 'username'}" th:value="username">Username</option>
                         <option th:selected="${searchType == 'email'}" th:value="email">Email</option>
                         <option th:selected="${searchType == 'role'}" th:value="role">Role</option>
+                        <option th:selected="${searchType == 'userid'}" th:value="userid">UserID</option>
                     </select>
                 </div>
                 <input class="form-control rounded" name="query" placeholder="Keyword"
@@ -33,7 +33,7 @@
     <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(users)}">
         <thead class="bg-primary text-white">
         <tr>
-            <th>Id</th>
+            <th>UserId</th>
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
