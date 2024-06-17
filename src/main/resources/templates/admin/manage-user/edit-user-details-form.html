@@ -16,7 +16,7 @@
         th:text="${isEditMode} ? 'Update User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
-    <form method="post" th:action="@{/admin/manage-user/update/user}" th:if="${isEditMode}" th:object="${user}">
+    <form method="post" th:action="@{/admin/manage-user/update/user}" th:if="${isEditMode}" th:object="${user}" onsubmit="return validatePasswordMatch()">
         <input name="employee" th:field="*{employee}" type="hidden"/>
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="*{id}"/>
@@ -28,7 +28,7 @@
             <div class="col-8">
                 <input class="form-control" id="userName" th:field="*{username}" type="text"/>
                 <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
-                      th:class="${#fields.hasErrors('username')}? error"></span>
+                      th:class="${#fields.hasErrors('username')} ? error"></span>
             </div>
         </div>
 
@@ -36,10 +36,10 @@
             <label class="col-4 col-form-label" for="userPassword">Password:</label>
             <div class="col-8">
                 <input class="form-control" name="userPassword" id="userPassword" th:field="*{password}"
-                       type="password" onChange="check()" />
+                       type="password" oninput="checkPasswords()" />
 
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                      th:class="${#fields.hasErrors('password')}? error"></span>
+                      th:class="${#fields.hasErrors('password')} ? error"></span>
             </div>
         </div>
 
@@ -48,8 +48,8 @@
             <label class="col-4 col-form-label" for="userPassword">Confirm Password:</label>
             <div class="col-8">
                 <input class="form-control" name="confirmPassword" id="confirmPassword"
-                       type="password" onChange="check()"/>
-                <span id='message'></span>
+                       type="password" oninput="checkPasswords()"/>
+                <span id='message' class="error"></span>
             </div>
         </div>
 
@@ -58,7 +58,7 @@
             <div class="col-8">
                 <input class="form-control" id="userEmail" th:field="*{email}" type="text"/>
                 <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-                      th:class="${#fields.hasErrors('email')}? error"></span>
+                      th:class="${#fields.hasErrors('email')} ? error"></span>
             </div>
         </div>
 
@@ -179,6 +179,7 @@
             </div>
         </div>
     </div>
+
 
 </div>
 

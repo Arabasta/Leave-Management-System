@@ -16,7 +16,7 @@
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 
     <!-- Edit mode form -->
-    <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}">
+    <form method="post" th:action="@{/admin/manage-staff/create/user}" th:if="${isEditMode}" th:object="${user}" onsubmit="return validatePasswordMatch()">
         <input name="employee" th:field="*{employee}" type="hidden"/>
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="${user.id}"/>
@@ -35,7 +35,7 @@
             <label class="col-4 col-form-label" for="userPassword">Password:</label>
             <div class="col-8">
                 <input class="form-control" name="userPassword" id="userPassword" th:field="*{password}"
-                       type="password" onChange="check()" />
+                       type="password" oninput="checkPasswords()" />
 
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                       th:class="${#fields.hasErrors('password')}? error"></span>
@@ -48,7 +48,7 @@
             <label class="col-4 col-form-label" for="userPassword">Confirm Password:</label>
             <div class="col-8">
                 <input class="form-control" name="confirmPassword" id="confirmPassword"
-                       type="password" onChange="check()"/>
+                       type="password" oninput="checkPasswords()"/>
                 <span id='message'></span>
             </div>
         </div>
