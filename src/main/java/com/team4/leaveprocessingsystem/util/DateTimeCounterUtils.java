@@ -29,10 +29,6 @@ public class DateTimeCounterUtils {
         return countWorkingDays;
     }
 
-    public static Long countCalendarHours(LocalDateTime startDateTime, LocalDateTime endDateTime){
-        return Duration.between(startDateTime, endDateTime).toHours();
-    }
-
     public static Long countCalendarDays(LocalDate startDate, LocalDate endDate){
         return endDate.toEpochDay() - startDate.toEpochDay() + 1;
     }

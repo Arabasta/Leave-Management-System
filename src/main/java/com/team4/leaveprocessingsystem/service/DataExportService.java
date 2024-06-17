@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.interfacemethods.IDataExport;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
+import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import org.springframework.stereotype.Service;
 
 import java.io.PrintWriter;
@@ -28,7 +29,7 @@ public class DataExportService implements IDataExport {
                     + "," + claim.getApprovingManager().getName()
                     + "," + (((claim.getReviewedDateTime() != null) ? // date != null ? date : null
                     claim.getReviewedDateTime().format(DateTimeFormatter.ofPattern("dd/MMM/yyyy HH:mm")) : null))
-                    + "," + claim.getComments() + "\n"
+                    + "," + StringCleaningUtil.forCSV(claim.getComments()) + "\n"
             );
         }
         printWriter.close();
