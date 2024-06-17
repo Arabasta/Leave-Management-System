@@ -1,75 +1,71 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="fragments/head :: html_head">
-    <title>Leave Application</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: html_head"></head>
+
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
-<h3>View Leave Application</h3>
 
-<table>
-    <tbody>
-    <tr>
-        <td th:text="${leave.submittingEmployee.name}"></td>
-    </tr>
-    <tr>
-        <td>Leave Type</td>
-        <td th:text="${leave.leaveType}">
-        </td>
-    </tr>
-    <tr>
-        <td>Start Date</td>
-        <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}">
-    </tr>
-    <tr>
-        <td>End Date</td>
-        <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}">
-    </tr>
-    <tr>
-        <td th:if="${leave.reviewingManager} != null">Approving Manager</td>
-        <td th:if="${leave.reviewingManager} != null" th:text="${leave.reviewingManager.name}"></td>
-    </tr>
-    <tr>
-        <td>Reason</td>
-        <td th:text="${leave.submissionReason}">
-    </tr>
-    <tr>
-        <td>Work Dissemination (if any)</td>
-        <td th:text="${leave.workDissemination}">
-    </tr>
-    <tr>
-        <td>Contact Details (if on an overseas trip)</td>
-        <td th:text="${leave.contactDetails}">
-    </tr>
-    <tr>
-        <td>Leave Status</td>
-        <td th:text="${leave.leaveStatus}">
-    </tr>
-    <tr>
-        <td>
-            <a th:href="@{/employee/leave/edit/{id}(id=${leave.id})}"
-               th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')
-               or #strings.equals(leave.leaveStatus, 'UPDATED')}">
-                Edit
-            </a>
-            <a th:href="@{/employee/leave/cancel/{id}(id=${leave.id})}"
-               th:if="${#strings.equals(leave.leaveStatus, 'APPROVED')}">
-                Cancel
-            </a>
-            <a th:href="@{/employee/leave/delete/{id}(id=${leave.id})}"
-               th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')
-               or #strings.equals(leave.leaveStatus, 'UPDATED')}">
-                Delete
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" onclick="history.go(-1); return false;">Back</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="container w-50 mt-5 text-center">
+    <h3 class="mb-3 mt-3 text-center">View Leave Application</h3>
+
+    <table class="table table-bordered table-hover">
+        <tbody>
+        <tr>
+            <td>Employee Name</td>
+            <td th:text="${leave.submittingEmployee.name}"></td>
+        </tr>
+        <tr>
+            <td>Leave Type</td>
+            <td th:text="${leave.leaveType}"></td>
+        </tr>
+        <tr>
+            <td>Start Date</td>
+            <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
+        </tr>
+        <tr>
+            <td>End Date</td>
+            <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
+        </tr>
+        <tr th:if="${leave.reviewingManager != null}">
+            <td>Approving Manager</td>
+            <td th:text="${leave.reviewingManager.name}"></td>
+        </tr>
+        <tr>
+            <td>Reason</td>
+            <td th:text="${leave.submissionReason}"></td>
+        </tr>
+        <tr>
+            <td>Work Dissemination (if any)</td>
+            <td th:text="${leave.workDissemination}"></td>
+        </tr>
+        <tr>
+            <td>Contact Details (if on an overseas trip)</td>
+            <td th:text="${leave.contactDetails}"></td>
+        </tr>
+        <tr>
+            <td>Leave Status</td>
+            <td th:text="${leave.leaveStatus}"></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a class="btn btn-primary" th:href="@{/employee/leave/edit/{id}(id=${leave.id})}"
+                   th:if="${#strings.equals(leave.leaveStatus, 'APPLIED') or #strings.equals(leave.leaveStatus, 'UPDATED')}">
+                    Edit
+                </a>
+                <a class="btn btn-danger" th:href="@{/employee/leave/cancel/{id}(id=${leave.id})}"
+                   th:if="${#strings.equals(leave.leaveStatus, 'APPROVED')}">
+                    Cancel
+                </a>
+                <a class="btn btn-danger" th:href="@{/employee/leave/delete/{id}(id=${leave.id})}"
+                   th:if="${#strings.equals(leave.leaveStatus, 'APPLIED') or #strings.equals(leave.leaveStatus, 'UPDATED')}">
+                    Delete
+                </a>
+                <a class="btn btn-secondary" href="#" onclick="history.go(-1); return false;">Back</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 </body>
 </html>
