@@ -87,24 +87,21 @@ public class ManageUserController {
     }
 
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
-    @GetMapping("/edit/{employeeId}")
-    public String editUserDetails(@PathVariable(name = "employeeId") int employeeId, Model model) {
-        // Fetch the employee by ID
-        Employee employee = employeeService.findEmployeeById(employeeId);
-
-        // Fetch the user's details associated with the employee
-        List<User> existingUsers = userService.findByEmployeeId(employeeId);
-
-        // If there are multiple users, you might need to handle this differently
-        User user = existingUsers.isEmpty() ? new User() : existingUsers.get(0);
+    @GetMapping("/edit/{userid}")
+    public String editUserDetails(@PathVariable(name = "userid") int userId, Model model) {
+        // Fetch the user by ID
+        User user = userService.findById(userId);
+        if (user == null) {
+            // Handle the case where the user is not found
+            model.addAttribute("errorMessage", "User not found");
+            return "admin/manage-user/error"; // Ensure you have an error page
+        }
 
         // Fetch roles (assuming you have an enum for roles)
         List<RoleEnum> roles = List.of(RoleEnum.values());
 
         // Add attributes to the model
         model.addAttribute("user", user);
-        model.addAttribute("employee", employee);
-        model.addAttribute("existingUsers", existingUsers);
         model.addAttribute("roles", roles);
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);

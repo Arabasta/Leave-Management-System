@@ -18,22 +18,22 @@
     <!-- Edit mode form -->
     <form method="post" th:action="@{/admin/manage-user/update/user}" th:if="${isEditMode}" th:object="${user}">
         <!-- hidden fields -->
-        <input type="hidden" name="userId" th:field="*{user.id}"/>
+        <input type="hidden" name="userId" th:field="*{id}"/>
         <input type="hidden" name="employee" th:field="*{employee.id}"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userName">Username:</label>
             <div class="col-8">
-                <input class="form-control" id="userName" th:field="*{user.username}" type="text"/>
-                <span th:if="${#fields.hasErrors('username')}" th:errors="*{user.username}" th:class="${#fields.hasErrors('username')} ? 'error'"></span>
+                <input class="form-control" id="userName" th:field="*{username}" type="text" readonly/>
+                <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" th:class="${#fields.hasErrors('username')} ? 'error'"></span>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userPassword">Password:</label>
             <div class="col-8">
-                <input class="form-control" name="userPassword" id="userPassword" th:field="*{user.password}" type="password" onChange="check()" />
-                <span th:if="${#fields.hasErrors('password')}" th:errors="*{user.password}" th:class="${#fields.hasErrors('password')} ? 'error'"></span>
+                <input class="form-control" name="userPassword" id="userPassword" th:field="*{password}" type="password" onChange="check()" />
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:class="${#fields.hasErrors('password')} ? 'error'"></span>
             </div>
         </div>
 
@@ -48,8 +48,8 @@
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" for="userEmail">Email:</label>
             <div class="col-8">
-                <input class="form-control" id="userEmail" th:field="*{user.email}" type="text"/>
-                <span th:if="${#fields.hasErrors('email')}" th:errors="*{user.email}" th:class="${#fields.hasErrors('email')} ? 'error'"></span>
+                <input class="form-control" id="userEmail" th:field="*{email}" type="text" readonly/>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" th:class="${#fields.hasErrors('email')} ? 'error'"></span>
             </div>
         </div>
 
@@ -57,8 +57,8 @@
             <label class="col-4 col-form-label" for="role">Role Given:</label>
             <div class="col-8">
                 <div class="form-check form-check-inline">
-                    <select id="role" th:field="*{user.role}">
-                        <option th:each="role : ${user.roles}" th:text="${role}" th:value="${role}" th:selected="${role == user.role}"></option>
+                    <select id="role" th:field="*{role}">
+                        <option th:each="role : ${roles}" th:text="${role}" th:value="${role}" th:selected="${role == user.role}"></option>
                     </select>
                 </div>
             </div>
