@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/manager/reporting")
@@ -36,46 +37,44 @@ public class ManagerReportingController {
     }
 
     /*
-        MANAGER - GET - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
+        MANAGER - GET - VIEW/SEARCH ALL SUBORDINATE(EMPLOYEE) COMPENSATION CLAIMS
     */
     @GetMapping("viewCompensationClaims")
     public String viewCompensationClaims(@RequestParam(value = "query", required = false) String query,
-                                @RequestParam(value = "downloadCSV", defaultValue = "false", required = false) boolean downloadCSV,
+                                @RequestParam(value = "downloadEmployeeClaimsCSV", defaultValue = "false", required = false) boolean downloadCSV,
                                 Model model) {
-        List<Employee> employees;
+        ArrayList<Employee> employees;
         if (query == null || query.isBlank()) {
-            employees = employeeService.findAll();
+            employees = (ArrayList<Employee>) employeeService.findAll();
         } else {
-            employees = employeeService.findEmployeesByName(query);
+            employees = (ArrayList<Employee>) employeeService.findEmployeesByName(query);
         }
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        List<CompensationClaim> claims = compensationClaimService.filterByEmployeeListAndManager(employees, manager);
-        model.addAttribute("claims", claims);
-        model.addAttribute("exportDTO", new DataExportDTO(employees));
+        ArrayList<CompensationClaim> claims = (ArrayList<CompensationClaim>) compensationClaimService.filterByEmployeeListAndManager(employees, manager);
+        model.addAttribute("dataExportDTO", new DataExportDTO(employees, claims));
         if (downloadCSV) {
-            model.addAttribute("claims",claims);
-            return "redirect:/manager/reporting/downloadCSV";
+            return "redirect:/manager/reporting/downloadEmployeeClaimsCSV";
         }
         return "manager/reporting/view-employee-claims";
     }
 
     /*
-        MANAGER - POST - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
+        MANAGER - POST - DOWNLOAD EMPLOYEE COMPENSATION CLAIMS
     */
-    @PostMapping("downloadCSV")
-    public String downloadCSV(@ModelAttribute("exportDTO") DataExportDTO exportDTO,
-                         HttpServletResponse response,
-                         Model model) throws IOException {
-        List<Employee> employees = exportDTO.getEmployees();
+    @PostMapping("downloadEmployeeClaimsCSV")
+    public String downloadEmployeeClaimsCSV(@ModelAttribute("dataExportDTO") DataExportDTO dataExportDTO,
+                             HttpServletResponse response,
+                             Model model) throws IOException {
+        List<Employee> employees = dataExportDTO.getEmployees();
+        List<CompensationClaim> claims = dataExportDTO.getClaims();
         if (employees == null || employees.isEmpty()) {
             return "redirect:/manager/reporting/viewCompensationClaims";
+        } else {
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; file=export.csv");
+            dataExportService.downloadManagerReportingCompensationClaimsCSV(response.getWriter(), claims);
+            model.addAttribute("list",claims);
         }
-        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        List<CompensationClaim> claims = compensationClaimService.filterByEmployeeListAndManager(employees, manager);
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; file=export.csv");
-        dataExportService.downloadManagerReportingCompensationClaimsCSV(response.getWriter(), claims);
-        model.addAttribute("list",claims);
         return "manager/reporting/view-employee-claims";
     }
 

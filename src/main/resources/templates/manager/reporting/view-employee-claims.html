@@ -8,7 +8,7 @@
 <h1 class="text-center">View Employee Compensation Claims</h1>
 <br>
 
-<h3 class="text-center" th:if="${#lists.isEmpty(claims)}"><em>There are no Compensation Claims.</em></h3>
+<h3 class="text-center" th:if="${#lists.isEmpty(dataExportDTO.claims)}"><em>There are no Compensation Claims.</em></h3>
 
 <div class="d-flex flex-column align-items-center">
 
@@ -25,12 +25,13 @@
     </form>
     <br>
 
-    <!-- Save as CSV -->
-    <form class="form-inline" method="POST" th:object="${exportDTO}" th:action="@{/manager/reporting/downloadCSV}">
+    <!-- Data Export - Save as CSV -->
+    <form class="form-inline" method="POST" th:object="${dataExportDTO}" th:action="@{/manager/reporting/downloadEmployeeClaimsCSV}">
         <div class="form-group">
             <div class="input">
                 <button type="submit" class="btn btn-primary">Save as CSV</button>
-                <input type="hidden" th:field="${exportDTO.employees}">
+                <input type="hidden" th:field="${dataExportDTO.employees}">
+                <input type="hidden" th:field="${dataExportDTO.claims}">
             </div>
         </div>
     </form>
@@ -53,7 +54,7 @@
             </thead>
             <tbody>
                 <!-- Loop through claims -->
-                <th:block th:each="claim:${claims}">
+                <th:block th:each="claim:${dataExportDTO.claims}">
                     <tr>
                         <td th:text="${claim.id}"></td>
                         <td th:text="${claim.claimingEmployee.name}"></td>

@@ -1,5 +1,6 @@
 package com.team4.leaveprocessingsystem.model.dataTransferObjects;
 
+import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,11 @@ import java.util.List;
 @Setter
 public class DataExportDTO {
     private ArrayList<Employee> employees;
+    private ArrayList<CompensationClaim> claims;
 
-    public DataExportDTO(List<Employee> employees) {
-        this.employees = (ArrayList<Employee>) employees;
+    public DataExportDTO(ArrayList<Employee> employees, ArrayList<CompensationClaim> claims) {
+        this.employees = employees;
+        this.claims = claims;
     }
+
 }
