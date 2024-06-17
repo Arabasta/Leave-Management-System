@@ -8,11 +8,13 @@ import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,9 +83,44 @@ public class UserService implements UserDetailsService, IUser {
     }
 
     @Transactional
-    public List<User> findByRole(RoleEnum role) {
-        return userRepository.findByRole(role);
+    public List<User> findByRole(String role) {
+        RoleEnum roleEnum = null;
+        try {
+            roleEnum = RoleEnum.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            roleEnum = null;
+        }
+
+        if (roleEnum != null) {
+            return userRepository.findByRole(roleEnum);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
 
+    @Override
+    @Transactional
+    public List<User> findUsersByUsername(String keyword) {
+        return userRepository.findUsersByUsername(keyword);
+    }
+    @Override
+    @Transactional
+    public List<User> findUsersByEmail(String email){
+        return userRepository.findUsersByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public List<User> findUsersById(String id){
+        int userId;
+        try {
+            userId =  Integer.parseInt(id);
+        }catch (NumberFormatException e){
+            userId =0;
+        }catch (NullPointerException e){
+            userId =0;
+        }
+        return userRepository.findUsersById(userId);
+    }
 }

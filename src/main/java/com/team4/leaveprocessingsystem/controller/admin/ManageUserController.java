@@ -57,26 +57,33 @@ public class ManageUserController {
             }
 
             users = switch (searchType) {
-                case "userid" -> {
-                    try {
-                        int userId = Integer.parseInt(query);
-                        User user = userService.findById(userId);
-                        yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-                    } catch (NumberFormatException e) {
-                        yield Collections.emptyList(); // or handle the error as needed
-                    }
-                }
-                case "email" -> {
-                    User user = userService.findByEmail(query);
-                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-                }
-                case "username" -> {
-                    User user = userService.findByUsername(query);
-                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
-                }
-                case "role" -> userService.findByRole(RoleEnum.valueOf(query.toUpperCase()));
+                case "username" -> userService.findUsersByUsername(query);
+                case "userid" -> userService.findUsersById(query);
+                case "email" -> userService.findUsersByEmail(query);
+                case "role" -> userService.findByRole(query);
                 default -> userService.findAll();
             };
+//            users = switch (searchType) {
+//                case "userid" -> {
+//                    try {
+//                        int userId = Integer.parseInt(query);
+//                        User user = userService.findById(userId);
+//                        yield user != null ? Collections.singletonList(user) : Collections.emptyList();
+//                    } catch (NumberFormatException e) {
+//                        yield Collections.emptyList(); // or handle the error as needed
+//                    }
+//                }
+//                case "email" -> {
+//                    User user = userService.findByEmail(query);
+//                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
+//                }
+//                case "username" -> {
+//                    User user = userService.findByUsername(query);
+//                    yield user != null ? Collections.singletonList(user) : Collections.emptyList();
+//                }
+//                case "role" -> userService.findByRole(RoleEnum.valueOf(query.toUpperCase()));
+//                default -> userService.findAll();
+//            };
         }
 
         model.addAttribute("users", users);
@@ -90,11 +97,6 @@ public class ManageUserController {
     public String editUserDetails(@PathVariable(name = "userid") int userId, Model model) {
         // Fetch the user by ID
         User user = userService.findById(userId);
-        if (user == null) {
-            // Handle the case where the user is not found
-            model.addAttribute("errorMessage", "User not found");
-            return "admin/manage-user/error"; // Ensure you have an error page
-        }
 
         // Fetch roles (assuming you have an enum for roles)
         List<RoleEnum> roles = List.of(RoleEnum.values());
