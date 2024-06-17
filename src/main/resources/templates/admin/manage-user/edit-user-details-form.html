@@ -6,6 +6,9 @@
     .error {
         color: red;
     }
+    .success-message {
+        color: green;
+    }
 </style>
 
 <body>
@@ -22,42 +25,42 @@
         <input type="hidden" name="employee" th:field="*{employee.id}"/>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="userName">Username:</label>
+            <label class="col-4 col-form-label" th:for="'userName' + ${user.id}">Username:</label>
             <div class="col-8">
-                <input class="form-control" id="userName" th:field="*{username}" type="text" readonly/>
+                <input class="form-control" th:id="'userName' + ${user.id}" th:field="*{username}" type="text" readonly/>
                 <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" th:class="${#fields.hasErrors('username')} ? 'error'"></span>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="userPassword">Password:</label>
+            <label class="col-4 col-form-label" th:for="'userPassword' + ${user.id}">Password:</label>
             <div class="col-8">
-                <input class="form-control" name="userPassword" id="userPassword" th:field="*{password}" type="password" onChange="check()" />
+                <input class="form-control" name="userPassword" th:id="'userPassword' + ${user.id}" th:field="*{password}" type="password" onChange="check()" />
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:class="${#fields.hasErrors('password')} ? 'error'"></span>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="confirmPassword">Confirm Password:</label>
+            <label class="col-4 col-form-label" th:for="'confirmPassword' + ${user.id}">Confirm Password:</label>
             <div class="col-8">
-                <input class="form-control" name="confirmPassword" id="confirmPassword" type="password" onChange="check()"/>
+                <input class="form-control" name="confirmPassword" th:id="'confirmPassword' + ${user.id}" type="password" onChange="check()"/>
                 <span id='message'></span>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="userEmail">Email:</label>
+            <label class="col-4 col-form-label" th:for="'userEmail' + ${user.id}">Email:</label>
             <div class="col-8">
-                <input class="form-control" id="userEmail" th:field="*{email}" type="text" readonly/>
+                <input class="form-control" th:id="'userEmail' + ${user.id}" th:field="*{email}" type="text" readonly/>
                 <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" th:class="${#fields.hasErrors('email')} ? 'error'"></span>
             </div>
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label class="col-4 col-form-label" for="role">Role Given:</label>
+            <label class="col-4 col-form-label" th:for="'role' + ${user.id}">Role Given:</label>
             <div class="col-8">
                 <div class="form-check form-check-inline">
-                    <select id="role" th:field="*{role}">
+                    <select th:id="'role' + ${user.id}" th:field="*{role}">
                         <option th:each="role : ${roles}" th:text="${role}" th:value="${role}" th:selected="${role == user.role}"></option>
                     </select>
                 </div>
@@ -72,6 +75,55 @@
             </div>
         </div>
     </form>
+
+    <!-- Success view -->
+    <div th:if="${!isEditMode}" th:object="${updatedUser}">
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userId">User ID:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="userId" readonly="readonly"
+                       th:value="${updatedUser.id}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userName">Username:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="userName" readonly="readonly"
+                       th:value="${updatedUser.username}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="userEmail">Email:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="userEmail" readonly="readonly"
+                       th:value="${updatedUser.email}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="role">Role:</label>
+            <div class="col-8">
+                <input class="form-control-plaintext" id="role" readonly="readonly"
+                       th:value="${updatedUser.role}" type="text"/>
+            </div>
+        </div>
+
+        <div class="alert alert-success mt-3">User details updated successfully!</div>
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                <span class="ms-3">
+                    <a class="btn btn-primary text-decoration-none" th:href="@{/admin/manage-user/}">Return</a>
+                </span>
+                <span class="ms-3">
+                    <a class="btn btn-secondary text-decoration-none" th:href="@{/admin/manage-user/edit/{id}(id=${updatedUser.id})}">Edit Again</a>
+                </span>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

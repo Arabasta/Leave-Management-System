@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -109,5 +106,20 @@ public class ManageUserController {
         // Return the Thymeleaf template
         return "admin/manage-user/edit-user-details-form";
     }
+
+    @PostMapping("/update/user")
+    public String updateUser(@ModelAttribute("user") User user, Model model) {
+        try {
+            userService.save(user);
+            model.addAttribute("updatedUser", user);
+            model.addAttribute("isEditMode", false);
+            return "admin/manage-user/edit-user-details-form";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error updating user: " + e.getMessage());
+            model.addAttribute("isEditMode", true);
+            return "admin/manage-user/edit-user-details-form";
+        }
+    }
+
 
 }
