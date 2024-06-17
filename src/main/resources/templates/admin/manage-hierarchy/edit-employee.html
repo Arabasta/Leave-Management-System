@@ -11,7 +11,7 @@
     <form th:action="@{/admin/manage-hierarchy/update}" th:object="${employee}" method="post">
         <!-- hidden fields -->
         <input name="employeeId" th:value="${employeeId}" type="hidden"/>
-        <input name="oldManager" th:value="${oldManager != null ? oldManager.id : null}" type="hidden"/>
+        <input name="oldManager" th:value="${oldManager != null ? oldManager.id : -1}" type="hidden"/>
         <input th:field="*{leaveBalance}" type="hidden"/>
         <input th:field="*{jobDesignation}" type="hidden"/>
 
