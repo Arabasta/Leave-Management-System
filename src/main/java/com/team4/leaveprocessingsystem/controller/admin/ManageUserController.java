@@ -90,20 +90,23 @@ public class ManageUserController {
         return "admin/manage-user/edit-user-details-form";
     }
 
-    @PostMapping("/update/user")
-    public String updateUser(@ModelAttribute("user") User user, Model model) {
-        try {
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
-            userService.save(user);
-            model.addAttribute("updatedUser", user);
-            model.addAttribute("isEditMode", false);
-            return "admin/manage-user/edit-user-details-form";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error updating user: " + e.getMessage());
+    @RequestMapping("/update/user")
+    public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("roles", RoleEnum.values());
+
             model.addAttribute("isEditMode", true);
+            model.addAttribute("updateSuccess", false);
             return "admin/manage-user/edit-user-details-form";
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        model.addAttribute("updatedUser", user);
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("updateSuccess", true);
+        return "admin/manage-user/edit-user-details-form";
     }
 
 
