@@ -19,6 +19,12 @@
     <div th:replace="~{admin/manage-hierarchy/view-toggle :: view-toggle(view='tree')}"></div>
     <br>
 
+    <!-- Tree size -->
+    <div>
+        <button class="btn btn-secondary" onclick="setTreeSize(-3)">-</button>
+        <button class="btn btn-secondary" onclick="setTreeSize(3)">+</button>
+    </div>
+
     <!-- Hierarchy Tree -->
     <div class="container">
         <div class="tree">
@@ -50,5 +56,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    function setTreeSize(change) {
+        const nodes = document.querySelectorAll('.tree li .node');
+        nodes.forEach(node => {
+            let currSize = parseInt(window.getComputedStyle(node).fontSize);
+            node.style.fontSize = (currSize + change) + 'px';
+        });
+    }
+</script>
 </body>
 </html>

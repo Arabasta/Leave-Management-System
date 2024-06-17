@@ -108,30 +108,36 @@ public class ManageHierarchyController {
         Employee currEmployee = employeeService.findEmployeeById(employee.getId());
 
         try {
+            // if curr split to new tree
             if (employee.getManager().getId() == null) {
                 currEmployee.setManager(null);
-            } else {
-                Manager newManager = managerService.findManagerById(employee.getManager().getId());
-
+            } // if curr normal employee (no subordinates)
+            else if (!(currEmployee instanceof Manager)) {
+                currEmployee.setManager(managerService.findManagerById(employee.getManager().getId()));
+            } // else curr is manager and not set to new tree
+            // check and handle if curr reassigned to subordinates
+            else {
                 // check if new is in curr.subtree
-                List<Employee> currSubordinates = employeeService.findEmployeesByManager((Manager) currEmployee);
-                List<Employee> currPrevs = new ArrayList<>();
-                for (Employee e : currSubordinates) {
+                List<Employee> currChilds = employeeService.findEmployeesByManager((Manager) currEmployee);
+                List<Employee> currMChilds = new ArrayList<>();
+                for (Employee e : currChilds) {
                     // add all curr.prev to list only for Manager curr.prevs
                     if (e.getManager() == currEmployee && e instanceof Manager) {
-                        currPrevs.add(e);
+                        currMChilds.add(e);
                     }
                 }
 
-                // if curr.subtree
-                if (!currPrevs.isEmpty()) {
-                    // set curr.prevs to curr.next
-                    Manager currNext = oldManagerId != null ? managerService.findManagerById(oldManagerId) : null;
-                    for (Employee currPrev : currPrevs) {
+                // if curr.child has managers
+                if (!currMChilds.isEmpty()) {
+                    // set curr.MChilds to curr.next
+                    Manager currNext = oldManagerId != -1 ? managerService.findManagerById(oldManagerId) : null;
+                    for (Employee currPrev : currMChilds) {
                         currPrev.setManager(currNext);
                         employeeService.save(currPrev);
                     }
                 }
+                Manager newManager = managerService.findManagerById(employee.getManager().getId());
+                System.out.println(newManager.getName());
                 // set curr.next = new
                 currEmployee.setManager(newManager);
             }
