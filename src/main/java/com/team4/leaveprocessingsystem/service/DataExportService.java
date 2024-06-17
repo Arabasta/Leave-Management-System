@@ -12,7 +12,7 @@ import java.util.List;
 public class DataExportService implements IDataExport {
 
     @Override
-    public void downloadViewEmployeesCompensationClaimsCSV(PrintWriter printWriter, List<CompensationClaim> list) {
+    public void downloadManagerReportingCompensationClaimsCSV(PrintWriter printWriter, List<CompensationClaim> list) {
         printWriter.write("Id, Claim Status, Claiming Employee, OvertimeStart, OvertimeEnd, OvertimeHours, " +
                 "CompensationLeaveRequested, ClaimDateTime, ApprovingManager, ReviewedDateTime, Comments \n");
         for(CompensationClaim claim: list) {
@@ -25,7 +25,8 @@ public class DataExportService implements IDataExport {
                     + "," + claim.getCompensationLeaveRequested()
                     + "," + claim.getClaimDateTime().format(DateTimeFormatter.ofPattern("dd/MMM/yyyy HH:mm"))
                     + "," + claim.getApprovingManager().getName()
-                    + "," + (((claim.getReviewedDateTime() != null) ? claim.getReviewedDateTime().format(DateTimeFormatter.ofPattern("dd/MMM/yyyy HH:mm")) : null))
+                    + "," + (((claim.getReviewedDateTime() != null) ? // date != null ? date : null
+                    claim.getReviewedDateTime().format(DateTimeFormatter.ofPattern("dd/MMM/yyyy HH:mm")) : null))
                     + "," + claim.getComments() + "\n"
             );
         }

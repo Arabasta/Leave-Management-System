@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@RequestMapping("/manager/data-export")
+@RequestMapping("/manager/reporting")
 @Controller
-public class ManagerDataExportController {
+public class ManagerReportingController {
 
     private final DataExportService dataExportService;
     private final CompensationClaimService compensationClaimService;
@@ -23,11 +23,11 @@ public class ManagerDataExportController {
     private final ManagerService managerService;
     private final EmployeeService employeeService;
 
-    public ManagerDataExportController(DataExportService dataExportService,
-                                       EmployeeService employeeService,
-                                       AuthenticationService authenticationService,
-                                       CompensationClaimService compensationClaimService,
-                                       ManagerService managerService) {
+    public ManagerReportingController(DataExportService dataExportService,
+                                      EmployeeService employeeService,
+                                      AuthenticationService authenticationService,
+                                      CompensationClaimService compensationClaimService,
+                                      ManagerService managerService) {
         this.dataExportService = dataExportService;
         this.authenticationService = authenticationService;
         this.compensationClaimService = compensationClaimService;
@@ -38,8 +38,8 @@ public class ManagerDataExportController {
     /*
         MANAGER - GET - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
     */
-    @GetMapping("viewEmployees")
-    public String viewEmployees(@RequestParam(value = "query", required = false) String query,
+    @GetMapping("viewCompensationClaims")
+    public String viewCompensationClaims(@RequestParam(value = "query", required = false) String query,
                                 @RequestParam(value = "downloadCSV", defaultValue = "false", required = false) boolean downloadCSV,
                                 Model model) {
         List<Employee> employees;
@@ -54,9 +54,9 @@ public class ManagerDataExportController {
         model.addAttribute("exportDTO", new DataExportDTO(employees));
         if (downloadCSV) {
             model.addAttribute("claims",claims);
-            return "redirect:/manager/data-export/downloadCSV";
+            return "redirect:/manager/reporting/downloadCSV";
         }
-        return "manager/data-export/view-employee-claims";
+        return "manager/reporting/view-employee-claims";
     }
 
     /*
@@ -68,15 +68,15 @@ public class ManagerDataExportController {
                          Model model) throws IOException {
         List<Employee> employees = exportDTO.getEmployees();
         if (employees == null || employees.isEmpty()) {
-            return "redirect:/manager/data-export/viewEmployees";
+            return "redirect:/manager/reporting/viewCompensationClaims";
         }
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         List<CompensationClaim> claims = compensationClaimService.filterByEmployeeListAndManager(employees, manager);
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; file=export.csv");
-        dataExportService.downloadViewEmployeesCompensationClaimsCSV(response.getWriter(), claims);
+        dataExportService.downloadManagerReportingCompensationClaimsCSV(response.getWriter(), claims);
         model.addAttribute("list",claims);
-        return "manager/data-export/view-employee-claims";
+        return "manager/reporting/view-employee-claims";
     }
 
 }
