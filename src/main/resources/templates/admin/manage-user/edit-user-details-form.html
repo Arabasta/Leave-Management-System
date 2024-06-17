@@ -23,6 +23,7 @@
         <!-- hidden fields -->
         <input type="hidden" name="userId" th:field="*{id}"/>
         <input type="hidden" name="employee" th:field="*{employee.id}"/>
+        <input type="hidden" name="employee" th:field="*{createDateTime}"/>
 
         <div class="mb-3 row align-items-center">
             <label class="col-4 col-form-label" th:for="'userName' + ${user.id}">Username:</label>

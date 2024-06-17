@@ -112,6 +112,8 @@ public class ManageUserController {
     @PostMapping("/update/user")
     public String updateUser(@ModelAttribute("user") User user, Model model) {
         try {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
             userService.save(user);
             model.addAttribute("updatedUser", user);
             model.addAttribute("isEditMode", false);
