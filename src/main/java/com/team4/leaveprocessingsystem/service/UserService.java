@@ -25,9 +25,9 @@ public class UserService implements UserDetailsService, IUser {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // note: self invocation problem
         return findByUsername(username);
     }
 
@@ -68,10 +68,22 @@ public class UserService implements UserDetailsService, IUser {
         return userRepository.findByEmployeeId(employeeId);
     }
 
+    //@Override
+    @Transactional
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 
     @Override
     public User findById(int id) {
         User user = userRepository.findById(id);
         return user;
     }
+
+    @Transactional
+    public List<User> findByRole(RoleEnum role) {
+        return userRepository.findByRole(role);
+    }
+
+
 }

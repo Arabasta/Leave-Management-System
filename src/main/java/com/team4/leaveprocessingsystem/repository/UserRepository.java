@@ -1,8 +1,10 @@
 package com.team4.leaveprocessingsystem.repository;
 
 import com.team4.leaveprocessingsystem.model.User;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByEmployeeId(Integer employeeId);
 
     User findById(int id);
+
+    @Query("SELECT u FROM User u WHERE u.role = :role")
+    List<User> findByRole(@Param("role") RoleEnum role);
 
 }
