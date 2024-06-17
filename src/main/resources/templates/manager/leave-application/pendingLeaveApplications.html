@@ -5,53 +5,45 @@
 </head>
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
-<h3>Pending Leave Applications</h3>
 
-<table>
-    <tr>
-        <!-- TODO: to implement save as CSV function-->
-        <td><a class="button is-primary">Save as CSV</a></td>
-    </tr>
-</table>
-<br>
+<div class="container w-75 mt-5 text-center">
+    <h3 class="mb-3 mt-3 text-center">Pending Leave Applications</h3>
 
-<h3 th:if="${#maps.isEmpty(pendingLeaveApplications)}">There are no pending Leave Applications.</h3>
+    <h3 th:if="${#maps.isEmpty(pendingLeaveApplications)}">There are no pending Leave Applications.</h3>
 
-<!-- Loop through employees -->
-<th:block th:each="employee:${pendingLeaveApplications}">
-    <table>
-        <tr>
-            <td colspan="6" th:text="${employee.key}"></td>
-        </tr>
-        <tr>
-            <td>Leave Application Id</td>
-            <td>Start Date</td>
-            <td>End Date</td>
-            <td>Submission Reason</td>
-            <td>Status</td>
-            <td>Details</td>
-        </tr>
-        <!-- Loop through leave -->
-        <th:block th:each="leave:${employee.value}">
-            <th:block ${leave.id} th:if="${leave.leaveStatus.name() =='APPLIED'}
-            or ${leave.leaveStatus.name() == 'UPDATED'}">
-
-                <tr>
-                    <td th:text="${leave.id}"></td>
-                    <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
-                    <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
-                    <td th:text="${leave.submissionReason}"></td>
-                    <td th:text="${leave.leaveStatus}"></td>
-                    <td th:if="${leave.leaveStatus.name()}=='APPLIED' or
-                                ${leave.leaveStatus.name()}=='UPDATED'">
-                        <a th:href="@{/manager/leave/review/{id}(id=${leave.id})}" class="button is-primary">Details</a></td>
-                </tr>
-            </th:block>
-        </th:block>
-    </table>
-    <br>
-
-</th:block>
+    <!-- Loop through employees -->
+    <div th:each="employee:${pendingLeaveApplications}">
+        <table class="table table-bordered table-hover mt-4">
+            <thead class="bg-primary text-white">
+            <tr>
+                <th colspan="6" th:text="${employee.key}"></th>
+            </tr>
+            <tr>
+                <th>Leave Application Id</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Submission Reason</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through leave -->
+            <tr th:each="leave:${employee.value}" th:if="${leave.leaveStatus.name() =='APPLIED' or leave.leaveStatus.name() == 'UPDATED'}">
+                <td th:text="${leave.id}"></td>
+                <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
+                <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
+                <td th:text="${leave.submissionReason}"></td>
+                <td th:text="${leave.leaveStatus}"></td>
+                <td>
+                    <a th:href="@{/manager/leave/review/{id}(id=${leave.id})}" class="btn btn-primary">Details</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+    </div>
+</div>
 
 </body>
 </html>
