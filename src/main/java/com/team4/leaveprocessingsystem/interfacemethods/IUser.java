@@ -13,6 +13,8 @@ public interface IUser {
     User findByEmail(String email);
     long count();
 
+    List<User> findUserRolesByEmployeeId(Integer employeeId);
+
     List<User> findByEmployeeId(Integer employeeId);
 
     public User findById(int id);

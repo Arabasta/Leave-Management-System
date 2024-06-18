@@ -2,22 +2,17 @@ package com.team4.leaveprocessingsystem.service;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IUser;
-import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.User;
-import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -63,6 +58,12 @@ public class UserService implements UserDetailsService, IUser {
     @Transactional
     public long count() {
         return userRepository.count();
+    }
+
+    @Override
+    @Transactional
+    public List<User> findUserRolesByEmployeeId(Integer employeeId) {
+        return userRepository.findUserRolesByEmployeeId(employeeId);
     }
 
     @Override

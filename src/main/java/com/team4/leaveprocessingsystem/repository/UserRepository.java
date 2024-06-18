@@ -19,6 +19,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.employee.id = :employeeId")
     List<User> findByEmployeeId(Integer employeeId);
 
+    @Query("Select u from User u join u.employee userEmployee where userEmployee.id = :k")
+    List<User> findUserRolesByEmployeeId(@Param("k") Integer employeeId);
+
     User findById(int id);
 
     @Query("Select u from User u " +
