@@ -37,6 +37,7 @@ public class LeaveApplicationValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
+
         LeaveApplication leaveApplication = (LeaveApplication) target;
         LocalDate startDate = leaveApplication.getStartDate();
         LocalDate endDate = leaveApplication.getEndDate();

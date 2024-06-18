@@ -3,9 +3,9 @@ package com.team4.leaveprocessingsystem.controller.employee;
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationUpdateException;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
-import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
@@ -32,7 +32,7 @@ public class LeaveApplicationController {
     private final EmailApiService emailApiService;
     private final UserService userService;
 
-    @InitBinder
+    @InitBinder("leave_application")
     private void initLeaveApplicationBinder(WebDataBinder binder) {
         binder.addValidators(leaveApplicationValidator);
     }
@@ -144,9 +144,11 @@ public class LeaveApplicationController {
 
     @GetMapping("personalHistory")
     public String personalHistory(Model model) {
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
+        Employee loginEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
+        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(loginEmployee);
         model.addAttribute("personalLeaveApplications", personalLeaveApplications);
+        LeaveBalance leaveBalance = loginEmployee.getLeaveBalance();
+        model.addAttribute("LeaveBalance", leaveBalance);
         return "employee/leave-application/personalViewLeave";
     }
 }

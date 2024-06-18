@@ -11,8 +11,7 @@
 <br/>
 <h2 style="text-align: center;">Subordinate Leave History</h2>
 
-<h3 style="text-align: center;"
-    th:if="${#lists.isEmpty(subordinateLeaveApplications)}">No Results.</h3>
+
 
 <table style="margin-right: auto; margin-left: auto; width: 50%">
     <tr>
@@ -39,14 +38,15 @@
                            name="keyword" />
                 </label>
                 </div>
-                <div>
-                </div>
+
                 <fieldset>
                     <input type="submit" value="Search"
                     />
+                     <a th:href="@{/manager/leave/managerView}">Reset</a>
                 </fieldset>
             </form>
         </td>
+
     </tr>
 </table>
 <br>
@@ -59,6 +59,7 @@ margin-left: auto; margin-right: auto;">
         <th>Start Date</th>
         <th>End Date</th>
         <th>Leave Status</th>
+        <th>Leave Type</th>
         <th>Details</th>
     </tr>
     <tr th:each="leaveApplication:${subordinateLeaveApplications}">
@@ -69,21 +70,14 @@ margin-left: auto; margin-right: auto;">
 
         <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}">End Date</td>
         <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
-
+        <td th:text="${leaveApplication.leaveType}">Leave Type</td>
         <!-- change link to the controller method for manager to view detail leave application for approval/reject-->
         <td><a th:href="@{/manager/leave/viewSubordinateDetails/{id}(id=${leaveApplication.getId()})}">Details</a></td>
 
     </tr>
 </table>
 
-<table style="width:50%; margin-left: auto; margin-right: auto; border:
-white;">
-    <tr>
-        <td>
-            <a href="#" onclick="window.location.href='/home'; return false;">Back to Home</a>
-        </td>
-    </tr>
-</table>
+
 
 </body>
 
