@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +28,9 @@ public class PublicHolidayController {
         List<PublicHoliday> publicHolidays = publicHolidayService.findAll();
         model.addAttribute("publicHolidays", publicHolidays);
 
-        // Get list of years for dropdown
+        // Get list of years for dropdown and sort in descending order
         List<Integer> years = publicHolidayService.findAllYears();
+        Collections.sort(years, Collections.reverseOrder());
         model.addAttribute("years", years);
 
         return "admin/manage-ph/view-all";
@@ -42,8 +44,9 @@ public class PublicHolidayController {
         List<PublicHoliday> publicHolidays = publicHolidayService.findAll(searchType, query, year);
         model.addAttribute("publicHolidays", publicHolidays);
 
-        // Get list of years for dropdown
+        // Get list of years for dropdown and sort in descending order
         List<Integer> years = publicHolidayService.findAllYears();
+        Collections.sort(years, Collections.reverseOrder());
         model.addAttribute("years", years);
         model.addAttribute("selectedYear", year);
 
