@@ -8,8 +8,6 @@
 <h1 class="text-center">View Employee Compensation Claims</h1>
 <br>
 
-<h3 class="text-center" th:if="${#lists.isEmpty(dataExportDTO.claims)}"><em>There are no Compensation Claims.</em></h3>
-
 <div class="d-flex flex-column align-items-center">
 
     <!-- Search bar -->
@@ -18,61 +16,70 @@
             <div class="input-group">
                 <!-- query -->
                 <input class="form-control" name="query" placeholder="Name"
-                       aria-label="Search" th:value="${keyword}" type="search"/>
-                <button type="submit" class="btn btn-outline-primary">Search</button>
+                       aria-label="Search" type="search"/>
+                <button type="submit" class="btn btn-outline-primary"
+                        th:unless="${#lists.isEmpty(reportingDTO.claims)}">Search
+                </button>
+                <button type="submit" class="btn btn-outline-primary"
+                        th:if="${#lists.isEmpty(reportingDTO.claims)}">Reset
+                </button>
             </div>
         </div>
     </form>
     <br>
 
-    <!-- Data Export - Save as CSV -->
-    <form class="form-inline" method="POST" th:object="${dataExportDTO}" th:action="@{/manager/reporting/downloadEmployeeClaimsCSV}">
-        <div class="form-group">
-            <div class="input">
-                <button type="submit" class="btn btn-primary">Save as CSV</button>
-                <input type="hidden" th:field="${dataExportDTO.employees}">
-                <input type="hidden" th:field="${dataExportDTO.claims}">
+    <h3 class="text-center" th:if="${#lists.isEmpty(reportingDTO.claims)}"><em>There are no Compensation Claims.</em></h3>
+
+    <div th:unless="${#lists.isEmpty(reportingDTO.claims)}">
+
+        <!-- Data Export - Save as CSV -->
+        <form class="form-inline text-center" method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeClaimsCSV}">
+            <div class="form-group">
+                <div class="input">
+                    <button type="submit" class="btn btn-primary">Save as CSV</button>
+                    <input type="hidden" th:field="${reportingDTO.employees}">
+                    <input type="hidden" th:field="${reportingDTO.claims}">
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
 
-    <!-- Table - View Employee Compensation Claims -->
-    <div>
-        <table class="table table-hover table-striped table-responsive-md w-100 align-middle text-center">
-            <thead>
-                <tr>
-                    <th>Claim Id</th>
-                    <th>Employee Name</th>
-                    <th>Overtime Start</th>
-                    <th>Overtime End</th>
-                    <th>Overtime Hours</th>
-                    <th>Eligible Compensation Leave</th>
-                    <th>Approval Status</th>
-                    <th>Reviewed Date/Time</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Loop through claims -->
-                <th:block th:each="claim:${dataExportDTO.claims}">
+        <!-- Table - View Employee Compensation Claims -->
+        <div>
+            <table class="table table-hover table-striped table-responsive-md w-100 align-middle text-center">
+                <thead>
                     <tr>
-                        <td th:text="${claim.id}"></td>
-                        <td th:text="${claim.claimingEmployee.name}"></td>
-                        <td th:text="${#temporals.format(claim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
-                        <td th:text="${#temporals.format(claim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
-                        <td th:text="${claim.overtimeHours}"></td>
-                        <td th:text="${claim.compensationLeaveRequested}"></td>
-                        <td th:text="${claim.claimStatus}"></td>
-                        <td th:text="${#temporals.format(claim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
-                        <td class="col-" th:if="${claim.claimStatus.name()}=='APPROVED' or ${claim.claimStatus.name()}=='REJECTED'"
-                            th:text="${claim.comments}"></td>
-                        <td th:unless="${claim.claimStatus.name()}=='APPROVED' or ${claim.claimStatus.name()}=='REJECTED'"> </td>
+                        <th>Claim Id</th>
+                        <th>Employee Name</th>
+                        <th>Overtime Start</th>
+                        <th>Overtime End</th>
+                        <th>Overtime Hours</th>
+                        <th>Eligible Compensation Leave</th>
+                        <th>Approval Status</th>
+                        <th>Reviewed Date/Time</th>
+                        <th>Comments</th>
                     </tr>
-                </th:block>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <!-- Loop through claims -->
+                    <th:block th:each="claim:${reportingDTO.claims}">
+                        <tr>
+                            <td th:text="${claim.id}"></td>
+                            <td th:text="${claim.claimingEmployee.name}"></td>
+                            <td th:text="${#temporals.format(claim.overtimeStart, 'dd-MMM-yyyy, HH:mm')}"></td>
+                            <td th:text="${#temporals.format(claim.overtimeEnd, 'dd-MMM-yyyy, HH:mm')}"></td>
+                            <td th:text="${claim.overtimeHours}"></td>
+                            <td th:text="${claim.compensationLeaveRequested}"></td>
+                            <td th:text="${claim.claimStatus}"></td>
+                            <td th:text="${#temporals.format(claim.reviewedDateTime, 'dd-MMM-yyyy, HH:mm')}"></td>
+                            <td class="col-" th:if="${claim.claimStatus.name()}=='APPROVED' or ${claim.claimStatus.name()}=='REJECTED'"
+                                th:text="${claim.comments}"></td>
+                            <td th:unless="${claim.claimStatus.name()}=='APPROVED' or ${claim.claimStatus.name()}=='REJECTED'"> </td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </div>
 
 </body>
