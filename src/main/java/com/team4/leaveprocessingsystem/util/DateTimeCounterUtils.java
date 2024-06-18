@@ -40,6 +40,7 @@ public class DateTimeCounterUtils {
             case MEDICAL:
             case COMPASSIONATE:
             case COMPENSATION:
+            case UNPAID:
                 return numOfWorkingDays;
             case ANNUAL:
                 if (numOfCalendarDays <= 14) {

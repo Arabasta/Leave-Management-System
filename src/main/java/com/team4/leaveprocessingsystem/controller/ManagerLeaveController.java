@@ -25,16 +25,18 @@ public class ManagerLeaveController {
     private final UserService userService;
     private final LeaveApplicationService leaveApplicationService;
     private final ManagerService managerService;
+    private final LeaveBalanceService leaveBalanceService;
 
     public ManagerLeaveController(EmployeeService employeeService, AuthenticationService authenticationService,
                                   EmailApiService emailApiService, UserService userService,
-                                  LeaveApplicationService leaveApplicationService, ManagerService managerService) {
+                                  LeaveApplicationService leaveApplicationService, ManagerService managerService, LeaveBalanceService leaveBalanceService) {
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.emailApiService = emailApiService;
         this.userService = userService;
         this.leaveApplicationService = leaveApplicationService;
         this.managerService = managerService;
+        this.leaveBalanceService = leaveBalanceService;
     }
 
     @GetMapping("managerView")
@@ -147,13 +149,14 @@ public class ManagerLeaveController {
         // Update to Approved
         if (leave.getLeaveStatus() == LeaveStatusEnum.APPROVED){
             existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.APPROVED);
-            leaveApplicationService.save(existingLeaveApplication);}
+        }
 
         //Update to Rejected
         if (leave.getLeaveStatus() == LeaveStatusEnum.REJECTED){
             existingLeaveApplication.setLeaveStatus(LeaveStatusEnum.REJECTED);
-            leaveApplicationService.save(existingLeaveApplication);}
-
+        }
+        leaveApplicationService.save(existingLeaveApplication);
+        leaveBalanceService.update(existingLeaveApplication);
         // Redirect to pending leave applications with a success parameter
         return "redirect:/manager/leave/pendingLeaves?updateSuccess=true";
     }

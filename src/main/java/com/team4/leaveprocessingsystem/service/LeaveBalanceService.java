@@ -65,25 +65,6 @@ public class LeaveBalanceService implements ILeaveBalance {
         }
 
         leaveBalanceRepository.save(empLeaveBalance);
-
-        // For testing only. To delete
-        System.out.println("Medical Leave Entitlement:" + empLeaveBalance.getMedicalLeave());
-        System.out.println("Medical Leave Consumed:" + (empLeaveBalance.getMedicalLeave() - empLeaveBalance.getCurrentMedicalLeave()));
-        System.out.println("Medical Leave Remaining:" + empLeaveBalance.getCurrentMedicalLeave());
-
-        System.out.println("ANNUAL Leave Entitlement:" + empLeaveBalance.getAnnualLeave());
-        System.out.println("ANNUAL Leave Consumed:" + (empLeaveBalance.getAnnualLeave() - empLeaveBalance.getCurrentAnnualLeave()));
-        System.out.println("ANNUAL Leave Remaining:" + empLeaveBalance.getCurrentAnnualLeave());
-
-        System.out.println("COMPASSIONATE Leave Entitlement:" + empLeaveBalance.getCompensationLeave());
-        System.out.println("COMPASSIONATE Leave Consumed:" + empLeaveBalance.getCompassionateLeaveConsumed());
-
-        System.out.println("COMPENSATION Leave Entitlement:" + empLeaveBalance.getCompensationLeave());
-        System.out.println("COMPENSATION Leave Consumed:" + (empLeaveBalance.getCompensationLeave() - empLeaveBalance.getCurrentCompensationLeave()));
-        System.out.println("COMPENSATION Leave Remaining:" + empLeaveBalance.getCurrentCompensationLeave());
-
-        System.out.println("UNPAID Leave Consumed:" + empLeaveBalance.getUnpaidLeaveConsumed());
-        // For testing only. To delete
     }
 
     @Override

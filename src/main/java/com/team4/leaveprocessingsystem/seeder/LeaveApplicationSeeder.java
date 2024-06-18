@@ -7,10 +7,12 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
+import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -20,16 +22,19 @@ public class LeaveApplicationSeeder {
     private final LeaveApplicationService leaveApplicationService;
     private final EmployeeService employeeService;
     private final Random random;
-    private LeaveTypeEnum[] leaveTypes;
+    private final LeaveBalanceService leaveBalanceService;
+    private List<LeaveTypeEnum> leaveTypes;
     private LeaveStatusEnum[] leaveStatuses;
 
     public LeaveApplicationSeeder(LeaveApplicationService leaveApplicationService,
-                                  EmployeeService employeeService) {
+                                  EmployeeService employeeService, LeaveBalanceService leaveBalanceService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.random = new Random(42);
-        this.leaveTypes = LeaveTypeEnum.values();
+        this.leaveTypes = new ArrayList<>(Arrays.asList(LeaveTypeEnum.values()));
+        leaveTypes.remove(LeaveTypeEnum.COMPENSATION);
         this.leaveStatuses = LeaveStatusEnum.values();
+        this.leaveBalanceService = leaveBalanceService;
     }
 
     // Note: bypasses working days and entitlement validation
@@ -64,10 +69,13 @@ public class LeaveApplicationSeeder {
         leaveApplication.setSubmittingEmployee(employee);
         leaveApplication.setReviewingManager(manager);
         leaveApplication.setLeaveStatus(leaveStatuses[random.nextInt(leaveStatuses.length)]);
-        leaveApplication.setLeaveType(leaveTypes[random.nextInt(leaveTypes.length)]);
+        leaveApplication.setLeaveType(leaveTypes.get(random.nextInt(leaveTypes.size())));
         leaveApplication.setStartDate(startDate);
         leaveApplication.setEndDate(endDate);
         leaveApplication.setSubmissionReason(reason);
         leaveApplicationService.save(leaveApplication);
+        if (leaveApplication.getLeaveStatus() == LeaveStatusEnum.APPROVED) {
+            leaveBalanceService.update(leaveApplication);
+        }
     }
 }

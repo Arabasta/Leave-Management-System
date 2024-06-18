@@ -6,19 +6,25 @@ import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.dataTransferObjects.LeaveApplicationResponse;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequestMapping("api/employee/leave")
-@CrossOrigin()
+@CrossOrigin
 @RestController
 public class LeaveApplicationApiController {
 
@@ -49,9 +55,16 @@ public class LeaveApplicationApiController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<LeaveApplication> createLeave(@Valid @RequestBody LeaveApplication leaveApplication, BindingResult bindingResult){
+    public ResponseEntity<?> createLeave(@Valid @RequestBody LeaveApplication leaveApplication, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().stream().forEach(x -> {
+                if (!errors.containsKey(x.getField())) {
+                    errors.put(x.getField(), x.getDefaultMessage());
+                }
+            });
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
@@ -61,6 +74,7 @@ public class LeaveApplicationApiController {
 
         leaveApplicationService.save(leaveApplication);
 
+        // uncomment before submitting due to limit
         // Send email notification to the manager
 //        if (leaveApplication.getReviewingManager() != null){
 //            try {
@@ -75,13 +89,20 @@ public class LeaveApplicationApiController {
         return new ResponseEntity<> (leaveApplication, HttpStatus.CREATED);
     }
 
-    @PutMapping("edit/{id}")
-    public ResponseEntity<LeaveApplication> editLeave(@Valid @RequestBody LeaveApplication inleaveApplication, BindingResult bindingResult, @PathVariable int id){
+    @PutMapping("edit")
+    public ResponseEntity<?> editLeave(@Valid @RequestBody LeaveApplication inleaveApplication, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().stream().forEach(x -> {
+                if (!errors.containsKey(x.getField())) {
+                    errors.put(x.getField(), x.getDefaultMessage());
+                }
+            });
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(inleaveApplication.getId(), employee.getId());
 
         // Only allow editing of leaves pending approval
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
@@ -100,10 +121,11 @@ public class LeaveApplicationApiController {
         return new ResponseEntity<> (leaveApplication, HttpStatus.OK);
     }
 
-    @PutMapping("delete/{id}")
-    public ResponseEntity<LeaveApplication> deleteLeave(@PathVariable int id){
+    @PutMapping("delete")
+    public ResponseEntity<LeaveApplication> deleteLeave(@RequestBody LeaveApplication inleaveApplication){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(inleaveApplication.getId(), employee.getId());
+        // Only applied or updated leave can be deleted
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -113,10 +135,10 @@ public class LeaveApplicationApiController {
         return new ResponseEntity<> (leaveApplication, HttpStatus.OK);
     }
 
-    @PutMapping("cancel/{id}")
-    public ResponseEntity<LeaveApplication> cancelLeave(@PathVariable int id){
+    @PutMapping("cancel")
+    public ResponseEntity<LeaveApplication> cancelLeave(@RequestBody LeaveApplication inleaveApplication){
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(inleaveApplication.getId(), employee.getId());
         // Only approved leave can be cancelled
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPROVED) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);

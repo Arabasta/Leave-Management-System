@@ -5,6 +5,7 @@ import com.team4.leaveprocessingsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,8 +22,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 // source: https://spring.io/guides/gs/securing-web
 // source: https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
 // to check : https://stackoverflow.com/questions/74753700/cannot-resolve-method-antmatchers-in-authorizationmanagerrequestmatcherregis
+// CORS Ref: https://www.baeldung.com/spring-cors
 
 @Configuration
+@EnableAsync
 @EnableWebSecurity
 public class WebSecurityConfig {
     // used for loading user data
@@ -35,6 +38,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults()) // must come first to allow handling of CORS before Spring Security
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
                         .requestMatchers("/images/team_4_logo.png", "/auth/login", "/js/auth/loginValidation.js").permitAll()
@@ -51,7 +55,6 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
 
                 )
-                .httpBasic(Customizer.withDefaults()) //For API consumption, allow http requests with authorization header
                 // successful login redirection path
                 .formLogin((form) -> form
                         .loginPage("/auth/login")
@@ -68,6 +71,7 @@ public class WebSecurityConfig {
                 .exceptionHandling((exceptions) -> exceptions
                         .accessDeniedHandler(accessDeniedHandler())
                 )
+                .httpBasic(Customizer.withDefaults()) //For API consumption, allow http requests with authorization header
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers("/api/**") // For PUT, POST requests
                 );
@@ -102,5 +106,4 @@ public class WebSecurityConfig {
         // use BCrypt for hashing, generates random salt internally
         return new BCryptPasswordEncoder();
     }
-
 }
