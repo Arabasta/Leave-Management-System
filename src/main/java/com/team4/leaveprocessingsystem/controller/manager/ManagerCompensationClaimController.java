@@ -1,9 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.manager;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
-import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.model.dataTransferObjects.DataExportDTO;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.StringCleaningUtil;

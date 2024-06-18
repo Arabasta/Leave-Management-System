@@ -6,15 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
-public class DataExportDTO {
+public class ReportingDTO {
     private ArrayList<Employee> employees;
     private ArrayList<CompensationClaim> claims;
 
-    public DataExportDTO(ArrayList<Employee> employees, ArrayList<CompensationClaim> claims) {
+    public ReportingDTO(ArrayList<Employee> employees, ArrayList<CompensationClaim> claims) {
         this.employees = employees;
         this.claims = claims;
     }
