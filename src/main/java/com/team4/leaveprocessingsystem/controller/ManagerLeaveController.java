@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,33 +49,47 @@ public class ManagerLeaveController {
     }
 
     @RequestMapping(value="searchingLeaveApplications")
-    public String search(@RequestParam("keyword")
-                         String k, @RequestParam("searchType") String t, Model
-                                 model)
-    {
-        String name=new String("name");
-        String id = new String("id");
+    public String search(@RequestParam("keyword") String keyword,
+                         @RequestParam("searchType") String searchType,
+                         Model model) {
 
-        //have error here, should make sure these subordinates belong to the manager
-        if(t.equals(name))
-        {
-            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(k);
+        String name = "name";
+        String id = "id";
+        List<LeaveApplication> searchBarResults;
+
+        if (keyword == null || keyword.isEmpty()) {
+            searchBarResults = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(authenticationService.getLoggedInEmployeeId());
+            model.addAttribute("subordinateLeaveApplications", searchBarResults);
+            return "manager/leave-application/managerViewLeave";
+        }
+
+        if (searchType == null || searchType.isEmpty()) {
+            searchType = "name";
+        }
+
+        if (searchType.equals(name)) {
+            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(keyword);
             model.addAttribute("subordinateLeaveApplications",
                     leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
-        }
-        else if(t.equals(id))
-        {
-            int k_num = Integer.parseInt(k);
-            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeId(k_num);
+        } else if (searchType.equals(id)) {
+            int keywordNum;
+            try {
+                keywordNum = Integer.parseInt(keyword);
+            } catch (NumberFormatException e) {
+                keywordNum = 0;
+            }
+            searchBarResults = leaveApplicationService.findByEmployeeId(keywordNum);
+            if (searchBarResults == null) {
+                searchBarResults = new ArrayList<>();
+            }
+
             model.addAttribute("subordinateLeaveApplications",
-                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
+                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchBarResults, authenticationService.getLoggedInEmployeeId()));
         }
-        else
-        {
-            return "redirect:404-notfound";
-        }
+
         return "manager/leave-application/managerViewLeave";
     }
+
 
     // MANAGER - GET - PENDING LEAVE APPLICATIONS
     @GetMapping("pendingLeaves")
