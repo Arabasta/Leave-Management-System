@@ -2,7 +2,7 @@ name: CD with AWS
 
 on:
   workflow_run:
-    workflows: [ "Java CI with Maven and Docker" ]
+    workflows: [ "Java CI with Maven" ]
     types:
       - completed
     branches:
