@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 // source: https://spring.io/guides/gs/securing-web
 // source: https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
 // to check : https://stackoverflow.com/questions/74753700/cannot-resolve-method-antmatchers-in-authorizationmanagerrequestmatcherregis
+// CORS Ref: https://www.baeldung.com/spring-cors
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +36,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(Customizer.withDefaults()) // must come first to allow handling of CORS before Spring Security
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
                         .requestMatchers("/images/team_4_logo.png", "/auth/login", "/js/auth/loginValidation.js").permitAll()
@@ -102,5 +104,4 @@ public class WebSecurityConfig {
         // use BCrypt for hashing, generates random salt internally
         return new BCryptPasswordEncoder();
     }
-
 }

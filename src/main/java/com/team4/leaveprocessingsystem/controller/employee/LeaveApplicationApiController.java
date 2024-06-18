@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("api/employee/leave")
-@CrossOrigin()
+@CrossOrigin
 @RestController
 public class LeaveApplicationApiController {
 
@@ -75,13 +75,13 @@ public class LeaveApplicationApiController {
         return new ResponseEntity<> (leaveApplication, HttpStatus.CREATED);
     }
 
-    @PutMapping("edit/{id}")
-    public ResponseEntity<LeaveApplication> editLeave(@Valid @RequestBody LeaveApplication inleaveApplication, BindingResult bindingResult, @PathVariable int id){
+    @PutMapping("edit")
+    public ResponseEntity<LeaveApplication> editLeave(@Valid @RequestBody LeaveApplication inleaveApplication, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
         }
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
+        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(inleaveApplication.getId(), employee.getId());
 
         // Only allow editing of leaves pending approval
         if (leaveApplication.getLeaveStatus() != LeaveStatusEnum.APPLIED && leaveApplication.getLeaveStatus() != LeaveStatusEnum.UPDATED){
