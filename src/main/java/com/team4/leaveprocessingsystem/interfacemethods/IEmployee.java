@@ -19,15 +19,11 @@ public interface IEmployee {
 
     List<Employee> findEmployeesByJobDesignation(String jobDesignation);
 
-    List<Employee> findUsersByRoleType(String roleType);
+    List<Employee> findEmployeesByManager(String manager);
 
     Employee findEmployeeById(int id);
 
     List<Employee> findAllExcludeDeleted();
 
     List<Employee> findOnlyDeleted();
-
-    @Transactional
-    void removeEmployee(Employee employee);
-
 }

@@ -4,7 +4,6 @@ import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IEmployee;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -75,8 +73,8 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> findUsersByRoleType(String roleType) {
-        return employeeRepository.findUsersByRoleType(roleType);
+    public List<Employee> findEmployeesByManager(String manager) {
+        return employeeRepository.findEmployeesByManager(manager);
     }
 
     @Override
@@ -99,12 +97,6 @@ public class EmployeeService implements IEmployee {
     @Override
     @Transactional
     public List<Employee> findOnlyDeleted() { return employeeRepository.findOnlyDeleted();}
-
-    @Override
-    @Transactional
-    public void removeEmployee(Employee employee) { employeeRepository.delete(employee);}
-
-
 
     }
 

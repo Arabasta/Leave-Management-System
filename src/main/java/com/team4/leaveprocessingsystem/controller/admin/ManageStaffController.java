@@ -53,13 +53,11 @@ public class ManageStaffController {
         if (query == null || query.isEmpty()) {
             employees = employeeService.findAllExcludeDeleted();
         } else {
-            if (searchType == null || searchType.isEmpty())
-                searchType = "name";
-
+            if (searchType == null || searchType.isEmpty()) { searchType = "name";}
             employees = switch (searchType) {
                 case "name" -> employeeService.findEmployeesByName(query);
                 case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
-                case "roleType" -> employeeService.findUsersByRoleType(query);
+                case "manager" -> employeeService.findEmployeesByManager(query);
                 default -> employeeService.findAll();
             };
         }
@@ -85,7 +83,7 @@ public class ManageStaffController {
             employees = switch (searchType) {
                 case "name" -> employeeService.findEmployeesByName(query);
                 case "jobDesignation" -> employeeService.findEmployeesByJobDesignation(query);
-                case "roleType" -> employeeService.findUsersByRoleType(query);
+                case "manager" -> employeeService.findEmployeesByManager(query);
                 default -> employeeService.findAll();
             };
         }
@@ -103,7 +101,7 @@ public class ManageStaffController {
     @GetMapping("/edit/{employeeId}")
     public String editEmployeeDetails(@PathVariable(name = "employeeId") int employeeId,
                                       Model model) {
-//        Employee employee;
+        // if there is a manager
 //        if (managerService.findManagerById(employeeId) != null) {
 //            List<Employee> subordinates = managerService.findManagerById(employeeId).getSubordinates();
 //            List<CompensationClaim> compensationClaims = managerService.findManagerById(employeeId).getCompensationClaims();

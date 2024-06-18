@@ -1,7 +1,3 @@
-// Testing onChange() does not work
-// todo: fix bug password validation does not work
-
-
 function checkPasswords() {
     const password = document.getElementById('userPassword');
     const confirm = document.getElementById('confirmPassword');

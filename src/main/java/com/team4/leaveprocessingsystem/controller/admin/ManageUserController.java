@@ -100,7 +100,6 @@ public class ManageUserController {
             model.addAttribute("updateSuccess", false);
             return "admin/manage-user/edit-user-details-form";
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.save(user);
         model.addAttribute("updatedUser", user);
