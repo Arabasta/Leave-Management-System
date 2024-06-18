@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RequestMapping("employee/leave")
 @Controller
@@ -90,16 +89,17 @@ public class LeaveApplicationController {
         }
         leaveApplicationService.save(leaveApplication);
 
+        // uncomment before submitting due to limit
         // Send email notification to the manager
-        if (leaveApplication.getReviewingManager() != null){
-            try {
-                String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
-                Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
-                emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+//        if (leaveApplication.getReviewingManager() != null){
+//            try {
+//                String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
+//                Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
+//                emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+//            } catch (IOException e) {
+//                System.out.println(e.getMessage());
+//            }
+//        }
 
 
         return "redirect:/employee/leave/personalHistory";
