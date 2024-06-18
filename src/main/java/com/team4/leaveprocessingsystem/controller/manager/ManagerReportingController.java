@@ -3,7 +3,7 @@ package com.team4.leaveprocessingsystem.controller.manager;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
-import com.team4.leaveprocessingsystem.model.dataTransferObjects.DataExportDTO;
+import com.team4.leaveprocessingsystem.model.dataTransferObjects.ReportingDTO;
 import com.team4.leaveprocessingsystem.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @RequestMapping("/manager/reporting")
 @Controller
@@ -51,7 +50,7 @@ public class ManagerReportingController {
         }
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         ArrayList<CompensationClaim> claims = (ArrayList<CompensationClaim>) compensationClaimService.filterByEmployeeListAndManager(employees, manager);
-        model.addAttribute("dataExportDTO", new DataExportDTO(employees, claims));
+        model.addAttribute("reportingDTO", new ReportingDTO(employees, claims));
         if (downloadCSV) {
             return "redirect:/manager/reporting/downloadEmployeeClaimsCSV";
         }
@@ -62,12 +61,10 @@ public class ManagerReportingController {
         MANAGER - POST - DOWNLOAD EMPLOYEE COMPENSATION CLAIMS
     */
     @PostMapping("downloadEmployeeClaimsCSV")
-    public String downloadEmployeeClaimsCSV(@ModelAttribute("dataExportDTO") DataExportDTO dataExportDTO,
+    public String downloadEmployeeClaimsCSV(@ModelAttribute("claims") ArrayList<CompensationClaim> claims,
                              HttpServletResponse response,
                              Model model) throws IOException {
-        List<Employee> employees = dataExportDTO.getEmployees();
-        List<CompensationClaim> claims = dataExportDTO.getClaims();
-        if (employees == null || employees.isEmpty()) {
+        if (claims == null || claims.isEmpty()) {
             return "redirect:/manager/reporting/viewCompensationClaims";
         } else {
             response.setContentType("text/csv");
@@ -77,5 +74,22 @@ public class ManagerReportingController {
         }
         return "manager/reporting/view-employee-claims";
     }
+
+//    @PostMapping("downloadEmployeeClaimsCSV")
+//    public String downloadEmployeeClaimsCSV(@ModelAttribute("dataExportDTO") ReportingDTO dataExportDTO,
+//                                            HttpServletResponse response,
+//                                            Model model) throws IOException {
+//        List<Employee> employees = dataExportDTO.getEmployees();
+//        List<CompensationClaim> claims = dataExportDTO.getClaims();
+//        if (employees == null || employees.isEmpty()) {
+//            return "redirect:/manager/reporting/viewCompensationClaims";
+//        } else {
+//            response.setContentType("text/csv");
+//            response.setHeader("Content-Disposition", "attachment; file=export.csv");
+//            dataExportService.downloadManagerReportingCompensationClaimsCSV(response.getWriter(), claims);
+//            model.addAttribute("list",claims);
+//        }
+//        return "manager/reporting/view-employee-claims";
+//    }
 
 }

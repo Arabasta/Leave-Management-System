@@ -23,7 +23,6 @@ public class EmployeeCompensationClaimController {
     private final AuthenticationService authenticationService;
     private final CompensationClaimValidator compensationClaimValidator;
     private final EmployeeService employeeService;
-    private final ManagerService managerService;
 
     @InitBinder
     private void initCompensationClaimBinder(WebDataBinder binder) {
@@ -40,7 +39,6 @@ public class EmployeeCompensationClaimController {
 
         this.authenticationService = authenticationService;
         this.employeeService = employeeService;
-        this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
         this.compensationClaimService = compensationClaimService;
         this.compensationClaimValidator = validator;
