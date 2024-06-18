@@ -2,8 +2,12 @@ name: Java CI with Maven
 
 on:
   push:
+    branches-ignore:
+      - 'release/v[0-9]+.[0-9]+'
   pull_request:
     branches: [ "master" ]
+    branches-ignore:
+      - 'release/v[0-9]+.[0-9]+'
 
 jobs:
   build:
