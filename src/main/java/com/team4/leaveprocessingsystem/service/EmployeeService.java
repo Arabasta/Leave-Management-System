@@ -74,8 +74,8 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public List<Employee> findUsersByRoleType(String roleType) {
-        return employeeRepository.findUsersByRoleType(roleType);
+    public List<Employee> findEmployeesByManager(String manager) {
+        return employeeRepository.findEmployeesByManager(manager);
     }
 
     @Override
@@ -93,7 +93,13 @@ public class EmployeeService implements IEmployee {
 
     @Override
     @Transactional
-    public void removeEmployee(Employee employee) {
-        employeeRepository.delete(employee);
+    public List<Employee> findAllExcludeDeleted() { return employeeRepository.findAllExcludeDeleted();}
+
+    @Override
+    @Transactional
+    public List<Employee> findOnlyDeleted() { return employeeRepository.findOnlyDeleted();}
+
     }
-}
+
+
+

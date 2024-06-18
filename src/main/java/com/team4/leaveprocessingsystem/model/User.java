@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,6 +50,7 @@ public class User implements UserDetails {
     private LocalDateTime updateDateTime;
 
     public User() {}
+
 
     public User(RoleEnum role, String username, String password, String email, Employee employee) {
         this.role = role;

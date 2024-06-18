@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>All Users</h1>
+    <br>
+    <form class="form-inline" method="get" th:action="@{/admin/manage-user/}">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon2">Filter By</span>
+                <div class="input-group-btn">
+                    <select class="form-control" name="searchType">
+                        <option th:selected="${searchType == 'username'}" th:value="username">Username</option>
+                        <option th:selected="${searchType == 'email'}" th:value="email">Email</option>
+                        <option th:selected="${searchType == 'role'}" th:value="role">Role</option>
+                        <option th:selected="${searchType == 'userid'}" th:value="userid">UserID</option>
+                    </select>
+                </div>
+                <input class="form-control rounded" name="query" placeholder="Keyword"
+                       aria-label="Search" aria-describedby="search-addon"
+                       th:value="${query}" type="search"/>
+                <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>Search</button>
+            </div>
+        </div>
+    </form>
+
+    <br>
+
+    <!-- View all users mode -->
+    <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(users)}">
+        <thead class="bg-primary text-white">
+        <tr>
+            <th>UserId</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.id}">Id</td>
+            <td th:text="${u.username}">Username</td>
+            <td th:text="${u.email}">Email</td>
+            <td th:text="${u.role.name()}">Role</td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/admin/manage-user/edit/{id}(id=${u.id})}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+</body>
+</html>

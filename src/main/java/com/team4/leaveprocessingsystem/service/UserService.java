@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
-
 @Service
 public class UserService implements UserDetailsService, IUser {
     private final UserRepository userRepository;
@@ -24,9 +23,9 @@ public class UserService implements UserDetailsService, IUser {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // note: self invocation problem
         return findByUsername(username);
     }
 
@@ -69,7 +68,50 @@ public class UserService implements UserDetailsService, IUser {
 
     @Override
     @Transactional
-    public void removeUser(User user) {
-        userRepository.delete(user);
+    public List<User> findByEmployeeId(Integer employeeId) {
+        return userRepository.findByEmployeeId(employeeId);
+    }
+
+    //@Override
+    @Transactional
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User findById(int id) {
+        User user = userRepository.findById(id);
+        return user;
+    }
+
+    @Transactional
+    public List<User> findUsersByRoleType(String keyword){
+        return userRepository.findUsersByRoleType(keyword);
+    }
+
+
+    @Override
+    @Transactional
+    public List<User> findUsersByUsername(String keyword) {
+        return userRepository.findUsersByUsername(keyword);
+    }
+    @Override
+    @Transactional
+    public List<User> findUsersByEmail(String email){
+        return userRepository.findUsersByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public List<User> findUsersById(String id){
+        int userId;
+        try {
+            userId =  Integer.parseInt(id);
+        }catch (NumberFormatException e){
+            userId =0;
+        }catch (NullPointerException e){
+            userId =0;
+        }
+        return userRepository.findUsersById(userId);
     }
 }

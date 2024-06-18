@@ -81,7 +81,10 @@ public class LeaveApplicationValidator implements Validator {
         List<LeaveApplication> allLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);
         Map<Object, Object> pendingLeaveMap = allLeaveApplications.stream()
                 .filter(x -> (x.getLeaveStatus() == LeaveStatusEnum.APPLIED || x.getLeaveStatus() == LeaveStatusEnum.UPDATED))
-                .collect(Collectors.toMap(x -> x.getLeaveType(), x -> DateTimeCounterUtils.numOfLeaveToBeCounted(x.getStartDate(), x.getEndDate(), x.getLeaveType(), publicHolidayService),
+                .collect(Collectors.toMap
+                        (x -> x.getLeaveType(),
+                        x -> DateTimeCounterUtils.numOfLeaveToBeCounted(x.getStartDate(),
+                        x.getEndDate(), x.getLeaveType(), publicHolidayService),
                         (existingValue, newValue) -> (Long) existingValue + (Long) newValue));
 
         switch (leaveType) {

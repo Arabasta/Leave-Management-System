@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.DiscriminatorOptions;
+import org.hibernate.annotations.*;
 
 
 @Getter
@@ -14,7 +14,6 @@ import org.hibernate.annotations.DiscriminatorOptions;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "EMP_TYPE")
 @DiscriminatorOptions(force = true)
-
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +32,8 @@ public class Employee {
     @NotBlank(message = "Name cannot be blank")
     private String name;
 
+    private boolean isDeleted;
+
     public Employee() {}
 
     public Employee(String name, JobDesignation jobDesignation,
@@ -41,5 +42,6 @@ public class Employee {
         this.jobDesignation = jobDesignation;
         this.manager = manager;
         this.leaveBalance = leaveBalance;
+        this.isDeleted = false;
     }
 }
