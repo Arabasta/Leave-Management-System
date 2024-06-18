@@ -37,6 +37,9 @@ public class LeaveApplicationValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
+        if (!(target instanceof LeaveApplication)) {
+            throw new IllegalArgumentException("Target is not an instance of LeaveApplication");
+        }
         LeaveApplication leaveApplication = (LeaveApplication) target;
         LocalDate startDate = leaveApplication.getStartDate();
         LocalDate endDate = leaveApplication.getEndDate();
