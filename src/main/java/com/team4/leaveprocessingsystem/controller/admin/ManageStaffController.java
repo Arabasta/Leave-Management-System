@@ -101,15 +101,7 @@ public class ManageStaffController {
     @GetMapping("/edit/{employeeId}")
     public String editEmployeeDetails(@PathVariable(name = "employeeId") int employeeId,
                                       Model model) {
-        // if there is a manager
-//        if (managerService.findManagerById(employeeId) != null) {
-//            List<Employee> subordinates = managerService.findManagerById(employeeId).getSubordinates();
-//            List<CompensationClaim> compensationClaims = managerService.findManagerById(employeeId).getCompensationClaims();
-//            List<LeaveApplication> leaveApplications = managerService.findManagerById(employeeId).getLeaveApplications();
-//            model.addAttribute("subordinates", subordinates);
-//            model.addAttribute("compensationClaims", compensationClaims);
-//            model.addAttribute("leaveApplications", leaveApplications);
-//        }
+
         Employee employee = employeeService.findEmployeeById(employeeId);
         LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
 
@@ -219,6 +211,8 @@ public class ManageStaffController {
     }
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
 
+    // Logic to Update user account(s) details in Manage User Controller
+
     @GetMapping("/add/user/{employeeId}")
     public String createNewUserForm(@PathVariable(name = "employeeId") Integer employeeId,
                                     Model model) {
@@ -260,44 +254,5 @@ public class ManageStaffController {
 
         return "admin/manage-user/create-new-user-account-form";
     }
-
-//    @GetMapping("/edit/user/{employeeId}")
-//    public String editUserDetails(@PathVariable(name = "employeeId") int employeeId,
-//                                  Model model) {
-//
-//        Employee employee = employeeService.findEmployeeById(employeeId);
-//        List<User> userListForEmployee = userService.findByEmployeeId(employeeId);
-//
-//        model.addAttribute("employee", employee);
-//        model.addAttribute("userListForEmployee", userListForEmployee);
-//        model.addAttribute("roles", RoleEnum.values());
-//
-//        model.addAttribute("isEditMode", true);
-//        model.addAttribute("updateSuccess", false);
-//
-//        return "admin/manage-staff/edit-user-account-details-form";
-//    }
-//
-//    @PostMapping("/update/user")
-//    public String updateEmployeeDetails(@ModelAttribute("user") User user,
-//                                        BindingResult bindingResult,
-//                                        Model model) {
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("user", user);
-//            model.addAttribute("roles", RoleEnum.values());
-//
-//            model.addAttribute("isEditMode", true);
-//            model.addAttribute("updateSuccess", false);
-//            return "admin/manage-staff/edit-user-account-details-form";
-//        }
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userService.save(user);
-//        model.addAttribute("newUser", user);
-//        model.addAttribute("isEditMode", false);
-//        model.addAttribute("updateSuccess", true);
-//        return "admin/manage-staff/edit-user-account-details-form";
-//    }
 
 }

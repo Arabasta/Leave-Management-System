@@ -25,7 +25,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         "where CAST(u.role as String) like CONCAT('%', :k, '%')")
     List<User> findUsersByRoleType(@Param("k") String keyword);
 
-
     @Query("select u from User u where u.username like CONCAT('%', :k, '%')")
     List<User> findUsersByUsername(@Param("k") String keyword);
 
