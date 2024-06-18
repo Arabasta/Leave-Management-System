@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -97,19 +99,34 @@ public class LeaveApplicationService implements ILeaveApplication {
     @Override
     @Transactional
     public List<LeaveApplication> findByEmployeeId(int id) {
-        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
+        try {
+            return leaveApplicationRepository.findBySubmittingEmployeeId(id);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException();
+        }
     }
 
     @Override
     @Transactional
     public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
-        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
+        List<LeaveApplication> list = new ArrayList<>();
         for (LeaveApplication application : applications) {
             if (application.getReviewingManager() != null && application.getReviewingManager().getId() == managerId) {
-                applicationsBelongToManagerSubordinates.add(application);
+                list.add(application);
             }
         }
-        return applicationsBelongToManagerSubordinates;
+        return list;
     }
 
+    public List<LeaveApplication> filterByStringDateRange(List<LeaveApplication> applications, String start, String end) {
+        try {
+            return applications.stream()
+                    .filter(x -> !x.getStartDate().isAfter(LocalDate.parse(end))
+                            && !x.getEndDate().isBefore(LocalDate.parse(start))
+                    ).toList();
+        } catch (DateTimeParseException e) {
+            System.out.println(e + ": " + e.getMessage());
+            return applications;
+        }
+    }
 }

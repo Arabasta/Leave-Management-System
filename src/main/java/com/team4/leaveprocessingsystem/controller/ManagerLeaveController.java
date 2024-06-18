@@ -5,15 +5,19 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequestMapping("manager/leave")
 @Controller
@@ -52,42 +56,24 @@ public class ManagerLeaveController {
     @RequestMapping(value="searchingLeaveApplications")
     public String search(@RequestParam("keyword") String keyword,
                          @RequestParam("searchType") String searchType,
+                         @RequestParam("startDate") String startDate,
+                         @RequestParam("endDate") String endDate,
                          Model model) {
+        int managerId = authenticationService.getLoggedInEmployeeId();
+        List<LeaveApplication> applications = leaveApplicationService
+                .findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
 
-        String name = "name";
-        String id = "id";
-        List<LeaveApplication> searchBarResults;
-
-        if (keyword == null || keyword.isEmpty()) {
-            searchBarResults = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(authenticationService.getLoggedInEmployeeId());
-            model.addAttribute("subordinateLeaveApplications", searchBarResults);
-            return "manager/leave-application/managerViewLeave";
+        if (searchType.equals("name")) {
+            applications = leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(
+                    leaveApplicationService.findByEmployeeName(StringCleaningUtil.forDatabase(keyword)), managerId);
         }
-
-        if (searchType == null || searchType.isEmpty()) {
-            searchType = "name";
+        if (searchType.equals("id")) {
+            applications = leaveApplicationService.findByEmployeeId(Integer.parseInt(keyword));
         }
-
-        if (searchType.equals(name)) {
-            List<LeaveApplication> searchResults = leaveApplicationService.findByEmployeeName(keyword);
-            model.addAttribute("subordinateLeaveApplications",
-                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchResults, authenticationService.getLoggedInEmployeeId()));
-        } else if (searchType.equals(id)) {
-            int keywordNum;
-            try {
-                keywordNum = Integer.parseInt(keyword);
-            } catch (NumberFormatException e) {
-                keywordNum = 0;
-            }
-            searchBarResults = leaveApplicationService.findByEmployeeId(keywordNum);
-            if (searchBarResults == null) {
-                searchBarResults = new ArrayList<>();
-            }
-
-            model.addAttribute("subordinateLeaveApplications",
-                    leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(searchBarResults, authenticationService.getLoggedInEmployeeId()));
+        if (!startDate.isBlank() && !endDate.isBlank()) {
+            applications = leaveApplicationService.filterByStringDateRange(applications, startDate, endDate);
         }
-
+        model.addAttribute("subordinateLeaveApplications",applications);
         return "manager/leave-application/managerViewLeave";
     }
 
