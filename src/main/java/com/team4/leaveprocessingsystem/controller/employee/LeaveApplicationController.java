@@ -32,11 +32,9 @@ public class LeaveApplicationController {
     private final EmailApiService emailApiService;
     private final UserService userService;
 
-    @InitBinder
+    @InitBinder("leave_application")
     private void initLeaveApplicationBinder(WebDataBinder binder) {
-        if (binder.getTarget() instanceof LeaveApplication) {
-            binder.addValidators(leaveApplicationValidator);
-        }
+        binder.addValidators(leaveApplicationValidator);
     }
 
     @Autowired
