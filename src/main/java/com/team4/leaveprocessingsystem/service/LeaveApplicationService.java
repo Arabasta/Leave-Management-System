@@ -105,10 +105,11 @@ public class LeaveApplicationService implements ILeaveApplication {
     public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
         List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
         for (LeaveApplication application : applications) {
-            if (application.getReviewingManager().getId() == managerId) {
+            if (application.getReviewingManager() != null && application.getReviewingManager().getId() == managerId) {
                 applicationsBelongToManagerSubordinates.add(application);
             }
         }
         return applicationsBelongToManagerSubordinates;
     }
+
 }
