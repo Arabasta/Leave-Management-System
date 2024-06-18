@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: html_head"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container w-50 mt-5 text-center">
+    <h1 class="mb-3 mt-3 text-center">Edit Employee Manager</h1>
+
+    <form th:action="@{/admin/manage-hierarchy/update}" th:object="${employee}" method="post">
+        <!-- hidden fields -->
+        <input name="employeeId" th:value="${employeeId}" type="hidden"/>
+        <input name="oldManager" th:value="${oldManager != null ? oldManager.id : -1}" type="hidden"/>
+        <input th:field="*{leaveBalance}" type="hidden"/>
+        <input th:field="*{jobDesignation}" type="hidden"/>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeId">ID (read-only):</label>
+            <div class="col-8">
+                <input class="form-control" id="employeeId" readonly="readonly" th:field="*{id}" type="text"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeName">Name:</label>
+            <div class="col-8">
+                <input class="form-control" id="employeeName" th:field="*{name}" type="text" readonly="readonly"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="jobDesignation">Job Designation:</label>
+            <div class="col-8">
+                <input class="form-control" id="jobDesignation" th:field="*{jobDesignation.name}" type="text"
+                       readonly="readonly"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeManager">Manager:</label>
+            <div class="col-8">
+                <select th:field="*{manager.id}" class="form-select" id="employeeManager"
+                        name="managerId">
+                    <!-- only show no manager option if employee is instanceof Manager -->
+                    <option th:if="${employee.getClass().getSimpleName() == 'Manager'}" th:value="null"
+                            th:text="'No Manager'"
+                            th:selected="${employee.manager == null}"></option>
+                    <option th:each="manager : ${managers}" th:text="${manager.name}" th:value="${manager.id}"
+                            th:selected="${employee.manager != null and employee.manager.id == manager.id}"></option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+name: CD with AWS
+
+on:
+  push:
+    branches:
+      - 'release/v[0-9]+.[0-9]+'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -D skipTests
+
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: login to docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.KEI_DOCKER_USERNAME }}
+          password: ${{ secrets.KEI_DOCKER_PASSWORD }}
+
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
+
+      - name: wait for docker image to be uploaded
+        run: sleep 60
+
+      - name: Deploy to EC2
+        env:
+          EC2_SSH_KEY: ${{ secrets.KEI_EC2_SSH_KEY }}
+          EC2_PUBLIC_IPV4: ${{ secrets.KEI_EC2_PUBLIC_IPV4 }}
+          RDS_ENDPOINT: ${{ secrets.KEI_RDS_ENDPOINT }}
+          RDS_USERNAME: ${{ secrets.KEI_RDS_USERNAME }}
+          RDS_PASSWORD: ${{ secrets.KEI_RDS_PASSWORD }}
+        run: |
+          echo "${EC2_SSH_KEY}" > /tmp/key.pem
+          chmod 600 /tmp/key.pem
+          ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ec2-user@${{ env.EC2_PUBLIC_IPV4 }} << 'EOF'
+          docker pull ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
+          docker stop leave-processing-spring-boot || true
+          docker rm leave-processing-spring-boot || true
+          docker run -d \
+            --name leave-processing-spring-boot \
+            -p 8080:8080 \
+            -e RDS_ENDPOINT=${RDS_ENDPOINT} \
+            -e RDS_USERNAME=${RDS_USERNAME} \
+            -e RDS_PASSWORD=${RDS_PASSWORD} \
+            ${{ secrets.KEI_DOCKER_USERNAME }}/leave-processing-spring-boot:${{ github.sha }}
+          docker logs leave-processing-spring-boot
+          EOF

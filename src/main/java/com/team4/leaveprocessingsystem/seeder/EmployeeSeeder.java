@@ -65,7 +65,7 @@ public class EmployeeSeeder {
 
         Manager manager2 = new Manager("Mikasa Ackerman",
                 managementJobDesignation,
-                null,
+                employeeService.findManagerByName("Madara Uchiha"),
                 leaveBalance2);
         employeeService.save(manager2);
 
@@ -82,7 +82,7 @@ public class EmployeeSeeder {
 
         Manager manager3 = new Manager("Muzan Kibutsuji",
                 managementJobDesignation,
-                null,
+                employeeService.findManagerByName("Mikasa Ackerman"),
                 leaveBalance3);
         employeeService.save(manager3);
 
@@ -92,13 +92,64 @@ public class EmployeeSeeder {
                 "muzan@gmail.com",
                 manager3);
         userService.save(managerUser3);
+
+        // manager 4
+        LeaveBalance leaveBalance4 = new LeaveBalance(managementJobDesignation.getDefaultAnnualLeaves());
+        leaveBalanceService.save(leaveBalance4);
+
+        Manager manager4 = new Manager("Zenitsu",
+                managementJobDesignation,
+                employeeService.findManagerByName("Muzan Kibutsuji"),
+                leaveBalance4);
+        employeeService.save(manager4);
+
+        User managerUser4 = new User(RoleEnum.ROLE_MANAGER,
+                "manager4",
+                passwordEncoder.encode("manager"),
+                "muzan@gmail.com",
+                manager4);
+        userService.save(managerUser4);
+
+        // manager 5
+        LeaveBalance leaveBalance5 = new LeaveBalance(managementJobDesignation.getDefaultAnnualLeaves());
+        leaveBalanceService.save(leaveBalance5);
+
+        Manager manager5 = new Manager("Nezuko",
+                managementJobDesignation,
+                employeeService.findManagerByName("Zenitsu"),
+                leaveBalance5);
+        employeeService.save(manager5);
+
+        User managerUser5 = new User(RoleEnum.ROLE_MANAGER,
+                "manager5",
+                passwordEncoder.encode("manager"),
+                "muzan@gmail.com",
+                manager5);
+        userService.save(managerUser5);
+
+        // manager 6
+        LeaveBalance leaveBalance6 = new LeaveBalance(managementJobDesignation.getDefaultAnnualLeaves());
+        leaveBalanceService.save(leaveBalance6);
+
+        Manager manager6 = new Manager("Yor",
+                managementJobDesignation,
+                null,
+                leaveBalance6);
+        employeeService.save(manager6);
+
+        User managerUser6 = new User(RoleEnum.ROLE_MANAGER,
+                "manager6",
+                passwordEncoder.encode("manager"),
+                "muzan@gmail.com",
+                manager6);
+        userService.save(managerUser6);
     }
 
     private void seedEmployee() {
         JobDesignation administrativeJobDesignation = jobDesignationService.findByName("administrative");
 
         // administrative employee 1 (with 2 users, admin and employee)
-        Manager manager = employeeService.findManagerByName("Madara Uchiha");
+        Manager manager = employeeService.findManagerByName("Nezuko");
 
         LeaveBalance adminLeaveBalance1 = new LeaveBalance(administrativeJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(adminLeaveBalance1);
@@ -123,7 +174,22 @@ public class EmployeeSeeder {
                 administrativeEmployee1);
         userService.save(employeeAdminUser1);
 
+        // normal employee 1
+        LeaveBalance adminLeaveBalance2 = new LeaveBalance(administrativeJobDesignation.getDefaultAnnualLeaves());
+        leaveBalanceService.save(adminLeaveBalance2);
 
+        Employee administrativeEmployee2 = new Employee("Mob Psycho",
+                administrativeJobDesignation,
+                manager,
+                adminLeaveBalance2);
+        employeeService.save(administrativeEmployee2);
+
+        User employeeUser2 = new User(RoleEnum.ROLE_EMPLOYEE,
+                "employee2",
+                passwordEncoder.encode("employee2"),
+                "mobpsycho@example.com",
+                administrativeEmployee2);
+        userService.save(employeeUser2);
     }
 
     private void seedIntern() {
@@ -153,13 +219,13 @@ public class EmployeeSeeder {
         JobDesignation cleaningJobDesignation = jobDesignationService.findByName("cleaning");
 
         // cleaning staff 1
-        Manager manager = employeeService.findManagerByName("Madara Uchiha");
+        Manager manager1 = employeeService.findManagerByName("Madara Uchiha");
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
         Employee cleaningEmployee1 = new Employee("Andrew",
                 cleaningJobDesignation,
-                manager,
+                manager1,
                 cleaningLeaveBalance);
         employeeService.save(cleaningEmployee1);
 
@@ -169,6 +235,8 @@ public class EmployeeSeeder {
                 "andrew@gmail.com",
                 cleaningEmployee1);
         userService.save(cleaningUser1);
+
+
 
 
     }

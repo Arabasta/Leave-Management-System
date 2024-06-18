@@ -9,27 +9,33 @@ import java.util.List;
 import java.util.Map;
 
 public interface ICompensationClaim {
-    boolean save(CompensationClaim compensationClaim);
 
-    List<CompensationClaim> findCompensationClaimsByEmployee(Employee employee);
+    CompensationClaim save(CompensationClaim claim);
+
+    boolean isClashWithExisting(CompensationClaim claim);
+
+    float calculateOvertimeHours(CompensationClaim claim);
+
+    float calculateLeaveRequested(CompensationClaim claim);
 
     long count();
 
-    CompensationClaim findCompensationClaimById(Integer id);
+    CompensationClaim findById(Integer id);
 
-    CompensationClaim findCompensationClaimIfBelongsToEmployee(Integer id, Employee employee);
+    CompensationClaim findIfBelongsToEmployee(Integer id, Employee employee);
 
-    float calculateOvertimeHours(CompensationClaim compensationClaim);
+    CompensationClaim findIfBelongsToManagerForReview(Integer id, Manager manager);
 
-    float calculateLeaveRequested(CompensationClaim compensationClaim);
+    CompensationClaim getNewClaimForEmployee(Employee employee);
 
-    Map<String, List<CompensationClaim>> findCompensationClaimsPendingReviewByManager(Manager manager);
+    void setNewClaimAndSave(CompensationClaim claim);
 
-    // find all approving_manager_ids
+    void setUpdateClaimAndSave(CompensationClaim claim);
+
+    List<CompensationClaim> findByEmployee(Employee employee);
+
+    Map<String, List<CompensationClaim>> findPendingReviewByManager(Manager manager);
+
     @Transactional
-    List<Integer> allApprovingManagersIds();
-
-    // find all claiming_employee_ids
-    @Transactional
-    List<Integer> allClaimingEmployees();
+    List<CompensationClaim> findByApprovingManager(Manager manager);
 }

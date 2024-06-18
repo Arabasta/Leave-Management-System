@@ -23,6 +23,7 @@ public class LeaveApplication {
     private Employee submittingEmployee;
 
     @ManyToOne
+    @JoinColumn(name = "reviewing_manager_id")
     private Manager reviewingManager;
 
     @Enumerated(EnumType.STRING)

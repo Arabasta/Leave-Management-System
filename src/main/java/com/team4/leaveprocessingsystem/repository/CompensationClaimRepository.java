@@ -5,15 +5,19 @@ import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface CompensationClaimRepository extends JpaRepository<CompensationClaim, Integer> {
     List<CompensationClaim> findByClaimingEmployee(Employee employee);
 
-    @Query("Select distinct c.approvingManager.id from CompensationClaim c")
-    List<Integer> findApprovingManagersIds();
+    @Query("Select c FROM CompensationClaim c " +
+            "WHERE c.claimingEmployee.id = :employee_id " +
+            "AND c.claimStatus = 'APPLIED'" +
+            "OR c.claimStatus = 'UPDATED'" +
+            "OR c.claimStatus = 'APPROVED'")
+    List<CompensationClaim> findExistingByClaimingEmployeeId(@Param("employee_id") int employee_id);
 
-    @Query("Select distinct c.claimingEmployee.id from CompensationClaim c")
-    List<Integer> findClaimingEmployeesIds();
+    List<CompensationClaim> findByApprovingManager(Manager manager);
 }

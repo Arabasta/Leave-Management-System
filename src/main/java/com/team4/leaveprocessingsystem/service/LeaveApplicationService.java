@@ -5,20 +5,25 @@ import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
     private final LeaveApplicationRepository leaveApplicationRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository) {
+    public LeaveApplicationService(LeaveApplicationRepository leaveApplicationRepository, EmployeeRepository employeeRepository) {
         this.leaveApplicationRepository = leaveApplicationRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -42,13 +47,9 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
-    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, Employee employee) {
-        LeaveApplication leaveApplication = findLeaveApplicationById(id);
-        // Ensure an employee only accesses his own leave applications
-        if (!leaveApplication.getSubmittingEmployee().getId().equals(employee.getId())) {
-            throw new LeaveApplicationNotFoundException("Leave Application Not Found");
-        }
-        return leaveApplication;
+    public LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, int employeeId) {
+        return leaveApplicationRepository.findIfBelongsToEmployee(id, employeeId)
+                .orElseThrow(() -> new LeaveApplicationNotFoundException("Leave Application Not Found"));
     }
 
     @Override
@@ -57,36 +58,57 @@ public class LeaveApplicationService implements ILeaveApplication {
         return leaveApplicationRepository.count();
     }
 
+    @Override
+    @Transactional
+    public List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId){
+        return leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+    }
+
+    @Override
     @Transactional
     public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
         return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
     }
 
-
     @Override
     @Transactional
-    public List<Integer> allReviewingManagersIds()  {
-        return leaveApplicationRepository.findReviewingManagersIds();
+    public Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager) {
+        Map<String, List<LeaveApplication>> pendingLeaveApplications = new HashMap<>();
+        List<Employee> employeeList = employeeRepository.findByManager(manager);
+        for (Employee employee : employeeList) {
+            List<LeaveApplication> employeePendingLeaveApplications = findBySubmittingEmployee(employee)
+                    .stream()
+                    .filter(application -> application.getLeaveStatus() == LeaveStatusEnum.APPLIED
+                            || application.getLeaveStatus() == LeaveStatusEnum.UPDATED)
+                    .toList();
+            if (!employeePendingLeaveApplications.isEmpty()) {
+                pendingLeaveApplications.put(employee.getName(), employeePendingLeaveApplications);
+            }
+        }
+        return pendingLeaveApplications;
     }
 
     @Override
     @Transactional
-    public List<Integer> allClaimingEmployees()  {
-        return leaveApplicationRepository.findSubmittingEmployeesIds();
+    public List<LeaveApplication> findByEmployeeName(String name) {
+        return leaveApplicationRepository.findByName(name);
     }
 
-        /*
+    @Override
+    @Transactional
+    public List<LeaveApplication> findByEmployeeId(int id) {
+        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
+    }
 
-    @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
-    List<Employee> findEmployeesByName(@Param("k") String keyword);
-
-    @Query("Select e from Employee e join e.jobDesignation jd where jd.name like CONCAT('%', :k, '%')")
-    List<Employee> findEmployeesByJobDesignation(@Param("k") String keyword);
-
-    @Query("Select e from Employee e " +
-            "JOIN User u ON e.id = u.employee.id " +
-            "where CAST(u.role as String) like CONCAT('%', :k, '%')")
-    List<Employee> findUsersByRoleType(@Param("k") String keyword);
-
-    * */
+    @Override
+    @Transactional
+    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
+        List<LeaveApplication> applicationsBelongToManagerSubordinates = new ArrayList<>();
+        for (LeaveApplication application : applications) {
+            if (application.getReviewingManager().getId() == managerId) {
+                applicationsBelongToManagerSubordinates.add(application);
+            }
+        }
+        return applicationsBelongToManagerSubordinates;
+    }
 }

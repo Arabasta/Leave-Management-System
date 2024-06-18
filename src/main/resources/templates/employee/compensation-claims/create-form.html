@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+    <h1 class="text-center">Create Compensation Claim</h1>
+
+    <div class="d-flex flex-column align-items-center">
+        <div>
+            <form action="#" th:action="@{create}" th:object="${compensationClaim}" method="post">
+                <input type="hidden" th:field="${compensationClaim.id}" />
+                <input type="hidden" th:field="${compensationClaim.claimingEmployee}" />
+                <input type="hidden" th:field="${compensationClaim.approvingManager}" />
+                <input type="hidden" th:field="${compensationClaim.claimStatus}" />
+                <input type="hidden" th:field="${compensationClaim.claimDateTime}" />
+
+                <table class="table table-striped table-responsive-md w-auto">
+                    <tbody>
+                    <tr>
+                        <td>Name: </td>
+                        <td th:text="${compensationClaim.claimingEmployee.name}"></td>
+                    </tr>
+
+                    <tr>
+                        <td>Approving Manager: </td>
+                        <td th:text="${compensationClaim.approvingManager.name}"></td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="overtimeStart">Overtime Start</label></td>
+                        <td><input id="overtimeStart" type="datetime-local"
+                                   th:value="${compensationClaim.overtimeStart}"
+                                   th:field="${compensationClaim.overtimeStart}"/>
+                            <div th:if="${#fields.hasErrors('overtimeStart')}"
+                                 th:errors="${compensationClaim.overtimeStart}"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="overtimeEnd">Overtime End</label></td>
+                        <td><input id="overtimeEnd" type="datetime-local"
+                                   th:value="${compensationClaim.overtimeEnd}"
+                                   th:field="${compensationClaim.overtimeEnd}"/>
+                            <div th:if="${#fields.hasErrors('overtimeEnd')}"
+                                 th:errors="${compensationClaim.overtimeEnd}"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input class="btn btn-primary" type="submit" value="Submit" />
+                            <input class="btn btn-primary" type="reset" value="Reset" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div>
+            <a class="btn btn-primary" th:href="@{/employee/compensation-claims/view}">Back</a>
+        </div>
+    </div>
+</body>
+</html>

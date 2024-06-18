@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/head :: html_head">
+    <title>Subordinate Leave Application</title>
+</head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+<h3>Subordinate Leave Application</h3>
+
+<table>
+    <tbody>
+    <tr>
+        <td th:text="${leave.submittingEmployee.name}"></td>
+    </tr>
+    <tr>
+        <td>Leave Type</td>
+        <td th:text="${leave.leaveType}">
+        </td>
+    </tr>
+    <tr>
+        <td>Start Date</td>
+        <td th:text="${leave.startDate}">
+    </tr>
+    <tr>
+        <td>End Date</td>
+        <td th:text="${leave.endDate}">
+    </tr>
+    <tr>
+        <td th:if="${leave.submittingEmployee.manager.name} != null">Approving Manager</td>
+        <td th:if="${leave.submittingEmployee.manager.name} != null" th:text="${leave.submittingEmployee.manager.name}"></td>
+    </tr>
+    <tr>
+        <td>Reason</td>
+        <td th:text="${leave.submissionReason}">
+    </tr>
+    <tr>
+        <td>Work Dissemination (if any)</td>
+        <td th:text="${leave.workDissemination}">
+    </tr>
+    <tr>
+        <td>Contact Details (if on an overseas trip)</td>
+        <td th:text="${leave.contactDetails}">
+    </tr>
+    <tr>
+        <td>Leave Status</td>
+        <td th:text="${leave.leaveStatus}">
+    </tr>
+
+    <tr>
+        <a href="#" onclick="window.location.href='/manager/leave/managerView'; return false;">Back</a>
+    </tr>
+
+    </tbody>
+</table>
+
+</body>
+</html>

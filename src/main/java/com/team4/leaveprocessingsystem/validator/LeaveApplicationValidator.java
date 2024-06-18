@@ -21,9 +21,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class LeaveApplicationValidator implements Validator {
-    @Autowired
-    private PublicHolidayService publicHolidayService;
-    @Autowired LeaveApplicationService leaveApplicationService;
+
+    private final PublicHolidayService publicHolidayService;
+    private final LeaveApplicationService leaveApplicationService;
+
+    public LeaveApplicationValidator(PublicHolidayService publicHolidayService, LeaveApplicationService leaveApplicationService) {
+        this.publicHolidayService = publicHolidayService;
+        this.leaveApplicationService = leaveApplicationService;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -118,7 +123,6 @@ public class LeaveApplicationValidator implements Validator {
                     errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot overlap with other leaves");
                     break;
                 }
-
             }
         }
     }
