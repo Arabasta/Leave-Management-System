@@ -25,17 +25,4 @@ public class AuthenticationService {
         }
         return -1;
     }
-
-    public boolean isLoggedInAManager() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            for (GrantedAuthority authority: authentication.getAuthorities()){
-                if (authority.getAuthority().equals("ROLE_MANAGER")){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

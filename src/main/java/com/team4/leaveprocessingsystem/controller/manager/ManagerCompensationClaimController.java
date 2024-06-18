@@ -3,8 +3,10 @@ package com.team4.leaveprocessingsystem.controller.manager;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.dataTransferObjects.DataExportDTO;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import com.team4.leaveprocessingsystem.validator.CompensationClaimValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RequestMapping("/manager/compensation-claims")
 @Controller
@@ -39,6 +40,7 @@ public class ManagerCompensationClaimController {
     public ManagerCompensationClaimController(AuthenticationService authenticationService,
                                               EmployeeService employeeService,
                                               ManagerService managerService,
+                                              DataExportService dataExportService,
                                               LeaveBalanceService leaveBalanceService,
                                               CompensationClaimService compensationClaimService,
                                               CompensationClaimValidator validator) {
@@ -88,27 +90,9 @@ public class ManagerCompensationClaimController {
         } else {
             claim.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
         }
-        claim.setComments(claim.getComments());
+        claim.setComments(StringCleaningUtil.forDatabase(claim.getComments()));
         claim.setReviewedDateTime(LocalDateTime.now());
         compensationClaimService.save(claim);
         return "redirect:/manager/compensation-claims/viewPendingApproval";
-    }
-
-    /*
-        MANAGER - GET - VIEW ALL EMPLOYEE COMPENSATION CLAIMS
-    */
-    @GetMapping("viewEmployees")
-    public String viewEmployees(@RequestParam(value = "query", required = false) String query,
-                                Model model) {
-        List<Employee> employees;
-        if (query == null || query.isBlank()) {
-            employees = employeeService.findAll();
-        } else {
-            employees = employeeService.findEmployeesByName(query);
-        }
-        Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
-        List<CompensationClaim> claims = compensationClaimService.filterByEmployeeListAndManager(employees, manager);
-        model.addAttribute("claims", claims);
-        return "manager/compensation-claims/view-employee-claims";
     }
 }

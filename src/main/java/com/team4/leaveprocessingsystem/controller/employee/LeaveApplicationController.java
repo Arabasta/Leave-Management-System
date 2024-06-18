@@ -31,7 +31,6 @@ public class LeaveApplicationController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
-    private final EmployeeRepository employeeRepository;
 
     @InitBinder
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -41,14 +40,13 @@ public class LeaveApplicationController {
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService, EmployeeRepository employeeRepository) {
+                                      EmailApiService emailApiService, UserService userService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.emailApiService = emailApiService;
         this.userService = userService;
-        this.employeeRepository = employeeRepository;
     }
 
     @GetMapping("create")
@@ -93,13 +91,16 @@ public class LeaveApplicationController {
         leaveApplicationService.save(leaveApplication);
 
         // Send email notification to the manager
-        try {
-            String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
-            Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
-            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        if (leaveApplication.getReviewingManager() != null){
+            try {
+                String emailAdd = userService.findUserRolesByEmployeeId(leaveApplication.getReviewingManager().getId()).get(0).getEmail();
+                Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(leaveApplication);
+                emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
+
 
         return "redirect:/employee/leave/personalHistory";
 
@@ -141,7 +142,7 @@ public class LeaveApplicationController {
         return "employee/leave-application/viewLeave";
     }
 
-        @GetMapping("personalHistory")
+    @GetMapping("personalHistory")
     public String personalHistory(Model model) {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(employee);

@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head>
-    <title>Employee Leave History</title>
-
+<head th:replace="fragments/head :: html_head">
+    <title>Personal Leave History</title>
 </head>
-
 <body>
-
+<div th:replace="fragments/navbar :: menu"></div>
 
 <br/>
-<h2 style="text-align: center;">Personal leave History</h2>
+<h2 style="text-align: center;">Personal Leave History</h2>
 
 <h3 style="text-align: center;"
     th:if="${#lists.isEmpty(personalLeaveApplications)}">No Results.</h3>
@@ -19,41 +17,28 @@
 <table th:if="${not #lists.isEmpty(personalLeaveApplications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
-        <th>Employee ID</th>
-        <th>Name</th>
+        <th>Leave Application ID</th>
         <th>Start Date</th>
         <th>End Date</th>
+        <th>Leave Type</th>
         <th>Leave Status</th>
         <th>Details</th>
     </tr>
     <tr th:each="leaveApplication:${personalLeaveApplications}">
-        <td th:text="${leaveApplication.getId()}">Id</td>
-
-        <td th:text="${leaveApplication.getSubmittingEmployee().getName()}">Name</td>
-        <td><a th:text="${leaveApplication.getStartDate()}">Start Date</a></td>
-
-        <td th:text="${leaveApplication.getEndDate()}">End Date</td>
-        <td th:text="${leaveApplication.getLeaveStatus()}">Leave Status</td>
-
-
-        <td><a th:href="@{/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
-
+        <td th:text="${leaveApplication.getId()}"></td>
+        <td th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}"></td>
+        <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}"></td>
+        <td th:text="${leaveApplication.getLeaveType()}"></td>
+        <td th:text="${leaveApplication.getLeaveStatus()}"></td>
+        <td><a th:href="@{/employee/leave/view/{id}(id=${leaveApplication.getId()})}">Details</a></td>
     </tr>
 </table>
 
 <table style="width:50%; margin-left: auto; margin-right: auto; border:
 white;">
     <tr>
-
-    </tr>
-    <tr>
-        <td style="text-align: center; font-weight: bold;"><a href="#"
-                                                              onclick="history.go(-1); return false;">Back</a></td>
+        <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
     </tr>
 </table>
-
 </body>
-
-</div>
-
 </html>
