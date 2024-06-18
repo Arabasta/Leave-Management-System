@@ -70,7 +70,7 @@
                             </td>
                             <td>
                                 <textarea placeholder="Input reason here" id="comments" rows="2" cols="50" th:field="${compensationClaim.comments}"></textarea>
-                                <div th:if="${#fields.hasErrors('comments')}" th:errors="${compensationClaim.comments}"></div>
+                                <div th:if="${#fields.hasErrors('comments')}" th:errors="${compensationClaim.comments}" class="alert alert-danger mt-3"></div>
                             </td>
                         </tr>
 

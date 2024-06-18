@@ -41,4 +41,49 @@ public class PublicHolidayService implements IPublicHoliday {
         List<PublicHoliday> publicHolidayList =  publicHolidayRepository.findAll();
         return publicHolidayList.stream().map(PublicHoliday::getDate).collect(Collectors.toList());
     }
+
+
+    public Optional<PublicHoliday> findById(Integer id) {
+        // Log the ID to ensure it's correctly passed
+        System.out.println("Finding public holiday with ID: " + id);
+        return publicHolidayRepository.findById(id);
+    }
+
+    public boolean update(PublicHoliday publicHoliday) {
+        if (publicHolidayRepository.existsById(publicHoliday.getId())) {
+            publicHolidayRepository.save(publicHoliday);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteById(Integer id) {
+        try {
+            publicHolidayRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<PublicHoliday> findAll(String searchType, String query, String year) {
+        if (year != null && !year.isEmpty()) {
+            LocalDate startDate = LocalDate.of(Integer.parseInt(year), 1, 1);
+            LocalDate endDate = LocalDate.of(Integer.parseInt(year), 12, 31);
+            return publicHolidayRepository.findByDateBetween(startDate, endDate);
+        }
+        return publicHolidayRepository.findAll();
+    }
+
+    @Override
+    public List<PublicHoliday> findAll() {
+        return publicHolidayRepository.findAll();
+    }
+
+    @Override
+    public List<Integer> findAllYears() {
+        return publicHolidayRepository.findDistinctYears();
+    }
+
 }
