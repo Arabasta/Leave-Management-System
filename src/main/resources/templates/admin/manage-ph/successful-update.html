@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>Update Successful</h1>
+    <br>
+    <div class="alert alert-success" role="alert">
+        Your request has been processed successfully.
+    </div>
+    <p><strong>Details:</strong></p>
+    <p>Date: <span th:text="${publicHoliday.date}"></span></p>
+    <p>Holiday: <span th:text="${publicHoliday.holiday}"></span></p>
+    <br>
+    <a class="btn btn-primary" th:href="@{/admin/manage-ph/}">Back to Public Holidays List</a>
+</div>
+</body>
+</html>

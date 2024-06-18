@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: html_head}"></head>
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>Edit Public Holiday</h1>
+    <br>
+    <form th:action="@{/admin/manage-ph/update/{id}(id=${publicHoliday.id})}" th:object="${publicHoliday}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" class="form-control" id="date" th:field="*{date}" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Invalid date</div>
+        </div>
+        <div class="form-group">
+            <label for="holiday">Holiday:</label>
+            <input type="text" class="form-control" id="holiday" th:field="*{holiday}" required />
+            <div class="text-danger" th:if="${#fields.hasErrors('holiday')}" th:errors="*{holiday}">Invalid holiday</div>
+        </div>
+        <br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary ml-2" th:href="@{/admin/manage-ph}">Back to List</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
