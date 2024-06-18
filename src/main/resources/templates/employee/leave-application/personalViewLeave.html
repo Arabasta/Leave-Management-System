@@ -11,9 +11,34 @@
 <h2 style="text-align: center;">Personal Leave History</h2>
 
 <h3 style="text-align: center;"
-    th:if="${#lists.isEmpty(personalLeaveApplications)}">No Results.</h3>
+    th:if="${#lists.isEmpty(personalLeaveApplications)}">No Records.</h3>
 
+<table th:if="${not #lists.isEmpty(personalLeaveApplications)}" style="width:80%;
+margin-left: auto; margin-right: auto;">
+    <tr>
+        <th>  </th>
+        <th>Annual Leave</th>
+        <th>Compensation Leave</th>
+        <th>Medical Leave</th>
+        <th>Compassionate Leave</th>
 
+    </tr>
+    <tr>
+        <td>Remaining Balance</td>
+        <td th:text="${LeaveBalance.getCurrentAnnualLeave()}">Annual Leave</td>
+        <td th:text="${LeaveBalance.getCurrentCompensationLeave()}">Compensation Leave</td>
+        <td th:text="${LeaveBalance.getCurrentMedicalLeave()}">Medical Leave</td>
+        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE - LeaveBalance.compassionateLeaveConsumed}">-COMPASSIONATE LEAVE</td>
+    </tr>
+    </tr>
+    <tr>
+        <td>Total Balance</td>
+        <td th:text="${LeaveBalance.annualLeave}">Annual Leave</td>
+        <td th:text="${LeaveBalance.compensationLeave}">Compensation Leave</td>
+        <td th:text="${LeaveBalance.medicalLeave}">Medical Leave</td>
+        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}">-COMPASSIONATE LEAVE</td>
+    </tr>
+</table>
 <table th:if="${not #lists.isEmpty(personalLeaveApplications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
@@ -40,5 +65,6 @@ white;">
         <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
     </tr>
 </table>
+
 </body>
 </html>
