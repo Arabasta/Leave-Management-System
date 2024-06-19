@@ -3,12 +3,14 @@ package com.team4.leaveprocessingsystem.service;
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
+import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
+import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,5 +132,47 @@ public class LeaveApplicationService implements ILeaveApplication {
         return applications.stream()
                 .filter(x -> x.getLeaveStatus().name().equals(leaveStatus))
                 .toList();
+    }
+
+    public ArrayList<LeaveApplication> setArrayList(List<LeaveApplication> list) {
+        ArrayList<LeaveApplication> output = new ArrayList<>();
+        try {
+            output.addAll(list);
+        } catch (NullPointerException e) {
+            System.out.println(e + ": " + e.getMessage());
+        }
+        return output;
+    }
+
+    @Transactional
+    public List<LeaveApplication> filterManagerViewSearch(int managerId,
+                                                          String keyword,
+                                                          String searchType,
+                                                          String startDate,
+                                                          String endDate,
+                                                          String leaveStatus) {
+
+        List<LeaveApplication> applications = findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
+
+        if (Objects.equals(searchType, "name")) {
+            applications = getLeaveApplicationIfBelongsToManagerSubordinates(
+                    findByEmployeeName(StringCleaningUtil.forDatabase(keyword)), managerId);
+        }
+        if (Objects.equals(searchType, "id")) {
+            try {
+                int id = Integer.parseInt(keyword);
+                applications = findByEmployeeId(id);
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+                applications.clear();
+            }
+        }
+        if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
+            applications = filterByStringDateRange(applications, startDate, endDate);
+        }
+        if (!Objects.equals(leaveStatus, "ALL")) {
+            applications = filterByStringLeaveStatus(applications, leaveStatus);
+        }
+        return applications;
     }
 }

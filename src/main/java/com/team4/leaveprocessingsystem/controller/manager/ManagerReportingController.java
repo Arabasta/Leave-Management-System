@@ -22,17 +22,19 @@ public class ManagerReportingController {
     private final AuthenticationService authenticationService;
     private final ManagerService managerService;
     private final EmployeeService employeeService;
+    private final ReportingService reportingService;
 
     public ManagerReportingController(DataExportService dataExportService,
                                       EmployeeService employeeService,
                                       AuthenticationService authenticationService,
                                       CompensationClaimService compensationClaimService,
-                                      ManagerService managerService) {
+                                      ManagerService managerService, ReportingService reportingService) {
         this.dataExportService = dataExportService;
         this.authenticationService = authenticationService;
         this.compensationClaimService = compensationClaimService;
         this.managerService = managerService;
         this.employeeService = employeeService;
+        this.reportingService = reportingService;
     }
 
     /*
@@ -50,7 +52,7 @@ public class ManagerReportingController {
         }
         Manager manager = managerService.findManagerById(authenticationService.getLoggedInEmployeeId());
         ArrayList<CompensationClaim> claims = (ArrayList<CompensationClaim>) compensationClaimService.filterByEmployeeListAndManager(employees, manager);
-        model.addAttribute("reportingDTO", new ReportingDTO(employees, claims));
+        model.addAttribute("reportingDTO", reportingService.setForClaimsReport(employees, claims));
         if (downloadCSV) {
             return "redirect:/manager/reporting/downloadEmployeeClaimsCSV";
         }

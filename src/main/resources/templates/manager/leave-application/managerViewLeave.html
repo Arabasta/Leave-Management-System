@@ -20,7 +20,7 @@
     <tr>
         <td>
             <form action="#"
-                  th:action="@{/manager/leave/searchingLeaveApplications}" method="post">
+                  th:action="@{/manager/leave/managerView}" method="post">
                 <div style="font-weight: bold">
                     Search By:
                 </div>
@@ -39,11 +39,11 @@
                 </div>
 
                 <!-- Sort by Date Range -->
-                <div class="input-group mb-3 w-50">
+                <div class="input-group mb-3">
                     <span class="input-group-text">Date Range</span>
-                    <input type="date" class="form-control" name="startDate">
+                    <label><input class="form-control" type="date" name="startDate"></label>
                     <span class="input-group-text">To</span>
-                    <input type="date" class="form-control" name="endDate">
+                    <label><input class="form-control" type="date" name="endDate"></label>
                 </div>
 
                 <!-- Sort by Leave Application Status -->
@@ -67,7 +67,7 @@
     </tr>
 </table>
 <br>
-<table th:if="${not #lists.isEmpty(subordinateLeaveApplications)}" style="width:80%;
+<table th:if="${not #lists.isEmpty(reportingDTO.applications)}" style="width:80%;
 margin-left: auto; margin-right: auto;">
     <tr>
         <th>Application ID</th>
@@ -79,7 +79,7 @@ margin-left: auto; margin-right: auto;">
         <th>Leave Type</th>
         <th>Details</th>
     </tr>
-    <tr th:each="leaveApplication:${subordinateLeaveApplications}">
+    <tr th:each="leaveApplication:${reportingDTO.applications}">
         <td th:text="${leaveApplication.getId()}">Application Id</td>
         <td th:text="${leaveApplication.getSubmittingEmployee().id}">Employee id</td>
         <td th:text="${leaveApplication.getSubmittingEmployee().getName()}">Name</td>
