@@ -8,6 +8,7 @@
     <div class="d-flex flex-column align-items-center">
         <!-- Contents Header -->
         <h1>View My Compensation Claims</h1>
+        <br>
         <!-- Contents Body -->
         <div>
             <table class="table table-striped table-responsive-md w-auto">
@@ -22,9 +23,7 @@
                 </tr>
 
                 <tr>
-                    <td><a th:href="@{create}" class="btn btn-primary">New Compensation Claim</a></td>
-                    <!-- TODO: to implement save as CSV function-->
-                    <td><a class="btn btn-primary">Save as CSV</a></td>
+                    <td colspan="2" class="text-center"><a th:href="@{create}" class="btn btn-primary">New Compensation Claim</a></td>
                 </tr>
             </table>
             <br>
@@ -33,9 +32,9 @@
 
         <div>
             <th:block th:unless="${#lists.isEmpty(compensationClaims)}">
-            <table class="table table-striped table-responsive-md text-center w-auto">
+            <table class="table table-hover table-striped table-responsive-md text-center w-auto align-middle text-center">
                 <thead>
-                    <tr>
+                    <tr class="border-top">
                         <th>Claim Id</th>
                         <th>Overtime Start</th>
                         <th>Overtime End</th>
@@ -59,21 +58,21 @@
                             <td>
                                 <span th:if="${claim.claimStatus.name()}=='APPLIED'
                                          or ${claim.claimStatus.name()}=='UPDATED'">
-                                    <a th:href="@{updateForm/{id}(id=${claim.id})}" class="btn btn-primary">Update</a>
+                                    <a th:href="@{updateForm/{id}(id=${claim.id})}" class="btn btn-secondary">Update</a>
                                 </span>
                                 <span> </span> <!-- whitespace to retain cell space -->
                             </td>
                             <td >
                                 <span th:if="${claim.claimStatus.name()}=='APPLIED'
                                          or ${claim.claimStatus.name()}=='UPDATED'">
-                                    <a th:href="@{withdraw/{id}(id=${claim.id})}" class="btn btn-primary">Withdraw</a>
+                                    <a th:href="@{withdraw/{id}(id=${claim.id})}" class="btn btn-danger">Withdraw</a>
                                 </span>
                                 <span> </span> <!-- whitespace to retain cell space -->
                             </td>
                             <td >
                                 <span th:if="${claim.claimStatus.name()}=='APPROVED'
                                          or ${claim.claimStatus.name()}=='REJECTED'">
-                                    <a th:href="@{viewDetails/{id}(id=${claim.id})}" class="btn btn-primary">Details</a>
+                                    <a th:href="@{viewDetails/{id}(id=${claim.id})}" class="btn btn-info">Details</a>
                                 </span>
                                 <span> </span> <!-- whitespace to retain cell space -->
                             </td>
