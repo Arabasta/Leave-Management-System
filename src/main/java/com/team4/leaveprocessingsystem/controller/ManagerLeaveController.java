@@ -67,8 +67,14 @@ public class ManagerLeaveController {
             applications = leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(
                     leaveApplicationService.findByEmployeeName(StringCleaningUtil.forDatabase(keyword)), managerId);
         }
-        if (searchType.equals("id")) {
-            applications = leaveApplicationService.findByEmployeeId(Integer.parseInt(keyword));
+        if (searchType.equals("id")) { // TODO: implement validator instead of using try-catch
+            try {
+                int id = Integer.parseInt(keyword);
+                applications = leaveApplicationService.findByEmployeeId(id);
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+                applications.clear();
+            }
         }
         if (!startDate.isBlank() && !endDate.isBlank()) {
             applications = leaveApplicationService.filterByStringDateRange(applications, startDate, endDate);

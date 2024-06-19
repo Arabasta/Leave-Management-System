@@ -99,11 +99,7 @@ public class LeaveApplicationService implements ILeaveApplication {
     @Override
     @Transactional
     public List<LeaveApplication> findByEmployeeId(int id) {
-        try {
-            return leaveApplicationRepository.findBySubmittingEmployeeId(id);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException();
-        }
+        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
     }
 
     @Override
