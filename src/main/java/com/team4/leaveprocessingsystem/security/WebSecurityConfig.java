@@ -41,7 +41,11 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults()) // must come first to allow handling of CORS before Spring Security
                 .authorizeHttpRequests((authorize) -> authorize
                         // allow all roles and unauthenticated to visit login
-                        .requestMatchers("/images/team_4_logo.png", "/auth/login", "/js/auth/loginValidation.js").permitAll()
+                        .requestMatchers("/images/team_4_logo.png",
+                                "/auth/login",
+                                "/js/auth/loginValidation.js",
+                                "/diagram",
+                                "/images/aws_system_architecture_diagram.png").permitAll()
 
                          // employee
                         .requestMatchers("/", "/employee/home").hasAnyRole("EMPLOYEE", "MANAGER")
