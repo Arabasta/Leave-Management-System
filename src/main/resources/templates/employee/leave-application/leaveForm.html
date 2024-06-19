@@ -15,6 +15,7 @@
         <input type="hidden" name="submittingEmployee" th:field="${leave.submittingEmployee}" />
         <input type="hidden" name="reviewingManager" th:field="${leave.reviewingManager}" />
         <input type="hidden" name="leaveStatus" th:field="${leave.leaveStatus}" />
+        <input type="hidden" id="publicHolidays" th:value="${publicHolidays}">
         <table>
             <tbody>
             <tr>
@@ -48,6 +49,10 @@
                 <td><label for="endDate">End Date</label></td>
                 <td><input type="date" id="endDate" th:value="${leave.endDate}" th:field="${leave.endDate}" /></td>
                 <td th:if="${#fields.hasErrors('leave.endDate')}" th:errors="${leave.endDate}"></td>
+            </tr>
+            <tr>
+                <td>No. of Leave Days Required</td>
+                <td id="numOfLeaveDaysRequired"></td>
             </tr>
             <tr>
                 <td th:if="${leave.submittingEmployee.manager != null}">Approving Manager</td>

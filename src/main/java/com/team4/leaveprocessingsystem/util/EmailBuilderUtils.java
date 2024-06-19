@@ -24,12 +24,11 @@ public class EmailBuilderUtils {
         String reason= leaveApplication.getSubmissionReason();
         String rejectionReason= leaveApplication.getRejectionReason();
         String rejectionReasonStr = "";
-        if (rejectionReason != null && rejectionReason.isEmpty()){
-            rejectionReasonStr = "- Rejection Reason: " + rejectionReason + "<br>";
+        if (!rejectionReason.isEmpty()){
+            rejectionReasonStr = "Rejection Reason: " + rejectionReason + "<br>";
         }
-        String applicationUrlForEmployee = "http://localhost:8080/leave/view/" + leaveApplication.getId();
-        // TODO: Change the url to the manager's view once implemented
-        String applicationUrlForManager = "http://localhost:8080/leave/view/" + leaveApplication.getId();
+        String applicationUrlForEmployee = "http://localhost:8080/employee/leave/view/" + leaveApplication.getId();
+        String applicationUrlForManager = "http://localhost:8080/manager/leave/review/" + leaveApplication.getId();
 
         String leaveStatus = leaveApplication.getLeaveStatus().toString();
 

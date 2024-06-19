@@ -30,8 +30,9 @@ public class LeaveApplicationController {
     private final AuthenticationService authenticationService;
     private final EmailApiService emailApiService;
     private final UserService userService;
+    private final PublicHolidayService publicHolidayService;
 
-    @InitBinder("leave_application")
+    @InitBinder("leave")
     private void initLeaveApplicationBinder(WebDataBinder binder) {
         binder.addValidators(leaveApplicationValidator);
     }
@@ -39,24 +40,26 @@ public class LeaveApplicationController {
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService) {
+                                      EmailApiService emailApiService, UserService userService, PublicHolidayService publicHolidayService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.leaveApplicationValidator = leaveApplicationValidator;
         this.emailApiService = emailApiService;
         this.userService = userService;
+        this.publicHolidayService = publicHolidayService;
     }
 
     @GetMapping("create")
     public String createLeave(Model model) {
         LeaveApplication leaveApplication = new LeaveApplication();
-        // todo: note; kei changed to use authService
 
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
         leaveApplication.setSubmittingEmployee(employee);
         leaveApplication.setReviewingManager(employee.getManager());
         leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
+
+        model.addAttribute("publicHolidays", publicHolidayService.publicHolidayDateList());
 
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());

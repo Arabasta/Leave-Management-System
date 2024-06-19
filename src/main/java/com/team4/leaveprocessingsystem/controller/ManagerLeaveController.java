@@ -5,6 +5,7 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
+import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -143,6 +145,17 @@ public class ManagerLeaveController {
         }
         leaveApplicationService.save(existingLeaveApplication);
         leaveBalanceService.update(existingLeaveApplication);
+
+        // uncomment before submitting due to limit
+        // Send email notification to the employee
+//        try {
+//            String emailAdd = userService.findUserRolesByEmployeeId(existingLeaveApplication.getSubmittingEmployee().getId()).get(0).getEmail();
+//            Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(existingLeaveApplication);
+//            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+
         // Redirect to pending leave applications with a success parameter
         return "redirect:/manager/leave/pendingLeaves?updateSuccess=true";
     }
