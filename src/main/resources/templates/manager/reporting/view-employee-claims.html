@@ -9,12 +9,11 @@
 <br>
 
 <div class="d-flex flex-column align-items-center">
-
-    <!-- Search bar -->
-    <form class="form-inline" method="get" th:action="@{/manager/reporting/viewCompensationClaims}">
-        <div class="form-group">
+    <!-- Section for name search / buttons -->
+    <div class="d-flex flex-column">
+        <!-- Search bar -->
+        <form class="form-inline" method="get" th:action="@{/manager/reporting/viewCompensationClaims}">
             <div class="input-group">
-                <!-- query -->
                 <input class="form-control" name="query" placeholder="Name"
                        aria-label="Search" type="search"/>
                 <button type="submit" class="btn btn-outline-primary"
@@ -24,27 +23,31 @@
                         th:if="${#lists.isEmpty(reportingDTO.claims)}">Reset
                 </button>
             </div>
-        </div>
-    </form>
-    <br>
-
-    <h3 class="text-center" th:if="${#lists.isEmpty(reportingDTO.claims)}"><em>There are no Compensation Claims.</em></h3>
-
-    <div th:unless="${#lists.isEmpty(reportingDTO.claims)}">
+        </form>
+        <br>
 
         <!-- Data Export - Save as CSV -->
-        <form class="form-inline text-center" method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeClaimsCSV}">
+        <div th:unless="${#lists.isEmpty(reportingDTO.claims)}">
             <div class="form-group">
-                <div class="input">
-                    <button type="submit" class="btn btn-primary">Save as CSV</button>
-                    <input type="hidden" th:field="${reportingDTO.claims}">
-                </div>
+                <form class="text-center" method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeClaimsCSV}">
+                    <div class="input">
+                        <button type="submit" class="btn btn-primary">Save as CSV</button>
+                        <input type="hidden" th:field="${reportingDTO.claims}">
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+    </div>
 
+    <h3 class="text-center" th:if="${#lists.isEmpty(reportingDTO.claims)}"><em>There are no Compensation Claims.</em></h3>
+</div>
+
+<div>
+    <div th:unless="${#lists.isEmpty(reportingDTO.claims)}">
         <!-- Table - View Employee Compensation Claims -->
         <div>
-            <table class="table table-hover table-striped table-responsive-md w-100 align-middle text-center">
+            <br>
+            <table class="table table-hover table-striped table-responsive-md border-top w-100 align-middle text-center">
                 <thead>
                     <tr>
                         <th>Claim Id</th>
