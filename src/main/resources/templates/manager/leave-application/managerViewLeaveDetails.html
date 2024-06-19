@@ -10,6 +10,7 @@
 <table>
     <tbody>
     <tr>
+        <td>Employee Name</td>
         <td th:text="${leave.submittingEmployee.name}"></td>
     </tr>
     <tr>
@@ -19,11 +20,11 @@
     </tr>
     <tr>
         <td>Start Date</td>
-        <td th:text="${leave.startDate}">
+        <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}">
     </tr>
     <tr>
         <td>End Date</td>
-        <td th:text="${leave.endDate}">
+        <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}">
     </tr>
     <tr>
         <td th:if="${leave.submittingEmployee.manager.name} != null">Approving Manager</td>
@@ -45,7 +46,17 @@
         <td>Leave Status</td>
         <td th:text="${leave.leaveStatus}">
     </tr>
-
+    <tr>
+        <td th:if="${leave.rejectionReason != null}">Rejection Reason</td>
+        <td th:if="${leave.rejectionReason != null}" th:text="${leave.rejectionReason}">
+    </tr>
+    <tr>
+<td>
+    <a th:if="${#strings.equals(leave.leaveStatus, 'APPLIED')
+               or #strings.equals(leave.leaveStatus, 'UPDATED')}"
+       th:href="@{/manager/leave/review/{id}(id=${leave.id})}">Review</a></td>
+</td>
+    </tr>
     <tr>
         <a href="#" onclick="window.location.href='/manager/leave/managerView'; return false;">Back</a>
     </tr>
