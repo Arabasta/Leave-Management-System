@@ -62,6 +62,16 @@
                      <a th:href="@{/manager/leave/managerView}">Reset</a>
                 </fieldset>
             </form>
+
+            <!-- Data Export - Save as CSV -->
+            <form class="form-inline text-center" method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeLeaveApplicationsCSV}">
+                <div class="form-group">
+                    <div class="input">
+                        <button type="submit" class="btn btn-primary">Save as CSV</button>
+                        <input type="hidden" th:field="${reportingDTO.applications}">
+                    </div>
+                </div>
+            </form>
         </td>
 
     </tr>
