@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequestMapping("manager/leave")
@@ -60,6 +61,7 @@ public class ManagerLeaveController {
                          @RequestParam("searchType") String searchType,
                          @RequestParam("startDate") String startDate,
                          @RequestParam("endDate") String endDate,
+                         @RequestParam("leaveStatus") String leaveStatus,
                          Model model) {
         int managerId = authenticationService.getLoggedInEmployeeId();
         List<LeaveApplication> applications = leaveApplicationService
@@ -80,6 +82,9 @@ public class ManagerLeaveController {
         }
         if (!startDate.isBlank() && !endDate.isBlank()) {
             applications = leaveApplicationService.filterByStringDateRange(applications, startDate, endDate);
+        }
+        if (!Objects.equals(leaveStatus, "ALL")) {
+            applications = leaveApplicationService.filterByStringLeaveStatus(applications, leaveStatus);
         }
         model.addAttribute("subordinateLeaveApplications",applications);
         return "manager/leave-application/managerViewLeave";

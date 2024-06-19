@@ -125,4 +125,10 @@ public class LeaveApplicationService implements ILeaveApplication {
             return applications;
         }
     }
+
+    public List<LeaveApplication> filterByStringLeaveStatus(List<LeaveApplication> applications, String leaveStatus) {
+        return applications.stream()
+                .filter(x -> x.getLeaveStatus().name().equals(leaveStatus))
+                .toList();
+    }
 }
