@@ -14,7 +14,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 import static com.team4.leaveprocessingsystem.CompensationClaimObjectMother.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,11 +68,11 @@ public class CompensationClaimRepositoryTest {
     @Test
     public void testSaveEntity() {
         CompensationClaim modelToSave = new CompensationClaim();
-        modelToSave.setCompensationClaimStatus(CompensationClaimStatusEnum.REJECTED);
+        modelToSave.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
         modelToSave.setClaimingEmployee(testEmployee);
         modelToSave.setClaimDateTime(fixedNow);
-        modelToSave.setOvertimeStartDateTime(fixedNow.minusDays(4));
-        modelToSave.setOvertimeEndDateTime(fixedNow.minusDays(3).minusHours(20));
+        modelToSave.setOvertimeStart(fixedNow.minusDays(4));
+        modelToSave.setOvertimeEnd(fixedNow.minusDays(3).minusHours(20));
         modelToSave.setOvertimeHours(4f);
         modelToSave.setCompensationLeaveRequested(0.5f);
         modelToSave.setApprovingManager(testManager);
@@ -82,11 +81,11 @@ public class CompensationClaimRepositoryTest {
         CompensationClaim savedModel = compensationClaimRepository.save(modelToSave);
 
         assertThat(savedModel.getId()).isNotNull();
-        assertThat(savedModel.getCompensationClaimStatus()).isEqualTo(CompensationClaimStatusEnum.REJECTED);
+        assertThat(savedModel.getClaimStatus()).isEqualTo(CompensationClaimStatusEnum.REJECTED);
         assertThat(savedModel.getClaimingEmployee()).isEqualTo(testEmployee);
         assertThat(savedModel.getClaimDateTime()).isEqualTo(fixedNow);
-        assertThat(savedModel.getOvertimeStartDateTime()).isEqualTo(fixedNow.minusDays(4));
-        assertThat(savedModel.getOvertimeEndDateTime()).isEqualTo(fixedNow.minusDays(3).minusHours(20));
+        assertThat(savedModel.getOvertimeStart()).isEqualTo(fixedNow.minusDays(4));
+        assertThat(savedModel.getOvertimeEnd()).isEqualTo(fixedNow.minusDays(3).minusHours(20));
         assertThat(savedModel.getOvertimeHours()).isEqualTo(4f);
         assertThat(savedModel.getCompensationLeaveRequested()).isEqualTo(0.5f);
         assertThat(savedModel.getApprovingManager()).isEqualTo(testManager);
