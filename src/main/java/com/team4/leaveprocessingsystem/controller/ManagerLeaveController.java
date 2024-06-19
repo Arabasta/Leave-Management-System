@@ -33,10 +33,12 @@ public class ManagerLeaveController {
     private final LeaveApplicationService leaveApplicationService;
     private final ManagerService managerService;
     private final LeaveBalanceService leaveBalanceService;
+    private final ReportingService reportingService;
 
     public ManagerLeaveController(EmployeeService employeeService, AuthenticationService authenticationService,
                                   EmailApiService emailApiService, UserService userService,
-                                  LeaveApplicationService leaveApplicationService, ManagerService managerService, LeaveBalanceService leaveBalanceService) {
+                                  LeaveApplicationService leaveApplicationService, ManagerService managerService,
+                                  LeaveBalanceService leaveBalanceService, ReportingService reportingService) {
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
         this.emailApiService = emailApiService;
@@ -44,49 +46,24 @@ public class ManagerLeaveController {
         this.leaveApplicationService = leaveApplicationService;
         this.managerService = managerService;
         this.leaveBalanceService = leaveBalanceService;
+        this.reportingService = reportingService;
     }
 
-    @GetMapping("managerView")
-    public String managerViewLeave(Model model) {
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-
-        int managerId = employee.getId();
-        List<LeaveApplication> subordinateLeaveApplications = leaveApplicationService.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-        model.addAttribute("subordinateLeaveApplications", subordinateLeaveApplications);
-        return "manager/leave-application/managerViewLeave";
-    }
-
-    @RequestMapping(value="searchingLeaveApplications")
-    public String search(@RequestParam("keyword") String keyword,
-                         @RequestParam("searchType") String searchType,
-                         @RequestParam("startDate") String startDate,
-                         @RequestParam("endDate") String endDate,
-                         @RequestParam("leaveStatus") String leaveStatus,
+    // TODO: implement validators for below parameters
+    @RequestMapping(value="managerView")
+    public String viewLeaveApplications(@RequestParam(value="keyword", required = false) String keyword,
+                         @RequestParam(value="searchType", required = false) String searchType,
+                         @RequestParam(value="startDate", required = false) String startDate,
+                         @RequestParam(value="endDate", required = false) String endDate,
+                         @RequestParam(value="leaveStatus", required = false, defaultValue = "ALL") String leaveStatus,
                          Model model) {
         int managerId = authenticationService.getLoggedInEmployeeId();
-        List<LeaveApplication> applications = leaveApplicationService
-                .findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
 
-        if (searchType.equals("name")) {
-            applications = leaveApplicationService.getLeaveApplicationIfBelongsToManagerSubordinates(
-                    leaveApplicationService.findByEmployeeName(StringCleaningUtil.forDatabase(keyword)), managerId);
-        }
-        if (searchType.equals("id")) { // TODO: implement validator instead of using try-catch
-            try {
-                int id = Integer.parseInt(keyword);
-                applications = leaveApplicationService.findByEmployeeId(id);
-            } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
-                applications.clear();
-            }
-        }
-        if (!startDate.isBlank() && !endDate.isBlank()) {
-            applications = leaveApplicationService.filterByStringDateRange(applications, startDate, endDate);
-        }
-        if (!Objects.equals(leaveStatus, "ALL")) {
-            applications = leaveApplicationService.filterByStringLeaveStatus(applications, leaveStatus);
-        }
-        model.addAttribute("subordinateLeaveApplications",applications);
+        List<LeaveApplication> applications = leaveApplicationService
+                .filterManagerViewSearch(managerId, keyword, searchType, startDate, endDate, leaveStatus);
+
+        model.addAttribute("reportingDTO",reportingService
+                .setForLeavesReport(leaveApplicationService.setArrayList(applications)));
         return "manager/leave-application/managerViewLeave";
     }
 
