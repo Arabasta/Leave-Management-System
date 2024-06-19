@@ -45,7 +45,8 @@ public class WebSecurityConfig {
                                 "/auth/login",
                                 "/js/auth/loginValidation.js",
                                 "/diagram",
-                                "/images/aws_system_architecture_diagram.png").permitAll()
+                                "/images/aws_system_architecture_diagram.png",
+                                "/icons/tooltip-icon.png").permitAll()
 
                          // employee
                         .requestMatchers("/", "/employee/home").hasAnyRole("EMPLOYEE", "MANAGER")
