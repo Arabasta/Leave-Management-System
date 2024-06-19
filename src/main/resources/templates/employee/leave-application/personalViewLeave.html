@@ -21,22 +21,21 @@ margin-left: auto; margin-right: auto;">
         <th>Compensation Leave</th>
         <th>Medical Leave</th>
         <th>Compassionate Leave</th>
-
     </tr>
     <tr>
         <td>Remaining Balance</td>
-        <td th:text="${LeaveBalance.getCurrentAnnualLeave()}">Annual Leave</td>
-        <td th:text="${LeaveBalance.getCurrentCompensationLeave()}">Compensation Leave</td>
-        <td th:text="${LeaveBalance.getCurrentMedicalLeave()}">Medical Leave</td>
-        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE - LeaveBalance.compassionateLeaveConsumed}">-COMPASSIONATE LEAVE</td>
+        <td th:text="${LeaveBalance.getCurrentAnnualLeave()}"></td>
+        <td th:text="${LeaveBalance.getCurrentCompensationLeave()}"></td>
+        <td th:text="${LeaveBalance.getCurrentMedicalLeave()}"></td>
+        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}"></td>
     </tr>
     </tr>
     <tr>
-        <td>Total Balance</td>
-        <td th:text="${LeaveBalance.annualLeave}">Annual Leave</td>
-        <td th:text="${LeaveBalance.compensationLeave}">Compensation Leave</td>
-        <td th:text="${LeaveBalance.medicalLeave}">Medical Leave</td>
-        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}">-COMPASSIONATE LEAVE</td>
+        <td>Total Entitlement</td>
+        <td th:text="${LeaveBalance.annualLeave}"></td>
+        <td th:text="${LeaveBalance.compensationLeave}"></td>
+        <td th:text="${LeaveBalance.medicalLeave}"></td>
+        <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}"></td>
     </tr>
 </table>
 <table th:if="${not #lists.isEmpty(personalLeaveApplications)}" style="width:80%;
@@ -65,6 +64,35 @@ white;">
         <td style="text-align: center; font-weight: bold;"><a href="#" onclick="history.go(-1); return false;">Back</a></td>
     </tr>
 </table>
-
+<div th:if="${page.totalPages > 1}">
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/employee/leave/personalHistory(pageNo=${page.number - 1}, pageSize=${page.size})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link" th:text="${page.number + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.number + 1 == page.totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/employee/leave/personalHistory(pageNo=${page.number + 1}, pageSize=${page.size})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+    <form th:action="@{/employee/leave/personalHistory}" method="get">
+        <label for="pageSize">Results per page:</label>
+        <select id="pageSize" name="pageSize" onchange="this.form.submit()">
+            <option th:value="10" th:text="10" th:selected="${page.size == 10}"></option>
+            <option th:value="20" th:text="20" th:selected="${page.size == 20}"></option>
+            <option th:value="25" th:text="25" th:selected="${page.size == 25}"></option>
+        </select>
+        <input type="hidden" name="pageNo" th:value="${page.number}"/>
+    </form>
+</div>
 </body>
 </html>
