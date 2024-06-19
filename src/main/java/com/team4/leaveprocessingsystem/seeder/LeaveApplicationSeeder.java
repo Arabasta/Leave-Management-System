@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.seeder;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
@@ -41,12 +42,12 @@ public class LeaveApplicationSeeder {
         this.publicHolidayService = publicHolidayService;
     }
 
-    // Note: bypasses entitlement validation
+    // Note: doesn't validate available balance against leave that are pending approval
     public void seed() {
         if (leaveApplicationService.count() == 0) {
             List<LocalDate> publicHolidays = publicHolidayService.publicHolidayDateList();
             List<LocalDate> dateList = new ArrayList<>();
-            int numOfLeaves = 10; // number of leave applications to be generated per employee
+            int numOfLeaves = 50; // number of leave applications to be generated per employee
             int durationBound = 3; // max duration of leave applications
 
             LocalDate dateToAdd = getWorkingDay(LocalDate.now(), publicHolidays);
@@ -90,6 +91,25 @@ public class LeaveApplicationSeeder {
         leaveApplication.setStartDate(startDate);
         leaveApplication.setEndDate(endDate);
         leaveApplication.setSubmissionReason(reason);
+
+        Long numOfLeaveRequired = DateTimeCounterUtils.numOfLeaveToBeCounted(startDate, endDate, leaveApplication.getLeaveType(), publicHolidayService);
+        LeaveBalance empLeaveBalance = leaveBalanceService.findByEmployee(employee.getId());
+        float numOfLeaveAvailable = 0f;
+        switch (leaveApplication.getLeaveType()) {
+            case MEDICAL:
+                numOfLeaveAvailable = empLeaveBalance.getCurrentMedicalLeave();
+                if (numOfLeaveAvailable < numOfLeaveRequired) { return; }
+                break;
+            case ANNUAL:
+                numOfLeaveAvailable = empLeaveBalance.getCurrentAnnualLeave();
+                if (numOfLeaveAvailable < numOfLeaveRequired) { return; }
+                break;
+            case COMPENSATION:
+                numOfLeaveAvailable = empLeaveBalance.getCurrentCompensationLeave();
+                if (numOfLeaveAvailable < numOfLeaveRequired) { return; }
+                break;
+        }
+
         leaveApplicationService.save(leaveApplication);
         if (leaveApplication.getLeaveStatus() == LeaveStatusEnum.APPROVED) {
             leaveBalanceService.update(leaveApplication);
