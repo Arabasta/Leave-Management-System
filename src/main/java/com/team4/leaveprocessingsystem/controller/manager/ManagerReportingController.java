@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem.controller.manager;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.dataTransferObjects.ReportingDTO;
 import com.team4.leaveprocessingsystem.service.*;
@@ -64,16 +65,30 @@ public class ManagerReportingController {
     */
     @PostMapping("downloadEmployeeClaimsCSV")
     public String downloadEmployeeClaimsCSV(@ModelAttribute("claims") ArrayList<CompensationClaim> claims,
-                             HttpServletResponse response,
-                             Model model) throws IOException {
+                             HttpServletResponse response) throws IOException {
         if (claims == null || claims.isEmpty()) {
             return "redirect:/manager/reporting/viewCompensationClaims";
         } else {
             response.setContentType("text/csv");
             response.setHeader("Content-Disposition", "attachment; file=export.csv");
             dataExportService.downloadManagerReportingCompensationClaimsCSV(response.getWriter(), claims);
-            model.addAttribute("list",claims);
         }
         return "manager/reporting/view-employee-claims";
+    }
+
+    /*
+        MANAGER - POST - DOWNLOAD EMPLOYEE LEAVE APPLICATIONS
+    */
+    @PostMapping("downloadEmployeeLeaveApplicationsCSV")
+    public String downloadEmployeeApplicationsCSV(@ModelAttribute("applications") ArrayList<LeaveApplication> applications,
+                                            HttpServletResponse response) throws IOException {
+        if (applications == null || applications.isEmpty()) {
+            return "redirect:/manager/leave/managerView";
+        } else {
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; file=export.csv");
+            dataExportService.downloadManagerReportingLeaveApplicationsCSV(response.getWriter(), applications);
+        }
+        return "manager/leave/managerView";
     }
 }
