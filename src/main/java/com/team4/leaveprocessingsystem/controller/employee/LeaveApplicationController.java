@@ -60,7 +60,6 @@ public class LeaveApplicationController {
         leaveApplication.setLeaveStatus(LeaveStatusEnum.APPLIED);
 
         model.addAttribute("publicHolidays", publicHolidayService.publicHolidayDateList());
-
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
 
@@ -77,6 +76,7 @@ public class LeaveApplicationController {
             throw new LeaveApplicationUpdateException("Leave application cannot be edited");
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.UPDATED);
+        model.addAttribute("publicHolidays", publicHolidayService.publicHolidayDateList());
         model.addAttribute("leave", leaveApplication);
         model.addAttribute("leaveTypes", LeaveTypeEnum.values());
 
@@ -86,6 +86,7 @@ public class LeaveApplicationController {
     @PostMapping("save")
     public String saveLeave(@Valid @ModelAttribute("leave") LeaveApplication leaveApplication, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("publicHolidays", publicHolidayService.publicHolidayDateList());
             model.addAttribute("leave", leaveApplication);
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
             return "employee/leave-application/leaveForm";
