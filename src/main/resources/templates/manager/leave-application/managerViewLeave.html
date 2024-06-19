@@ -46,6 +46,16 @@
                     <input type="date" class="form-control" name="endDate">
                 </div>
 
+                <!-- Sort by Leave Application Status -->
+                <div class="input-group mb-3 w-50">
+                    <label class="input-group-text" for="applicationStatus">Leave Status</label>
+                    <select class="form-control" name="leaveStatus" id="applicationStatus">
+                        <option selected>ALL</option>
+                        <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
+                                th:value="${status}" th:text="${status}"></option>
+                    </select>
+                </div>
+
                 <fieldset>
                     <input type="submit" value="Search"
                     />
