@@ -56,20 +56,4 @@ public class LeaveApplication {
     private String contactDetails;
 
     public LeaveApplication() {}
-
-    // TODO: to remove below after Movement Registry is complete (used to test LeaveApplicationRepository Query)
-//    @Override
-//    public String toString() {
-//        return "Leave Application Id: "+id
-//                +", Employee: "+submittingEmployee.getName()
-//                +", Manager: "+(reviewingManager!=null ? reviewingManager.getName() : "N.A.")
-//                +", Status: "+leaveStatus
-//                +", Type: "+leaveType
-//                +", Start: "+startDate
-//                +", End: "+endDate
-//                +", Submission Reason: "+submissionReason
-//                +", Rejection Reason: "+rejectionReason
-//                +", Work Dissemination: "+workDissemination
-//                +", Contact Details: "+contactDetails;
-//    }
 }
