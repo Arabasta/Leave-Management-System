@@ -11,11 +11,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 // source: https://docs.spring.io/spring-security/reference/servlet/getting-started.html
@@ -28,12 +26,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableAsync
 @EnableWebSecurity
 public class WebSecurityConfig {
-    // used for loading user data
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final RedirectService redirectService;
 
     @Autowired
-    private RedirectService redirectService;
+    public WebSecurityConfig(UserService userService, RedirectService redirectService) {
+        this.userService = userService;
+        this.redirectService = redirectService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,7 +46,8 @@ public class WebSecurityConfig {
                                 "/js/auth/loginValidation.js",
                                 "/diagram",
                                 "/images/aws_system_architecture_diagram.png",
-                                "/icons/tooltip-icon.png").permitAll()
+                                "/icons/tooltip-icon.png",
+                                "/error/**").permitAll()
 
                          // employee
                         .requestMatchers("/", "/employee/**").hasAnyRole("EMPLOYEE", "MANAGER")
@@ -55,7 +56,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/manager/**").hasRole("MANAGER")
 
                         // admin
-                        .requestMatchers("/", "/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/admin/**", "/error/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -73,7 +74,9 @@ public class WebSecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling((exceptions) -> exceptions
-                        .accessDeniedHandler(accessDeniedHandler())
+                        .accessDeniedPage("/error/403-forbidden")
+                        .authenticationEntryPoint((request, response, authException)
+                                -> response.sendRedirect("/error/401-badrequest"))
                 )
                 .httpBasic(Customizer.withDefaults()) //For API consumption, allow http requests with authorization header
                 .csrf((csrf) -> csrf
@@ -92,14 +95,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        // redirects to 403-forbidden when accessDeniedException thrown
-        return (request, response, accessDeniedException) -> response.sendRedirect("/error/403-forbidden");
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder,
-                                                       UserDetailsService userDetailsService) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authMB = http.getSharedObject(AuthenticationManagerBuilder.class);
         authMB.userDetailsService(userService).passwordEncoder(passwordEncoder());
         return authMB.build();
