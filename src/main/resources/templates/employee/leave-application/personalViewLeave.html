@@ -12,9 +12,7 @@
 <div class="container mt-4">
     <h2 class="text-center">Personal Leave History</h2>
 
-    <h3 class="text-center" th:if="${#lists.isEmpty(personalLeaveApplications)}">No Records.</h3>
-
-    <div th:if="${not #lists.isEmpty(personalLeaveApplications)}">
+    <div>
         <table class="table table-bordered table-striped mt-3">
             <thead>
             <tr>
@@ -22,7 +20,7 @@
                 <th>Annual Leave</th>
                 <th>Compensation Leave</th>
                 <th>Medical Leave</th>
-                <th>Compassionate Leave</th>
+
             </tr>
             </thead>
             <tbody>
@@ -31,18 +29,31 @@
                 <td th:text="${LeaveBalance.getCurrentAnnualLeave()}"></td>
                 <td th:text="${LeaveBalance.getCurrentCompensationLeave()}"></td>
                 <td th:text="${LeaveBalance.getCurrentMedicalLeave()}"></td>
-                <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}"></td>
             </tr>
             <tr>
-                <td>Total Balance</td>
+                <td>Total Entitlement</td>
                 <td th:text="${LeaveBalance.annualLeave}"></td>
                 <td th:text="${LeaveBalance.compensationLeave}"></td>
                 <td th:text="${LeaveBalance.medicalLeave}"></td>
-                <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}"></td>
             </tr>
             </tbody>
         </table>
-
+        <table class="table table-bordered table-striped mt-3">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Compassionate Leave</th>
+                <th>Unpaid Leave</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Leave Consumed</td>
+                <td th:text="${LeaveBalance.getCompassionateLeaveConsumed()}"></td>
+                <td th:text="${LeaveBalance.getUnpaidLeaveConsumed()}"></td>
+            </tr>
+            </tbody>
+        </table>
         <table class="table table-bordered table-striped mt-3">
             <thead>
             <tr>
@@ -55,6 +66,12 @@
             </tr>
             </thead>
             <tbody>
+            <tr th:if="${#lists.isEmpty(personalLeaveApplications)}">
+                <td colspan="6" class="text-center">
+                    <h3 class="text-center">No Records.</h3>
+                </td>
+            </tr>
+
             <tr th:each="leaveApplication:${personalLeaveApplications}">
                 <td th:text="${leaveApplication.getId()}"></td>
                 <td th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}"></td>
