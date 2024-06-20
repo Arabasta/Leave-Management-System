@@ -69,6 +69,35 @@ public class LeaveBalanceService implements ILeaveBalance {
 
     @Override
     @Transactional
+    public void refund(LeaveApplication leaveApplication){
+        // Refund an employee's leave balance when cancelled
+        Employee employee = leaveApplication.getSubmittingEmployee();
+        LeaveBalance empLeaveBalance = employee.getLeaveBalance();
+        LeaveTypeEnum leaveType = leaveApplication.getLeaveType();
+        Long numOfLeaveToBeCounted = DateTimeCounterUtils.numOfLeaveToBeCounted(leaveApplication.getStartDate(), leaveApplication.getEndDate(), leaveType, publicHolidayService);
+        switch(leaveType){
+            case MEDICAL:
+                empLeaveBalance.setCurrentMedicalLeave(empLeaveBalance.getCurrentMedicalLeave() + numOfLeaveToBeCounted);
+                break;
+            case ANNUAL:
+                empLeaveBalance.setCurrentAnnualLeave(empLeaveBalance.getCurrentAnnualLeave() + numOfLeaveToBeCounted);
+                break;
+            case COMPASSIONATE:
+                empLeaveBalance.setCompassionateLeaveConsumed(empLeaveBalance.getCompassionateLeaveConsumed() - numOfLeaveToBeCounted);
+                break;
+            case COMPENSATION:
+                empLeaveBalance.setCurrentCompensationLeave(empLeaveBalance.getCurrentCompensationLeave() + numOfLeaveToBeCounted);
+                break;
+            case UNPAID:
+                empLeaveBalance.setUnpaidLeaveConsumed(empLeaveBalance.getUnpaidLeaveConsumed() - numOfLeaveToBeCounted);
+                break;
+        }
+
+        leaveBalanceRepository.save(empLeaveBalance);
+    }
+
+    @Override
+    @Transactional
     public void updateCompensationLeave(CompensationClaim claim) {
         LeaveBalance employeeLeaveBalance = claim.getClaimingEmployee().getLeaveBalance();
         employeeLeaveBalance.setCompensationLeave(employeeLeaveBalance.getCompensationLeave() + claim.getCompensationLeaveRequested());

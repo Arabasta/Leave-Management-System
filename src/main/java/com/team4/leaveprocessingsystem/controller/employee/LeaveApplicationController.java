@@ -144,6 +144,7 @@ public class LeaveApplicationController {
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
+        leaveBalanceService.refund(leaveApplication);
 
         return "redirect:/employee/leave/personalHistory";
     }
