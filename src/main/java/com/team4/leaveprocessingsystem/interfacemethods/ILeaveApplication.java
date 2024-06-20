@@ -23,6 +23,6 @@ public interface ILeaveApplication {
                                                    String startDate,
                                                    String endDate,
                                                    String leaveStatus,
-                                                   Pageable page););
+                                                   Pageable page);
     Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth);
 }

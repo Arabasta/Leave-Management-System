@@ -153,7 +153,6 @@ public class LeaveApplicationService implements ILeaveApplication {
         }
         return output;
     }
-}
 
     public Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth) {
         String year;
