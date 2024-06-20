@@ -1,128 +1,137 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: html_head">
-
-
-<title>Leave Application</title>
+    <title>Leave Application</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
-<h3>Leave Application Details</h3>
 
-<script>
-    //Ensure either Approve or Reject selected
-    function validateForm() {
-        const leaveStatusChecked = document.querySelector('input[name="leaveStatus"]:checked');
-        if (!leaveStatusChecked) {
-            alert("Please select either Approve or Reject.");
-            return false;
+<div class="container mt-4">
+    <h3 class="text-center">Leave Application Details</h3>
+
+    <script>
+        // Ensure either Approve or Reject is selected
+        function validateForm() {
+            const leaveStatusChecked = document.querySelector('input[name="leaveStatus"]:checked');
+            if (!leaveStatusChecked) {
+                alert("Please select either Approve or Reject.");
+                return false;
+            }
+            const leaveStatus = leaveStatusChecked.value;
+            const rejectionReason = document.getElementById('rejectionReason').value;
+
+            // Ensure rejection reason is given
+            if (leaveStatus === 'REJECTED' && rejectionReason.trim() === '') {
+                alert("Please provide a reason for rejection.");
+                return false;
+            }
+            return true;
         }
-        const leaveStatus = leaveStatusChecked.value;
-        const rejectionReason = document.getElementById('rejectionReason').value;
 
-        //Ensure rejection reason given
-        if (leaveStatus === 'REJECTED' && rejectionReason.trim() === '') {
-            alert("Please provide a reason for rejection.");
-            return false;
-        }
-        return true;
-    }
+        // Check for the success parameter in the URL
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('updateSuccess') === 'true') {
+                alert("Leave status has been updated successfully.");
+            }
+        };
+    </script>
 
-    // Check for the success parameter in the URL
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('updateSuccess') === 'true') {
-            alert("Leave status has been updated successfully.");
-        }
-    };
-</script>
+    <form th:object="${leave}" method="post" th:action="@{/manager/leave/submitLeaveApplication}" onsubmit="return validateForm();">
+        <input type="hidden" th:field="${leave.id}"/>
+        <input type="hidden" th:field="${leave.submittingEmployee}"/>
+        <input type="hidden" th:field="${leave.reviewingManager}"/>
+        <input type="hidden" th:field="${leave.leaveType}"/>
+        <input type="hidden" th:field="${leave.startDate}"/>
+        <input type="hidden" th:field="${leave.endDate}"/>
+        <input type="hidden" th:field="${leave.submissionReason}"/>
+        <input type="hidden" th:field="${leave.workDissemination}"/>
+        <input type="hidden" th:field="${leave.contactDetails}"/>
 
-<form th:object="${leave}" method="post" th:action="@{/manager/leave/submitLeaveApplication}" onsubmit="return validateForm();">
-    <input type="hidden" th:field="${leave.id}"/>
-    <input type="hidden" th:field="${leave.submittingEmployee}"/>
-    <input type="hidden" th:field="${leave.reviewingManager}"/>
-    <input type="hidden" th:field="${leave.leaveType}"/>
-    <input type="hidden" th:field="${leave.startDate}"/>
-    <input type="hidden" th:field="${leave.endDate}"/>
-    <input type="hidden" th:field="${leave.submissionReason}"/>
-    <input type="hidden" th:field="${leave.workDissemination}"/>
-    <input type="hidden" th:field="${leave.contactDetails}"/>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <td>Employee Name</td>
+                <td th:text="${leave.submittingEmployee.name}"></td>
+            </tr>
+            <tr>
+                <td>Leave Type</td>
+                <td th:text="${leave.leaveType}"></td>
+            </tr>
+            <tr>
+                <td>Start Date</td>
+                <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
+            </tr>
+            <tr>
+                <td>End Date</td>
+                <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
+            </tr>
+            <tr>
+                <td>Approving Manager</td>
+                <td th:text="${leave.submittingEmployee.manager.name}"></td>
+            </tr>
+            <tr>
+                <td>Reason</td>
+                <td th:text="${leave.submissionReason}"></td>
+            </tr>
+            <tr>
+                <td>Work Dissemination (if any)</td>
+                <td th:text="${leave.workDissemination}"></td>
+            </tr>
+            <tr>
+                <td>Contact Details (if on an overseas trip)</td>
+                <td th:text="${leave.contactDetails}"></td>
+            </tr>
+            <tr>
+                <td>Leave Status</td>
+                <td th:text="${leave.leaveStatus}"></td>
+            </tr>
+            <tr>
+                <td>Approval Status</td>
+                <td>
+                    <!-- Approve or Reject Buttons here -->
+                    <fieldset class="form-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="approve" name="leaveStatus" value="APPROVED" th:field="*{leaveStatus}" />
+                            <label class="form-check-label" for="approve">Approve</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="reject" name="leaveStatus" value="REJECTED" th:field="*{leaveStatus}" />
+                            <label class="form-check-label" for="reject">Reject</label>
+                        </div>
+                    </fieldset>
+                </td>
+                <td th:if="${#fields.hasErrors('leaveStatus')}" th:errors="*{leaveStatus}"></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="rejectionReason">Rejection Reason</label>
+                </td>
+                <td>
+                    <textarea id="rejectionReason" class="form-control" rows="2" th:field="*{rejectionReason}"></textarea>
+                </td>
+                <td th:if="${#fields.hasErrors('rejectionReason')}" th:errors="*{rejectionReason}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Confirm" class="btn btn-primary" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="#" onclick="window.location.href='/manager/leave/pendingLeaves'; return false;" class="btn btn-secondary">Back</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
 
-    <table>
-        <tbody>
-        <tr>
-            <td>Employee Name</td>
-            <td th:text="${leave.submittingEmployee.name}"></td>
-        </tr>
-        <tr>
-            <td>Leave Type</td>
-            <td th:text="${leave.leaveType}"></td>
-        </tr>
-        <tr>
-            <td>Start Date</td>
-            <td th:text="${#temporals.format(leave.startDate, 'dd-MMM-yyyy')}"></td>
-        </tr>
-        <tr>
-            <td>End Date</td>
-            <td th:text="${#temporals.format(leave.endDate, 'dd-MMM-yyyy')}"></td>
-        </tr>
-        <tr>
-            <td>Approving Manager</td>
-            <td th:text="${leave.submittingEmployee.manager.name}"></td>
-        </tr>
-        <tr>
-            <td>Reason</td>
-            <td th:text="${leave.submissionReason}"></td>
-        </tr>
-        <tr>
-            <td>Work Dissemination (if any)</td>
-            <td th:text="${leave.workDissemination}"></td>
-        </tr>
-        <tr>
-            <td>Contact Details (if on an overseas trip)</td>
-            <td th:text="${leave.contactDetails}"></td>
-        </tr>
-        <tr>
-            <td>Leave Status</td>
-            <td th:text="${leave.leaveStatus}"></td>
-        </tr>
-        <tr>
-            <td>Approval Status</td>
-            <td>
-                <!-- Approve or Reject Buttons here -->
-                <fieldset>
-                    <label for="approve">Approve</label>
-                    <input type="radio" id="approve" name="leaveStatus" value="APPROVED" th:field="*{leaveStatus}" />
-                    &nbsp;&nbsp;
-                    <label for="reject">Reject</label>
-                    <input type="radio" id="reject" name="leaveStatus" value="REJECTED" th:field="*{leaveStatus}" />
-                </fieldset>
-            </td>
-            <td th:if="${#fields.hasErrors('leaveStatus')}" th:errors="*{leaveStatus}"></td>
-        </tr>
-        <tr>
-            <td>
-                <label for="rejectionReason">Rejection Reason</label>
-            </td>
-            <td>
-                <textarea id="rejectionReason" rows="2" cols="50" th:field="*{rejectionReason}"></textarea>
-            </td>
-            <td th:if="${#fields.hasErrors('rejectionReason')}" th:errors="*{rejectionReason}"></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input th:type="submit" th:value="Confirm" class="blcass" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <a href="#" onclick="window.location.href='/manager/leave/pendingLeaves'; return false;">Back</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</form>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2ABjtSj7R8gFqjwkJXYa2yMwD4/Op3ZSffvENxyl5P4wKxqlpF4F2N3y9p" crossorigin="anonymous"></script>
 </body>
-
 </html>
