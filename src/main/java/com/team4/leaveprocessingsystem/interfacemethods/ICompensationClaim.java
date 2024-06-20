@@ -34,8 +34,9 @@ public interface ICompensationClaim {
 
     List<CompensationClaim> findByEmployee(Employee employee);
 
+    List<CompensationClaim> filterByEmployeeListAndManager(List<Employee> list, Manager manager);
+
     Map<String, List<CompensationClaim>> findPendingReviewByManager(Manager manager);
 
-    @Transactional
     List<CompensationClaim> findByApprovingManager(Manager manager);
 }

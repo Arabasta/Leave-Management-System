@@ -34,6 +34,7 @@ public class LeaveApplicationController {
     private final EmailApiService emailApiService;
     private final UserService userService;
     private final PublicHolidayService publicHolidayService;
+    private final LeaveBalanceService leaveBalanceService;
 
     @InitBinder("leave")
     private void initLeaveApplicationBinder(WebDataBinder binder) {
@@ -43,7 +44,8 @@ public class LeaveApplicationController {
     @Autowired
     public LeaveApplicationController(LeaveApplicationService leaveApplicationService, EmployeeService employeeService,
                                       AuthenticationService authenticationService, LeaveApplicationValidator leaveApplicationValidator,
-                                      EmailApiService emailApiService, UserService userService, PublicHolidayService publicHolidayService) {
+                                      EmailApiService emailApiService, UserService userService, PublicHolidayService publicHolidayService,
+                                      LeaveBalanceService leaveBalanceService) {
         this.leaveApplicationService = leaveApplicationService;
         this.employeeService = employeeService;
         this.authenticationService = authenticationService;
@@ -51,6 +53,7 @@ public class LeaveApplicationController {
         this.emailApiService = emailApiService;
         this.userService = userService;
         this.publicHolidayService = publicHolidayService;
+        this.leaveBalanceService = leaveBalanceService;
     }
 
     @GetMapping("create")
@@ -94,9 +97,13 @@ public class LeaveApplicationController {
             model.addAttribute("leaveTypes", LeaveTypeEnum.values());
             return "employee/leave-application/leaveForm";
         }
+        if (leaveApplication.getReviewingManager() == null){
+            leaveApplication.setLeaveStatus(LeaveStatusEnum.APPROVED);
+            leaveBalanceService.update(leaveApplication);
+        }
         leaveApplicationService.save(leaveApplication);
 
-        // uncomment before submitting due to limit
+        // TODO: uncomment before submitting due to limit
         // Send email notification to the manager
 //        if (leaveApplication.getReviewingManager() != null){
 //            try {
@@ -137,6 +144,7 @@ public class LeaveApplicationController {
         }
         leaveApplication.setLeaveStatus(LeaveStatusEnum.CANCELLED);
         leaveApplicationService.save(leaveApplication);
+        leaveBalanceService.refund(leaveApplication);
 
         return "redirect:/employee/leave/personalHistory";
     }

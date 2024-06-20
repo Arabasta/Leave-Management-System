@@ -1,26 +1,22 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.service.*;
 import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
-import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RequestMapping("manager/leave")
 @Controller
@@ -52,18 +48,26 @@ public class ManagerLeaveController {
     // TODO: implement validators for below parameters
     @RequestMapping(value="managerView")
     public String viewLeaveApplications(@RequestParam(value="keyword", required = false) String keyword,
-                         @RequestParam(value="searchType", required = false) String searchType,
-                         @RequestParam(value="startDate", required = false) String startDate,
-                         @RequestParam(value="endDate", required = false) String endDate,
-                         @RequestParam(value="leaveStatus", required = false, defaultValue = "ALL") String leaveStatus,
-                         Model model) {
+                                        @RequestParam(value="searchType", required = false) String searchType,
+                                        @RequestParam(value="startDate", required = false) String startDate,
+                                        @RequestParam(value="endDate", required = false) String endDate,
+                                        @RequestParam(value="leaveStatus", required = false, defaultValue = "ALL") String leaveStatus,
+                                        @RequestParam(defaultValue = "0") Integer pageNo,
+                                        @RequestParam(defaultValue = "10") Integer pageSize,
+                                        Model model) {
         int managerId = authenticationService.getLoggedInEmployeeId();
-
-        List<LeaveApplication> applications = leaveApplicationService
-                .filterManagerViewSearch(managerId, keyword, searchType, startDate, endDate, leaveStatus);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<LeaveApplication> applications = leaveApplicationService
+                .filterManagerViewSearch(managerId, keyword, searchType, startDate, endDate, leaveStatus, pageable);
 
         model.addAttribute("reportingDTO",reportingService
-                .setForLeavesReport(leaveApplicationService.setArrayList(applications)));
+                .setForLeavesReport(leaveApplicationService.setArrayList(applications.getContent())));
+        model.addAttribute("page", applications);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("leaveStatus", leaveStatus);
         return "manager/leave-application/managerViewLeave";
     }
 
@@ -96,7 +100,7 @@ public class ManagerLeaveController {
     // MANAGER - POST - REVIEW LEAVE APPLICATION
     @PostMapping("/submitLeaveApplication")
     public String reviewLeaveApplication(@Valid @ModelAttribute("leave") LeaveApplication leave,
-                                         BindingResult bindingResult, Model model) {
+                                         BindingResult bindingResult) {
         LeaveApplication existingLeaveApplication = leaveApplicationService.findLeaveApplicationById(leave.getId());
         existingLeaveApplication.setSubmittingEmployee(employeeService.findEmployeeById(leave.getSubmittingEmployee().getId()));
         existingLeaveApplication.setReviewingManager(managerService.findManagerById(leave.getReviewingManager().getId()));
@@ -134,7 +138,7 @@ public class ManagerLeaveController {
         leaveApplicationService.save(existingLeaveApplication);
         leaveBalanceService.update(existingLeaveApplication);
 
-        // uncomment before submitting due to limit
+        // TODO: uncomment before submitting due to limit
         // Send email notification to the employee
 //        try {
 //            String emailAdd = userService.findUserRolesByEmployeeId(existingLeaveApplication.getSubmittingEmployee().getId()).get(0).getEmail();

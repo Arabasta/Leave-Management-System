@@ -74,7 +74,7 @@ public class LeaveApplicationApiController {
 
         leaveApplicationService.save(leaveApplication);
 
-        // uncomment before submitting due to limit
+        // TODO: uncomment before submitting due to limit
         // Send email notification to the manager
 //        if (leaveApplication.getReviewingManager() != null){
 //            try {
