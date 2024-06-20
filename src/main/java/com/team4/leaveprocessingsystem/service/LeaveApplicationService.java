@@ -3,7 +3,6 @@ package com.team4.leaveprocessingsystem.service;
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
-import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
@@ -13,6 +12,8 @@ import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -72,6 +73,12 @@ public class LeaveApplicationService implements ILeaveApplication {
     @Transactional
     public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
         return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
+    }
+
+    @Override
+    @Transactional
+    public Page<LeaveApplication> findBySubmittingEmployeeWithPaging(Employee submittingEmployee, Pageable page) {
+        return leaveApplicationRepository.findBySubmittingEmployeeWithPaging(submittingEmployee, page);
     }
 
     @Override

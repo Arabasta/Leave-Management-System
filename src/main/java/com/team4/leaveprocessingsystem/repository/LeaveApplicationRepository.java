@@ -2,6 +2,8 @@ package com.team4.leaveprocessingsystem.repository;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,9 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
     List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(@Param("managerId") int managerId);
 
     List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee);
+
+    @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee = :employee")
+    Page<LeaveApplication> findBySubmittingEmployeeWithPaging(@Param("employee") Employee submittingEmployee, Pageable page);
 
     @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee.name LIKE %:name%")
     List<LeaveApplication> findByName(@Param("name") String name);

@@ -45,19 +45,19 @@ public class WebSecurityConfig {
                                 "/auth/login",
                                 "/js/auth/loginValidation.js",
                                 "/diagram",
-                                "/images/aws_system_architecture_diagram.png").permitAll()
+                                "/images/aws_system_architecture_diagram.png",
+                                "/icons/tooltip-icon.png").permitAll()
 
                          // employee
-                        .requestMatchers("/", "/employee/home").hasAnyRole("EMPLOYEE", "MANAGER")
+                        .requestMatchers("/", "/employee/**").hasAnyRole("EMPLOYEE", "MANAGER")
 
                         // manager
-                        .requestMatchers("/", "/manager/home/").hasRole("MANAGER")
+                        .requestMatchers("/", "/manager/**").hasRole("MANAGER")
 
                         // admin
-                        .requestMatchers("/", "/admin/home").hasRole("ADMIN")
+                        .requestMatchers("/", "/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
-
                 )
                 // successful login redirection path
                 .formLogin((form) -> form

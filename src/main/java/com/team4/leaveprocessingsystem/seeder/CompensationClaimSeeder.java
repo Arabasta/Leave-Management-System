@@ -9,9 +9,13 @@ import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
 import com.team4.leaveprocessingsystem.service.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.EmployeeService;
 import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class CompensationClaimSeeder {
@@ -20,6 +24,8 @@ public class CompensationClaimSeeder {
     private final EmployeeService employeeService;
     private final LeaveBalanceService leaveBalanceService;
     private final EmployeeRepository employeeRepository;
+    private final Random random;
+    private CompensationClaimStatusEnum[] claimStatusEnum;
 
     public CompensationClaimSeeder(CompensationClaimService compensationClaimService,
                                    EmployeeService employeeService,
@@ -28,113 +34,167 @@ public class CompensationClaimSeeder {
         this.employeeService = employeeService;
         this.leaveBalanceService = leaveBalanceService;
         this.employeeRepository = employeeRepository;
+        this.random = new Random(42);
+        this.claimStatusEnum = CompensationClaimStatusEnum.values();
     }
 
     public void seed() {
         if (compensationClaimService.count() == 0) {
             System.out.println("Start Compensation Claim Seeder");
-
-            Employee employee = employeeService.findByName("Anya Forger");
-            Manager manager = employee.getManager();
-            LeaveBalance employeeLeaveBalance = leaveBalanceService.findByEmployee(employee.getId());
-
-            CompensationClaim compensationClaim1 = new CompensationClaim();
-            compensationClaim1.setClaimingEmployee(employee);
-            compensationClaim1.setClaimStatus(CompensationClaimStatusEnum.APPROVED);
-            compensationClaim1.setCompensationLeaveRequested(0.5f);
-            compensationClaim1.setOvertimeStart(LocalDateTime.now().minusDays(20).minusHours(4));
-            compensationClaim1.setOvertimeEnd(LocalDateTime.now().minusDays(20));
-            compensationClaim1.setClaimDateTime(LocalDateTime.now().minusDays(19));
-            compensationClaim1.setOvertimeHours(4L);
-            compensationClaim1.setApprovingManager(manager);
-            compensationClaim1.setReviewedDateTime(LocalDateTime.now().minusDays(19).minusHours(3));
-            employeeLeaveBalance.setCompensationLeave(0.5f);
-            compensationClaimService.save(compensationClaim1);
-            leaveBalanceService.save(employeeLeaveBalance);
-
-            CompensationClaim compensationClaim2 = new CompensationClaim();
-            compensationClaim2.setClaimingEmployee(employee);
-            compensationClaim2.setApprovingManager(manager);
-            compensationClaim2.setCompensationLeaveRequested(0.5f);
-            compensationClaim2.setOvertimeStart(LocalDateTime.now().minusDays(18).minusHours(4));
-            compensationClaim2.setOvertimeEnd(LocalDateTime.now().minusDays(18));
-            compensationClaim2.setClaimDateTime(LocalDateTime.now().minusDays(17));
-            compensationClaim2.setOvertimeHours(4L);
-            compensationClaim2.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
-            compensationClaim2.setComments("You went for 3 hours lunch. Your Overtime work was only 2 hours.");
-            compensationClaim2.setReviewedDateTime(LocalDateTime.now().minusDays(17).minusHours(1));
-            compensationClaimService.save(compensationClaim2);
-
-            CompensationClaim compensationClaim3 = new CompensationClaim();
-            compensationClaim3.setClaimingEmployee(employee);
-            compensationClaim3.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
-            compensationClaim3.setCompensationLeaveRequested(1.0f);
-            compensationClaim3.setOvertimeStart(LocalDateTime.now().minusDays(15).minusHours(8));
-            compensationClaim3.setOvertimeEnd(LocalDateTime.now().minusDays(15));
-            compensationClaim3.setClaimDateTime(LocalDateTime.now().minusDays(14));
-            compensationClaim3.setOvertimeHours(8L);
-            compensationClaim3.setApprovingManager(manager);
-            employeeLeaveBalance.setCompensationLeave(1.0f);
-            compensationClaimService.save(compensationClaim3);
-
-            CompensationClaim compensationClaim4 = new CompensationClaim();
-            compensationClaim4.setClaimingEmployee(employee);
-            compensationClaim4.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
-            compensationClaim4.setCompensationLeaveRequested(1.0f);
-            compensationClaim4.setOvertimeStart(LocalDateTime.now().minusDays(13).minusHours(8));
-            compensationClaim4.setOvertimeEnd(LocalDateTime.now().minusDays(13));
-            compensationClaim4.setClaimDateTime(LocalDateTime.now().minusDays(12));
-            compensationClaim4.setOvertimeHours(8L);
-            compensationClaim4.setApprovingManager(manager);
-            employeeLeaveBalance.setCompensationLeave(1.0f);
-            compensationClaimService.save(compensationClaim4);
-
-            Employee employee2 = employeeService.findByName("Andrew");
-            LeaveBalance employeeLeaveBalance2 = leaveBalanceService.findByEmployee(employee2.getId());
-
-            CompensationClaim compensationClaim5 = new CompensationClaim();
-            compensationClaim5.setClaimingEmployee(employee2);
-            compensationClaim5.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
-            compensationClaim5.setCompensationLeaveRequested(0.5f);
-            compensationClaim5.setOvertimeStart(LocalDateTime.now().minusDays(20).minusHours(4));
-            compensationClaim5.setOvertimeEnd(LocalDateTime.now().minusDays(20));
-            compensationClaim5.setClaimDateTime(LocalDateTime.now().minusDays(19));
-            compensationClaim5.setOvertimeHours(4L);
-            compensationClaim5.setApprovingManager(manager);
-            employeeLeaveBalance.setCompensationLeave(0.5f);
-            compensationClaimService.save(compensationClaim5);
-            leaveBalanceService.save(employeeLeaveBalance2);
-
-            Employee employee3 = employeeService.findByName("Mob Psycho");
-            LeaveBalance employeeLeaveBalance3 = leaveBalanceService.findByEmployee(employee3.getId());
-
-            CompensationClaim compensationClaim6 = new CompensationClaim();
-            compensationClaim6.setClaimingEmployee(employee3);
-            compensationClaim6.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
-            compensationClaim6.setCompensationLeaveRequested(0.5f);
-            compensationClaim6.setOvertimeStart(LocalDateTime.now().minusDays(6).minusHours(4));
-            compensationClaim6.setOvertimeEnd(LocalDateTime.now().minusDays(6));
-            compensationClaim6.setClaimDateTime(LocalDateTime.now().minusDays(4));
-            compensationClaim6.setOvertimeHours(4L);
-            compensationClaim6.setApprovingManager(manager);
-            employeeLeaveBalance.setCompensationLeave(0.5f);
-            compensationClaimService.save(compensationClaim6);
-            leaveBalanceService.save(employeeLeaveBalance3);
-
-            CompensationClaim compensationClaim7 = new CompensationClaim();
-            compensationClaim7.setClaimingEmployee(employee3);
-            compensationClaim7.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
-            compensationClaim7.setCompensationLeaveRequested(0.5f);
-            compensationClaim7.setOvertimeStart(LocalDateTime.now().minusDays(5).minusHours(4));
-            compensationClaim7.setOvertimeEnd(LocalDateTime.now().minusDays(5));
-            compensationClaim7.setClaimDateTime(LocalDateTime.now().minusDays(3));
-            compensationClaim7.setOvertimeHours(4L);
-            compensationClaim7.setApprovingManager(manager);
-            employeeLeaveBalance.setCompensationLeave(0.5f);
-            compensationClaimService.save(compensationClaim7);
-            leaveBalanceService.save(employeeLeaveBalance3);
-
+            generatedSeed();
+            manualSeed();
             System.out.println("End Compensation Claim Seeder");
         }
+    }
+
+    private void generatedSeed() {
+        Map<Integer, ArrayList<LocalDateTime>> claims = new HashMap<>();
+        int numOfClaims = 6;
+        int durationBound = 13;
+        for (int i = 0; i < numOfClaims; i++){
+            ArrayList<LocalDateTime> claimDates = new ArrayList<>();
+            claimDates.add(LocalDateTime.now().minusWeeks(random.nextInt(1,durationBound)).minusHours(random.nextInt(durationBound)));
+            claimDates.add(claimDates.get(0).plusHours(random.nextInt(4,durationBound)));
+            claimDates.add(claimDates.get(1).plusDays(random.nextInt(1)).plusHours(random.nextInt(durationBound)));
+            claims.put(i, claimDates);
+        }
+
+        List<Employee> employeeList = employeeService.findAll();
+        for (Employee employee : employeeList) {
+            for (var entry : claims.entrySet()){
+                ArrayList<LocalDateTime> dates = entry.getValue();
+                claimSeed(employee, dates.get(0), dates.get(1), dates.get(2));
+            }
+        }
+    }
+
+    private void claimSeed(Employee employee, LocalDateTime startDateTime,
+                           LocalDateTime endDateTime, LocalDateTime claimDateTime) {
+        String[] rejectionReasons = new String[] {
+                "You came to work late.",
+                "You left work early.",
+                "That was within your working hours."
+        };
+        Manager manager = employee.getManager();
+        if (manager == null) {return;} // short-circuit seeding if employee is not reporting to anyone.
+        CompensationClaim claim = new CompensationClaim();
+        claim.setClaimStatus(claimStatusEnum[random.nextInt(claimStatusEnum.length)]);
+        claim.setClaimingEmployee(employee);
+        claim.setClaimDateTime(claimDateTime);
+        claim.setOvertimeStart(startDateTime);
+        claim.setOvertimeEnd(endDateTime);
+        claim.setOvertimeHours(compensationClaimService.calculateOvertimeHours(claim));
+        claim.setCompensationLeaveRequested(compensationClaimService.calculateLeaveRequested(claim));
+        claim.setApprovingManager(manager);
+        if (claim.getClaimStatus() == CompensationClaimStatusEnum.APPROVED
+                || claim.getClaimStatus() == CompensationClaimStatusEnum.REJECTED) {
+            claim.setReviewedDateTime(claimDateTime.plusDays(random.nextInt(3)));
+        }
+        if (claim.getClaimStatus() == CompensationClaimStatusEnum.REJECTED) {
+            claim.setComments(rejectionReasons[random.nextInt(rejectionReasons.length)]);
+        }
+        compensationClaimService.save(claim);
+    }
+
+    private void manualSeed() { //stable test user+password accounts: (manager5,manager) and (employee,employee)
+        Employee employee = employeeService.findByName("Anya Forger");
+        Manager manager = employee.getManager();
+        LeaveBalance employeeLeaveBalance = leaveBalanceService.findByEmployee(employee.getId());
+
+        CompensationClaim claim1 = new CompensationClaim();
+        claim1.setClaimStatus(CompensationClaimStatusEnum.APPROVED);
+        claim1.setClaimingEmployee(employee);
+        claim1.setOvertimeStart(LocalDateTime.now().minusDays(20).minusHours(4));
+        claim1.setOvertimeEnd(LocalDateTime.now().minusDays(20));
+        claim1.setOvertimeHours(compensationClaimService.calculateOvertimeHours(claim1));
+        claim1.setCompensationLeaveRequested(compensationClaimService.calculateLeaveRequested(claim1));
+        claim1.setClaimDateTime(LocalDateTime.now().minusDays(19));
+        claim1.setApprovingManager(manager);
+        claim1.setReviewedDateTime(LocalDateTime.now().minusDays(19).minusHours(3));
+        employeeLeaveBalance.setCompensationLeave(compensationClaimService.calculateLeaveRequested(claim1));
+        leaveBalanceService.save(employeeLeaveBalance);
+        compensationClaimService.save(claim1);
+
+        CompensationClaim claim2 = new CompensationClaim();
+        claim2.setClaimStatus(CompensationClaimStatusEnum.REJECTED);
+        claim2.setClaimingEmployee(employee);
+        claim2.setOvertimeStart(LocalDateTime.now().minusDays(18).minusHours(4));
+        claim2.setOvertimeEnd(LocalDateTime.now().minusDays(18));
+        claim2.setOvertimeHours(compensationClaimService.calculateOvertimeHours(claim2));
+        claim2.setCompensationLeaveRequested(compensationClaimService.calculateLeaveRequested(claim2));
+        claim2.setClaimDateTime(LocalDateTime.now().minusDays(17));
+        claim2.setApprovingManager(manager);
+        claim2.setReviewedDateTime(LocalDateTime.now().minusDays(17).minusHours(1));
+        claim2.setComments("You went for 3 hours lunch. Your Overtime work was only 2 hours.");
+        compensationClaimService.save(claim2);
+
+        CompensationClaim claim3 = new CompensationClaim();
+        claim3.setClaimingEmployee(employee);
+        claim3.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        claim3.setCompensationLeaveRequested(1.0f);
+        claim3.setOvertimeStart(LocalDateTime.now().minusDays(15).minusHours(8));
+        claim3.setOvertimeEnd(LocalDateTime.now().minusDays(15));
+        claim3.setClaimDateTime(LocalDateTime.now().minusDays(14));
+        claim3.setOvertimeHours(8L);
+        claim3.setApprovingManager(manager);
+        employeeLeaveBalance.setCompensationLeave(1.0f);
+        compensationClaimService.save(claim3);
+
+        CompensationClaim claim4 = new CompensationClaim();
+        claim4.setClaimingEmployee(employee);
+        claim4.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        claim4.setCompensationLeaveRequested(1.0f);
+        claim4.setOvertimeStart(LocalDateTime.now().minusDays(13).minusHours(8));
+        claim4.setOvertimeEnd(LocalDateTime.now().minusDays(13));
+        claim4.setClaimDateTime(LocalDateTime.now().minusDays(12));
+        claim4.setOvertimeHours(8L);
+        claim4.setApprovingManager(manager);
+        employeeLeaveBalance.setCompensationLeave(1.0f);
+        compensationClaimService.save(claim4);
+
+        Employee employee2 = employeeService.findByName("Andrew");
+        LeaveBalance employeeLeaveBalance2 = leaveBalanceService.findByEmployee(employee2.getId());
+
+        CompensationClaim claim5 = new CompensationClaim();
+        claim5.setClaimingEmployee(employee2);
+        claim5.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        claim5.setCompensationLeaveRequested(0.5f);
+        claim5.setOvertimeStart(LocalDateTime.now().minusDays(20).minusHours(4));
+        claim5.setOvertimeEnd(LocalDateTime.now().minusDays(20));
+        claim5.setClaimDateTime(LocalDateTime.now().minusDays(19));
+        claim5.setOvertimeHours(4L);
+        claim5.setApprovingManager(manager);
+        employeeLeaveBalance.setCompensationLeave(0.5f);
+        compensationClaimService.save(claim5);
+        leaveBalanceService.save(employeeLeaveBalance2);
+
+        Employee employee3 = employeeService.findByName("Mob Psycho");
+        LeaveBalance employeeLeaveBalance3 = leaveBalanceService.findByEmployee(employee3.getId());
+
+        CompensationClaim claim6 = new CompensationClaim();
+        claim6.setClaimingEmployee(employee3);
+        claim6.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        claim6.setCompensationLeaveRequested(0.5f);
+        claim6.setOvertimeStart(LocalDateTime.now().minusDays(6).minusHours(4));
+        claim6.setOvertimeEnd(LocalDateTime.now().minusDays(6));
+        claim6.setClaimDateTime(LocalDateTime.now().minusDays(4));
+        claim6.setOvertimeHours(4L);
+        claim6.setApprovingManager(manager);
+        employeeLeaveBalance.setCompensationLeave(0.5f);
+        compensationClaimService.save(claim6);
+        leaveBalanceService.save(employeeLeaveBalance3);
+
+        CompensationClaim claim7 = new CompensationClaim();
+        claim7.setClaimingEmployee(employee3);
+        claim7.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
+        claim7.setCompensationLeaveRequested(0.5f);
+        claim7.setOvertimeStart(LocalDateTime.now().minusDays(5).minusHours(4));
+        claim7.setOvertimeEnd(LocalDateTime.now().minusDays(5));
+        claim7.setClaimDateTime(LocalDateTime.now().minusDays(3));
+        claim7.setOvertimeHours(4L);
+        claim7.setApprovingManager(manager);
+        employeeLeaveBalance.setCompensationLeave(0.5f);
+        compensationClaimService.save(claim7);
+        leaveBalanceService.save(employeeLeaveBalance3);
     }
 }

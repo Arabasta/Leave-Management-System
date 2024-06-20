@@ -11,6 +11,9 @@ import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -147,10 +150,15 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("personalHistory")
-    public String personalHistory(Model model) {
+    public String personalHistory(Model model,
+                                  @RequestParam(defaultValue = "0") Integer pageNo,
+                                  @RequestParam(defaultValue = "10") Integer pageSize) {
         Employee loginEmployee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        List<LeaveApplication> personalLeaveApplications = leaveApplicationService.findBySubmittingEmployee(loginEmployee);
-        model.addAttribute("personalLeaveApplications", personalLeaveApplications);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<LeaveApplication> personalLeaveApplicationsPage = leaveApplicationService.findBySubmittingEmployeeWithPaging(loginEmployee, pageable);
+
+        model.addAttribute("personalLeaveApplications", personalLeaveApplicationsPage.getContent());
+        model.addAttribute("page", personalLeaveApplicationsPage);
         LeaveBalance leaveBalance = loginEmployee.getLeaveBalance();
         model.addAttribute("LeaveBalance", leaveBalance);
         return "employee/leave-application/personalViewLeave";

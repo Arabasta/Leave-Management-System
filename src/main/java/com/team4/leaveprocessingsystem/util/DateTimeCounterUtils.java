@@ -19,9 +19,7 @@ public class DateTimeCounterUtils {
         List<LocalDate> publicHolidays = publicHolidayService.publicHolidayDateList();
 
         for (int i = 0; i < numOfDays; i++) {
-            if (currentDate.getDayOfWeek() != DayOfWeek.SATURDAY &&
-                    currentDate.getDayOfWeek() != DayOfWeek.SUNDAY &&
-                    !publicHolidays.contains(currentDate)) {
+            if (!isWeekend(currentDate) && !publicHolidays.contains(currentDate)) {
                 countWorkingDays++;
             }
             currentDate = currentDate.plusDays(1);
@@ -50,5 +48,12 @@ public class DateTimeCounterUtils {
                 }
         }
         return 0L;
+    }
+
+    public static boolean isWeekend(LocalDate date){
+        if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY){
+            return true;
+        }
+        return false;
     }
 }
