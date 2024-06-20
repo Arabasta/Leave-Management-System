@@ -3,7 +3,6 @@ package com.team4.leaveprocessingsystem;
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.repository.*;
-import com.team4.leaveprocessingsystem.service.LeaveTypeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,6 @@ public class CompensationClaimRepositoryTest {
     private LeaveBalanceRepository leaveBalanceRepository;
     @Autowired
     private JobDesignationRepository jobDesignationRepository;
-    @Autowired
-    private LeaveTypeService leaveTypeService;
 
     private final LocalDateTime fixedNow;
     private Manager testManager;
@@ -49,14 +46,14 @@ public class CompensationClaimRepositoryTest {
     void init() {
         System.out.println("startup");
         this.testJobDesignation = jobDesignationRepository
-                .save(createCompensationClaimObjectMotherJobDesignation(leaveTypeService.findAllLeaveTypes(),"Manager"));
+                .save(createCompensationClaimObjectMotherJobDesignation("Manager"));
         this.testLeaveBalance = leaveBalanceRepository
                 .save(createCompensationClaimObjectMotherLeaveBalance());
         Manager m = createCompensationClaimObjectMotherManager(testJobDesignation, testLeaveBalance);
         this.testManager = managerRepository.save(m);
 
         this.testJobDesignation2 = jobDesignationRepository
-                .save(createCompensationClaimObjectMotherJobDesignation(leaveTypeService.findAllLeaveTypes(),"Employee"));
+                .save(createCompensationClaimObjectMotherJobDesignation("Employee"));
         this.testLeaveBalance2 = leaveBalanceRepository
                 .save(createCompensationClaimObjectMotherLeaveBalance());
         Employee e = createCompensationClaimObjectMotherEmployee(testJobDesignation2, testLeaveBalance2);

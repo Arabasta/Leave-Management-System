@@ -7,19 +7,10 @@ import java.util.List;
 
 public class CompensationClaimObjectMother {
 
-    static LeaveType createCompensationClaimObjectMotherLeaveTypeCompensation() {
-        LeaveType compensationLeave = new LeaveType();
-        compensationLeave.setLeaveType(LeaveTypeEnum.COMPENSATION);
-        compensationLeave.setDescription("This leave is offered to compensate employees \n" +
-                "for the extra hours they have worked beyond their regular working hours.");
-        return compensationLeave;
-    }
-
-    static JobDesignation createCompensationClaimObjectMotherJobDesignation(List<LeaveType> leaveTypeList, String name) {
+    static JobDesignation createCompensationClaimObjectMotherJobDesignation(String name) {
         return new JobDesignation(
                 "CompensationClaimObjectMotherJobDesignation"+name,
-                15,
-                leaveTypeList);
+                15);
     }
 
     static LeaveBalance createCompensationClaimObjectMotherLeaveBalance() {
