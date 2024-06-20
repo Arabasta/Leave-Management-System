@@ -17,12 +17,14 @@ import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
@@ -75,12 +77,6 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
-    public List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId){
-        return leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-    }
-
-    @Override
-    @Transactional
     public List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee) {
         return leaveApplicationRepository.findBySubmittingEmployee(submittingEmployee);
     }
@@ -111,44 +107,41 @@ public class LeaveApplicationService implements ILeaveApplication {
 
     @Override
     @Transactional
-    public List<LeaveApplication> findByEmployeeName(String name) {
-        return leaveApplicationRepository.findByName(name);
-    }
+    public Page<LeaveApplication> filterManagerViewSearch(int managerId,
+                                                          String keyword,
+                                                          String searchType,
+                                                          String startDate,
+                                                          String endDate,
+                                                          String leaveStatus,
+                                                          Pageable pageable) {
 
-    @Override
-    @Transactional
-    public List<LeaveApplication> findByEmployeeId(int id) {
-        return leaveApplicationRepository.findBySubmittingEmployeeId(id);
-    }
+        Page<LeaveApplication> applications = leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId, pageable);
 
-    @Override
-    @Transactional
-    public List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId) {
-        List<LeaveApplication> list = new ArrayList<>();
-        for (LeaveApplication application : applications) {
-            if (application.getReviewingManager() != null && application.getReviewingManager().getId() == managerId) {
-                list.add(application);
+        if (Objects.equals(searchType, "name")) {
+            applications = leaveApplicationRepository.findSubordinatesByNameLeaveApplicationsByReviewingManager_Id(managerId, StringCleaningUtil.forDatabase(keyword), pageable);
+
+        }
+        if (Objects.equals(searchType, "id")) {
+            try {
+                int id = Integer.parseInt(keyword);
+                applications = leaveApplicationRepository.findBySubmittingEmployeeId(id, pageable);
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+                applications = new PageImpl<>(Collections.emptyList(), pageable, 0);
             }
         }
-        return list;
-    }
-
-    public List<LeaveApplication> filterByStringDateRange(List<LeaveApplication> applications, String start, String end) {
-        try {
-            return applications.stream()
-                    .filter(x -> !x.getStartDate().isAfter(LocalDate.parse(end))
-                            && !x.getEndDate().isBefore(LocalDate.parse(start))
-                    ).toList();
-        } catch (DateTimeParseException e) {
-            System.out.println(e + ": " + e.getMessage());
-            return applications;
+        if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate startDateFormatted = LocalDate.parse(startDate, df);
+            LocalDate endDateFormatted = LocalDate.parse(endDate, df);
+            applications = leaveApplicationRepository.findAllWithinDateRange(managerId, startDateFormatted, endDateFormatted, pageable);
         }
-    }
-
-    public List<LeaveApplication> filterByStringLeaveStatus(List<LeaveApplication> applications, String leaveStatus) {
-        return applications.stream()
-                .filter(x -> x.getLeaveStatus().name().equals(leaveStatus))
-                .toList();
+        if (!Objects.equals(leaveStatus, "ALL")) {
+//            applications = filterByStringLeaveStatus(applications, leaveStatus);
+            LeaveStatusEnum leaveStatusEnum = LeaveStatusEnum.valueOf(leaveStatus);
+            applications = leaveApplicationRepository.findSubordinatesLeaveApplicationsByLeaveStatusByReviewingManager_Id(managerId, leaveStatusEnum, pageable);
+        }
+        return applications;
     }
 
     public ArrayList<LeaveApplication> setArrayList(List<LeaveApplication> list) {
@@ -160,39 +153,7 @@ public class LeaveApplicationService implements ILeaveApplication {
         }
         return output;
     }
-
-    @Override
-    @Transactional
-    public List<LeaveApplication> filterManagerViewSearch(int managerId,
-                                                          String keyword,
-                                                          String searchType,
-                                                          String startDate,
-                                                          String endDate,
-                                                          String leaveStatus) {
-
-        List<LeaveApplication> applications = findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId);
-
-        if (Objects.equals(searchType, "name")) {
-            applications = getLeaveApplicationIfBelongsToManagerSubordinates(
-                    findByEmployeeName(StringCleaningUtil.forDatabase(keyword)), managerId);
-        }
-        if (Objects.equals(searchType, "id")) {
-            try {
-                int id = Integer.parseInt(keyword);
-                applications = findByEmployeeId(id);
-            } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
-                applications.clear();
-            }
-        }
-        if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
-            applications = filterByStringDateRange(applications, startDate, endDate);
-        }
-        if (!Objects.equals(leaveStatus, "ALL")) {
-            applications = filterByStringLeaveStatus(applications, leaveStatus);
-        }
-        return applications;
-    }
+}
 
     public Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth) {
         String year;

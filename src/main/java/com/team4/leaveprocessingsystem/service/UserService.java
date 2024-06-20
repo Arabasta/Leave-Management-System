@@ -80,6 +80,7 @@ public class UserService implements UserDetailsService, IUser {
     }
 
     @Override
+    @Transactional
     public User findById(int id) {
         User user = userRepository.findById(id);
         return user;

@@ -12,20 +12,17 @@ import java.util.Map;
 public interface ILeaveApplication {
     boolean save(LeaveApplication leaveApplication);
     LeaveApplication findLeaveApplicationById(Integer id);
-    List<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(int managerId);
     List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee);
     LeaveApplication getLeaveApplicationIfBelongsToEmployee(int id, int employeeId);
     Page<LeaveApplication> findBySubmittingEmployeeWithPaging(Employee submittingEmployee, Pageable page);
     Map<String, List<LeaveApplication>> findLeaveApplicationsPendingApprovalByManager(Manager manager);
     long count();
-    List<LeaveApplication> findByEmployeeName(String name);
-    List<LeaveApplication> findByEmployeeId(int Id);
-    List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId);
-    List<LeaveApplication> filterManagerViewSearch(int managerId,
+    Page<LeaveApplication> filterManagerViewSearch(int managerId,
                                                    String keyword,
                                                    String searchType,
                                                    String startDate,
                                                    String endDate,
-                                                   String leaveStatus);
+                                                   String leaveStatus,
+                                                   Pageable page););
     Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth);
 }
