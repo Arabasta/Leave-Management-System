@@ -11,4 +11,6 @@ public interface ILeaveBalance {
     void updateCompensationLeave(CompensationClaim claim);
     LeaveBalance findByEmployee(int employee_id);
     LeaveBalance findLeaveBalanceById(int id);
+
+    void resetLeaves();
 }

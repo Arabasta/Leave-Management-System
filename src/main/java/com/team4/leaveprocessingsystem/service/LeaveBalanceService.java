@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LeaveBalanceService implements ILeaveBalance {
     private final LeaveBalanceRepository leaveBalanceRepository;
@@ -114,5 +116,22 @@ public class LeaveBalanceService implements ILeaveBalance {
     @Transactional
     public LeaveBalance findLeaveBalanceById(int id) {
         return leaveBalanceRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    @Transactional
+    public void resetLeaves() {
+        List<LeaveBalance> allLeaveBalances = leaveBalanceRepository.findAll();
+        for (LeaveBalance leaveBalance : allLeaveBalances) {
+            // annual leaves carry over
+            leaveBalance.setCurrentAnnualLeave(leaveBalance.getAnnualLeave() + leaveBalance.getCurrentAnnualLeave());
+
+            // rest of leaves reset
+            leaveBalance.setCurrentMedicalLeave(leaveBalance.getMedicalLeave());
+            leaveBalance.setCompassionateLeaveConsumed(0);
+            leaveBalance.setCurrentCompensationLeave(0);
+            leaveBalance.setUnpaidLeaveConsumed(0);
+            leaveBalanceRepository.save(leaveBalance);
+        }
     }
 }
