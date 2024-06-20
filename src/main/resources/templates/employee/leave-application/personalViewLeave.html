@@ -31,7 +31,7 @@
                 <td th:text="${LeaveBalance.getCurrentAnnualLeave()}"></td>
                 <td th:text="${LeaveBalance.getCurrentCompensationLeave()}"></td>
                 <td th:text="${LeaveBalance.getCurrentMedicalLeave()}"></td>
-                <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE - LeaveBalance.compassionateLeaveConsumed}"></td>
+                <td th:text="${LeaveBalance.COMPASSIONATE_LEAVE}"></td>
             </tr>
             <tr>
                 <td>Total Balance</td>
@@ -71,7 +71,7 @@
         <a href="#" onclick="history.go(-1); return false;" class="btn btn-secondary">Back</a>
     </div>
 </div>
-
+<br>
 <div th:if="${page.totalPages > 1}">
     <nav aria-label="Pagination">
         <ul class="pagination justify-content-center">
