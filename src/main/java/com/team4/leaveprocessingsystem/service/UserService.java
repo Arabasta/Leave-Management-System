@@ -25,6 +25,7 @@ public class UserService implements UserDetailsService, IUser {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return findByUsername(username);
     }
@@ -72,7 +73,7 @@ public class UserService implements UserDetailsService, IUser {
         return userRepository.findByEmployeeId(employeeId);
     }
 
-    //@Override
+    @Override
     @Transactional
     public List<User> findAll() {
         return userRepository.findAll();
@@ -84,6 +85,7 @@ public class UserService implements UserDetailsService, IUser {
         return user;
     }
 
+    @Override
     @Transactional
     public List<User> findUsersByRoleType(String keyword){
         return userRepository.findUsersByRoleType(keyword);
@@ -95,6 +97,7 @@ public class UserService implements UserDetailsService, IUser {
     public List<User> findUsersByUsername(String keyword) {
         return userRepository.findUsersByUsername(keyword);
     }
+
     @Override
     @Transactional
     public List<User> findUsersByEmail(String email){

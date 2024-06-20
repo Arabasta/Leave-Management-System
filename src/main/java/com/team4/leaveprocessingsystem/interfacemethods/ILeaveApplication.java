@@ -1,15 +1,11 @@
 package com.team4.leaveprocessingsystem.interfacemethods;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,5 +21,11 @@ public interface ILeaveApplication {
     List<LeaveApplication> findByEmployeeName(String name);
     List<LeaveApplication> findByEmployeeId(int Id);
     List<LeaveApplication> getLeaveApplicationIfBelongsToManagerSubordinates(List<LeaveApplication> applications, int managerId);
+    List<LeaveApplication> filterManagerViewSearch(int managerId,
+                                                   String keyword,
+                                                   String searchType,
+                                                   String startDate,
+                                                   String endDate,
+                                                   String leaveStatus);
     Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth);
 }

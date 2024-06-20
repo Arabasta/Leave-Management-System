@@ -12,15 +12,12 @@ public interface IUser {
     User findByUsername(String username);
     User findByEmail(String email);
     long count();
-
     List<User> findUserRolesByEmployeeId(Integer employeeId);
-
     List<User> findByEmployeeId(Integer employeeId);
-
-    public User findById(int id);
-    public List<User> findUsersByUsername(String keyword);
+    List<User> findAll();
+    User findById(int id);
+    List<User> findUsersByUsername(String keyword);
     List<User> findUsersByEmail(String email);
-
     List<User> findUsersById(String id);
     List<User> findUsersByRoleType(String keyword);
 }
