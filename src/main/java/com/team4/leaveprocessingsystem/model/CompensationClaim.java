@@ -40,11 +40,9 @@ public class CompensationClaim {
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime overtimeEnd;
 
-    @Positive
     @Column(nullable = false)
     private float overtimeHours;
 
-    @Positive
     @Column(nullable = false)
     private float compensationLeaveRequested;
 

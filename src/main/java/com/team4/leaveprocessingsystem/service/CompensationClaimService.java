@@ -10,6 +10,7 @@ import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import com.team4.leaveprocessingsystem.repository.CompensationClaimRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,18 +18,21 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class CompensationClaimService implements ICompensationClaim {
 
     private final CompensationClaimRepository compensationClaimRepository;
     private final EmployeeService employeeService;
+    private final LeaveBalanceService leaveBalanceService;
 
     @Autowired
     public CompensationClaimService(CompensationClaimRepository compensationClaimRepository,
-                                    EmployeeService employeeService) {
+                                    EmployeeService employeeService, LeaveBalanceService leaveBalanceService) {
         this.compensationClaimRepository = compensationClaimRepository;
         this.employeeService = employeeService;
+        this.leaveBalanceService = leaveBalanceService;
     }
 
     @Override
@@ -106,7 +110,11 @@ public class CompensationClaimService implements ICompensationClaim {
         CompensationClaim claim = new CompensationClaim();
         claim.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
         claim.setClaimingEmployee(employee);
-        claim.setApprovingManager(employee.getManager());
+        if ((employee.getManager() != null)) {
+            claim.setApprovingManager(employee.getManager());
+        } else if (Objects.equals(employee.getJobDesignation().getName(), "management")) {
+            claim.setApprovingManager((Manager) employee);
+        }
         claim.setClaimDateTime(LocalDateTime.now());
         return claim;
     }
@@ -114,10 +122,14 @@ public class CompensationClaimService implements ICompensationClaim {
     @Transactional
     public void setNewClaimAndSave(CompensationClaim claim) throws ServiceSaveException {
         try {
-            claim.setClaimStatus(CompensationClaimStatusEnum.APPLIED);
             claim.setOvertimeHours(calculateOvertimeHours(claim));
             claim.setCompensationLeaveRequested(calculateLeaveRequested(claim));
             claim.setClaimDateTime(LocalDateTime.now());
+            if (claim.getClaimingEmployee() == claim.getApprovingManager()) {
+                claim.setClaimStatus(CompensationClaimStatusEnum.APPROVED);
+                leaveBalanceService.updateCompensationLeave(claim);
+                claim.setReviewedDateTime(LocalDateTime.now());
+            }
             save(claim);
         } catch (ServiceSaveException e) {
             throw new ServiceSaveException(claim.toString());
