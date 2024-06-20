@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.repo;
 
 import com.team4.leaveprocessingsystem.interfacemethods.IManager;
 import com.team4.leaveprocessingsystem.model.Employee;

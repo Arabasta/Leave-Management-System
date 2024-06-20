@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
 import com.team4.leaveprocessingsystem.model.PublicHoliday;
-import com.team4.leaveprocessingsystem.service.PublicHolidayService;
+import com.team4.leaveprocessingsystem.service.repo.PublicHolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

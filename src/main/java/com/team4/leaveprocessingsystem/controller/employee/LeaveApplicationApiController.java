@@ -5,23 +5,24 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.dataTransferObjects.LeaveApplicationResponse;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
-import com.team4.leaveprocessingsystem.service.*;
-import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
+import com.team4.leaveprocessingsystem.service.api.EmailApiService;
+import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
+import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveApplicationService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.repo.UserService;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequestMapping("api/employee/leave")
 @CrossOrigin

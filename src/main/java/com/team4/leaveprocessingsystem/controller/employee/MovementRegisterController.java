@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.employee;
 
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
-import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveApplicationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

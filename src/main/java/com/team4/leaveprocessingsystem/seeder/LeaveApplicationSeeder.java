@@ -6,10 +6,10 @@ import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.LeaveApplicationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.PublicHolidayService;
+import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveApplicationService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.repo.PublicHolidayService;
 import com.team4.leaveprocessingsystem.util.DateTimeCounterUtils;
 import org.springframework.stereotype.Service;
 

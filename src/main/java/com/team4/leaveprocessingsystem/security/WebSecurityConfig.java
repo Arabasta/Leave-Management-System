@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.security;
 
-import com.team4.leaveprocessingsystem.service.RedirectService;
-import com.team4.leaveprocessingsystem.service.UserService;
+import com.team4.leaveprocessingsystem.service.auth.RedirectService;
+import com.team4.leaveprocessingsystem.service.repo.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
