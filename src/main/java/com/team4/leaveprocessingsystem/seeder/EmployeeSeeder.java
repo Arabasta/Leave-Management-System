@@ -2,10 +2,10 @@ package com.team4.leaveprocessingsystem.seeder;
 
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.JobDesignationService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
-import com.team4.leaveprocessingsystem.service.UserService;
+import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
+import com.team4.leaveprocessingsystem.service.repo.JobDesignationService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.repo.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

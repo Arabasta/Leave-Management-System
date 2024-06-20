@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.auth;
 
 
 import org.springframework.security.core.Authentication;

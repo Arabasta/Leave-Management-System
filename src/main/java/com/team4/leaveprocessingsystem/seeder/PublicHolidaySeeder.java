@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.seeder;
 
-import com.team4.leaveprocessingsystem.service.PublicHolidayApiService;
+import com.team4.leaveprocessingsystem.service.api.PublicHolidayApiService;
 import org.springframework.stereotype.Service;
 
 @Service

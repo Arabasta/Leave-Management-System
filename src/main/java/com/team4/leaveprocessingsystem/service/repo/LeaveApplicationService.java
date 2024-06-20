@@ -1,9 +1,5 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.repo;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
@@ -21,16 +17,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.Month;
-import java.time.Year;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {

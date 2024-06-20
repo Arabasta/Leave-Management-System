@@ -2,7 +2,7 @@ package com.team4.leaveprocessingsystem.validator;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
-import com.team4.leaveprocessingsystem.service.CompensationClaimService;
+import com.team4.leaveprocessingsystem.service.repo.CompensationClaimService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

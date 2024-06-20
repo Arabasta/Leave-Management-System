@@ -3,8 +3,10 @@ package com.team4.leaveprocessingsystem.controller;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
-import com.team4.leaveprocessingsystem.service.*;
-import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
+import com.team4.leaveprocessingsystem.service.api.EmailApiService;
+import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
+import com.team4.leaveprocessingsystem.service.repo.*;
+import com.team4.leaveprocessingsystem.service.reporting.ReportingService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package com.team4.leaveprocessingsystem.service.schedulers;
 
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

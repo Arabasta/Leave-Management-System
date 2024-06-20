@@ -1,15 +1,12 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.reporting;
 
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.dataTransferObjects.ReportingDTO;
-import jakarta.persistence.Entity;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ReportingService {

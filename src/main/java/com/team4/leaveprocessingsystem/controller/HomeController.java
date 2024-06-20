@@ -1,7 +1,7 @@
 package com.team4.leaveprocessingsystem.controller;
 
 import ch.qos.logback.core.model.Model;
-import com.team4.leaveprocessingsystem.service.RedirectService;
+import com.team4.leaveprocessingsystem.service.auth.RedirectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

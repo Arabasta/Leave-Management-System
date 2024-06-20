@@ -6,8 +6,9 @@ import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
 import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
-import com.team4.leaveprocessingsystem.service.*;
-import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
+import com.team4.leaveprocessingsystem.service.api.EmailApiService;
+import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
+import com.team4.leaveprocessingsystem.service.repo.*;
 import com.team4.leaveprocessingsystem.validator.LeaveApplicationValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @RequestMapping("employee/leave")
 @Controller

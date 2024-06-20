@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.repo;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.IJobDesignation;

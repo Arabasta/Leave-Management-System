@@ -3,8 +3,8 @@ package com.team4.leaveprocessingsystem.controller.admin;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveBalance;
-import com.team4.leaveprocessingsystem.service.EmployeeService;
-import com.team4.leaveprocessingsystem.service.LeaveBalanceService;
+import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.service;
+package com.team4.leaveprocessingsystem.service.reporting;
 
 import com.team4.leaveprocessingsystem.interfacemethods.IDataExport;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
