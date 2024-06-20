@@ -1,5 +1,9 @@
 package com.team4.leaveprocessingsystem.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.team4.leaveprocessingsystem.exception.LeaveApplicationNotFoundException;
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.interfacemethods.ILeaveApplication;
@@ -16,9 +20,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class LeaveApplicationService implements ILeaveApplication {
@@ -181,5 +191,35 @@ public class LeaveApplicationService implements ILeaveApplication {
             applications = filterByStringLeaveStatus(applications, leaveStatus);
         }
         return applications;
+    }
+
+    public Map<String, List<LeaveApplication>> mapEmployeeOnLeave(String targetYearMonth) {
+        String year;
+        String month;
+        if (targetYearMonth == null || targetYearMonth.isBlank()) {
+            year = String.valueOf(LocalDate.now().getYear());
+            month = String.valueOf(LocalDate.now().getMonth().getValue());
+        } else {
+            year = targetYearMonth.substring(0,4);
+            month = targetYearMonth.substring(5,7);
+        }
+        // get list of applications between during year month.
+        List<LeaveApplication> applicationsList = leaveApplicationRepository.findApprovedForYearMonth(year, month);
+
+        // setup empty map
+        Map<String, List<LeaveApplication>> map = new HashMap<>();
+
+        // loop through LeaveApplications and add to map
+        for(LeaveApplication application : applicationsList) {
+            String employeeName = application.getSubmittingEmployee().getName();
+            if(!map.containsKey(employeeName)) {
+                List<LeaveApplication> list = new ArrayList<>();
+                list.add(application);
+                map.put(employeeName, list);
+            } else {
+                map.get(employeeName).add(application);
+            }
+        }
+        return map;
     }
 }

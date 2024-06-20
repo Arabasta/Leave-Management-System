@@ -67,6 +67,9 @@
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
                     <a class="nav-link" th:href="@{/employee/compensation-claims/view}">My Compensation Claims</a>
                 </li>
+                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
+                    <a class="nav-link" th:href="@{/employee/movement-register/view}">Movement Register</a>
+                </li>
 
             </ul>
         </div>
