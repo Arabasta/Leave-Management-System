@@ -6,12 +6,13 @@
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
 
-<div class="container w-50 mt-5 text-center">
+<div class="container mt-5 text-left" style="max-width: 600px;">
 
-<h1 class="mb-3 mt-3 text-center"
-        th:text="${isEditMode} ? 'Edit Leave Entitlement' : 'View Leave Entitlement'"></h1>
+    <h1 class="mb-3 mt-5 text-center"
+        th:text="${isEditMode} ? 'Edit Leave Entitlement' : 'Employee Leave Entitlement'"></h1>
 
-    <form th:if="${isEditMode}" th:action="@{/admin/leave-entitlement/update}" th:object="${leaveBalance}"
+    <!-- edit mode -->
+    <form th:if="${isEditMode}" th:action="@{/admin/leave-entitlement/update/employee}" th:object="${leaveBalance}"
           method="post">
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" name="employeeId" th:value="${employeeId}"/>
@@ -38,7 +39,7 @@
         </div>
 
         <div class="mb-3 row align-items-center">
-            <label for="currentMedicalLeave" class="col-4 col-form-label">Medical Leave Used:</label>
+            <label for="currentMedicalLeave" class="col-4 col-form-label">Medical Leave Remaining:</label>
             <div class="col-8">
                 <input type="text" id="currentMedicalLeave" th:field="*{currentMedicalLeave}" class="form-control"/>
             </div>
@@ -74,11 +75,13 @@
             </div>
         </div>
 
+        <!-- update button -->
         <div>
             <input type="submit" value="Update" class="btn btn-primary float-end"/>
         </div>
     </form>
 
+    <!-- view mode -->
     <div th:if="${!isEditMode}">
         <div class="mb-3 row align-items-center">
             <label for="annualLeave" class="col-4 col-form-label">Annual Leave:</label>
@@ -136,10 +139,14 @@
             </div>
         </div>
 
+        <!-- edit button -->
         <div>
-            <a th:href="@{/admin/leave-entitlement/edit/{id}(id=${leaveBalance.id})}" class="btn btn-primary float-end">Edit</a>
+            <a th:href="@{/admin/leave-entitlement/edit/employee/{id}(id=${employeeId})}"
+               class="btn btn-primary float-end">Edit</a>
+            <br>
         </div>
 
+        <!-- success message -->
         <div th:if="${updateSuccess}" class="alert alert-success mt-3">Leave balance updated successfully!</div>
 
     </div>
