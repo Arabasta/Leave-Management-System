@@ -5,47 +5,57 @@
 <div th:replace="fragments/navbar :: menu"></div>
 
 <!--  Div to align body contents  -->
-<div class="d-flex flex-column align-items-center">
+<div class="align-items-center justify-content-center" style="max-width: 1920px;">
     <!-- Contents Header -->
-    <h1>View Movement Register</h1>
+    <h1 class="container text-center">View Movement Register</h1>
     <br>
-    <!-- Contents Body -->
-    <div>
-        <!-- Date Picker -->
-        <form action="#" class="form-inline text-center" method="POST" th:action="@{/employee/movement-register/view}">
-            <div class="form-group">
-                <div class="input">
-                    <label for="datePicker">Select Month</label>
-                    <input id="datePicker" name="date" onchange="this.form.submit()" th:value="${pickedDate}"
-                           type="month">
-                </div>
+
+    <!-- Date Picker -->
+    <div class="container d-flex justify-content-center">
+        <form action="#" class="mb-3" method="POST" th:action="@{/employee/movement-register/view}">
+            <div class="input-group" style="max-width: 300px;">
+                <div class="input-group-text">Select Month</div>
+                <input class="form-control" id="datePicker" name="date" onchange="this.form.submit()"
+                       th:value="${pickedDate}" type="month">
             </div>
         </form>
+    </div>
+    <!-- Contents Body -->
+    <div class="container d-flex flex-wrap justify-content-center">
+        <!-- Conditionally show contents -->
+        <div class="container" th:if="${#maps.isEmpty(applicationsMap)}">
+            <h3 class="text-center" th:text="'There are no Employees on leave in the selected month.'" style="font-style: italic"></h3>
+        </div>
+
         <!-- Loop through employees -->
-        <th:block th:each="employee:${applicationsMap}">
-            <table class="table table-striped table-responsive-md w-auto">
-                <thead>
-                <tr>
-                    <th colspan="3">
-                        <h4 th:text="${employee.key}"></h4>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Leave Type</th>
-                </tr>
-                </thead>
-                <!-- Loop through applications -->
-                <tbody>
-                <tr th:each="leaveApplication:${employee.value}">
-                    <td th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}"></td>
-                    <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}"></td>
-                    <td th:text="${leaveApplication.getLeaveType()}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </th:block>
+        <div class="container d-flex flex-wrap text-left justify-content-between">
+            <th:block th:each="employee:${applicationsMap}">
+                <div class="container d-flex flex-wrap text-left" style="max-width: 400px;">
+                    <table class="table table-hover table-striped flex-grow-0 p-2 align-top">
+                        <thead>
+                        <tr>
+                            <th colspan="3">
+                                <h4 th:text="${employee.key}"></h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Leave Type</th>
+                        </tr>
+                        </thead>
+                        <!-- Loop through applications -->
+                        <tbody>
+                        <tr th:each="leaveApplication:${employee.value}">
+                            <td th:text="${#temporals.format(leaveApplication.getStartDate(), 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${#temporals.format(leaveApplication.getEndDate(), 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${leaveApplication.getLeaveType()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </th:block>
+        </div>
     </div>
 
 </div>
