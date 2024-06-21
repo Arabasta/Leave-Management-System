@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container">
+    <h1>Job Designation Leaves</h1>
+    <br>
+
+    <!-- View Toggle -->
+    <div th:replace="~{admin/leave-entitlement/view-toggle :: view-toggle(view='jobDesignation')}"></div>
+    <br>
+
+    <!-- Search bar -->
+    <form class="form-inline" method="get" th:action="@{/admin/leave-entitlement/view-job-designations}">
+        <div class="form-group">
+            <div class="input-group">
+                <!-- query -->
+                <input class="form-control rounded" name="query" placeholder="Search..."
+                       aria-label="Search" aria-describedby="search-addon"
+                       th:value="${keyword}" type="search"/>
+                <button type="submit" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- job designation list -->
+    <table class="table table-bordered table-hover mt-5" th:if="${not #lists.isEmpty(jobDesignations)}">
+        <thead class="bg-primary">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Default Annual Leaves</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="jd : ${jobDesignations}">
+            <td th:text="${jd.id}"></td>
+            <td th:text="${jd.name}"></td>
+            <td th:text="${jd.defaultAnnualLeaves}"></td>
+            <td><a class="btn btn-primary" th:href="@{/admin/leave-entitlement/edit/jobDesignation/{id}(id=${jd.id})}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

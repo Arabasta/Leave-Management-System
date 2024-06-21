@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head th:insert="fragments/head.html :: html_head"></head>
+
+<body>
+<div th:fragment="view-toggle" id="view-toggle" class="view-toggle">
+    <div class="btn-group mt-3">
+        <a th:href="@{/admin/leave-entitlement/view-job-designations}" class="btn btn-secondary"
+           th:classappend="${view == 'jobDesignations'} ? 'active'">By Job Designation</a>
+        <a th:href="@{/admin/leave-entitlement/view-employees}" class="btn btn-secondary"
+           th:classappend="${view == 'employees'} ? 'active'">By Employees</a>
+    </div>
+    <br>
+</div>
+</body>
+</html>
