@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: html_head"></head>
+
+<body>
+<div th:replace="fragments/navbar :: menu"></div>
+
+<div class="container mt-5 text-left" style="max-width: 600px;">
+    <h1 class="mb-3 mt-5 text-center"
+        th:text="${isEditMode} ? 'Edit Default Annual Leaves for Job Designation' : 'Default Annual Leaves for Job Designation'"></h1>
+
+    <!-- edit mode -->
+    <form th:if="${isEditMode}" th:action="@{/admin/leave-entitlement/update/jobDesignation}"
+          th:object="${jobDesignation}"
+          method="post">
+        <input type="hidden" name="jobDesignationId" th:value="${jobDesignation.id}"/>
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="jobDesignationName">Job Designation:</label>
+            <div class="col-8">
+                <input class="form-control" id="jobDesignationName" th:field="*{name}" type="text" readonly="readonly"/>
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="defaultAnnualLeaves" class="col-4 col-form-label">Default Annual Leaves:</label>
+            <div class="col-8">
+                <input type="text" id="defaultAnnualLeaves" th:field="*{defaultAnnualLeaves}" class="form-control"/>
+            </div>
+        </div>
+
+        <!-- update button -->
+        <div>
+            <input type="submit" value="Update" class="btn btn-primary float-end"/>
+        </div>
+    </form>
+
+    <!-- view mode -->
+    <div th:if="${!isEditMode}" th:object="${jobDesignation}">
+
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="jobDesignationName2">Job Designation:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" id="jobDesignationName2" th:text="*{name}"></p>
+            </div>
+        </div>
+        <div class="mb-3 row align-items-center">
+            <label for="defaultAnnualLeaves2" class="col-4 col-form-label">Default Annual Leaves:</label>
+            <div class="col-8">
+                <p class="form-control-plaintext" id="defaultAnnualLeaves2" th:text="*{defaultAnnualLeaves}"></p>
+            </div>
+        </div>
+        <!-- edit button -->
+        <div>
+            <a th:href="@{/admin/leave-entitlement/edit/jobDesignation/{jobDesignationId}(jobDesignationId=${jobDesignation.id})}"
+               class="btn btn-primary float-end">Edit</a>
+            <br>
+        </div>
+
+        <!-- success message -->
+        <div th:if="${updateSuccess}" class="alert alert-success mt-5">Default annual leaves updated successfully!</div>
+    </div>
+
+</div>
+</body>
+</html>
