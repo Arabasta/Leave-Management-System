@@ -1,6 +1,5 @@
 package com.team4.leaveprocessingsystem.controller;
 
-import ch.qos.logback.core.model.Model;
 import com.team4.leaveprocessingsystem.service.auth.RedirectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,17 +20,17 @@ public class HomeController {
     }
 
     @GetMapping("/employee/home")
-    public String employeeHome(Model model) {
-        return "employee/home/home";
-    }
-
-    @GetMapping("/admin/home")
-    public String adminHome(Model model) {
-        return "admin/home/home";
+    public String employeeHome() {
+        return "redirect:/employee/leave/create";
     }
 
     @GetMapping("/manager/home")
-    public String managerHome(Model model) {
-        return "manager/home/home";
+    public String managerHome() {
+        return "redirect:/manager/reporting/viewCompensationClaims";
+    }
+
+    @GetMapping("/admin/home")
+    public String adminHome() {
+        return "redirect:/admin/manage-staff/";
     }
 }
