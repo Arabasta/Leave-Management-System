@@ -1,10 +1,7 @@
 package com.team4.leaveprocessingsystem.Employee;
 
 import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
