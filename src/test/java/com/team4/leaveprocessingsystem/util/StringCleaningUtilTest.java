@@ -7,7 +7,7 @@ public class StringCleaningUtilTest {
 
     @Test
     public void testForDatabase() {
-        assertThat(StringCleaningUtil.forDatabase("~`!@#$%^&*()_-=+{}[]|:';'<>?,./#test~`!@#$%^&*()_-=+{}[]|:';'<>?,./#")).isEqualTo("test");
+        assertThat(StringCleaningUtil.forDatabase("~`!@#$%^&*()_-=+{}[]|:';'<>?/#This#, is a!@# test string.~`!@#$%^&*()_-=+{}[]|:';'<>?/#")).isEqualTo("This, is a test string.");
     }
 
     @Test
