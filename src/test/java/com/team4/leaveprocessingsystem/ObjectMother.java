@@ -25,6 +25,7 @@ public class ObjectMother {
         return new LeaveBalance(15);
     }
 
+
     public static Employee createEmployee(JobDesignation jobDesignation, LeaveBalance leaveBalance) {
         return new Employee(
                 "ObjectMotherEmployee",
