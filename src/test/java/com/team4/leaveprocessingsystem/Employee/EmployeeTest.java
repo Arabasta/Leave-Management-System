@@ -1,6 +1,9 @@
 package com.team4.leaveprocessingsystem.Employee;
 
-import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.JobDesignation;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.Manager;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,4 +77,19 @@ public class EmployeeTest {
         e.setName("test");
         assertThat(e.getName()).isEqualTo("test");
     }
+
+    @Test
+    public void testGetIsDeleted() {
+        Employee e = new Employee();
+        assertThat(e.isDeleted()).isFalse();
+    }
+
+    @Test
+    public void testSetIsDeleted() {
+        Employee e = new Employee();
+        e.setDeleted(true);
+        assertThat(e.isDeleted()).isTrue();
+    }
+
+
 }
