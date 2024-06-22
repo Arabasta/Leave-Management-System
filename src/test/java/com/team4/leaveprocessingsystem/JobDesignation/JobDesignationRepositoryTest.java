@@ -1,7 +1,13 @@
 package com.team4.leaveprocessingsystem.JobDesignation;
 
-import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.repository.*;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.JobDesignation;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.repository.EmployeeRepository;
+import com.team4.leaveprocessingsystem.repository.JobDesignationRepository;
+import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
+import com.team4.leaveprocessingsystem.repository.ManagerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +26,6 @@ public class JobDesignationRepositoryTest {
     private ManagerRepository managerRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
-    @Autowired
-    private CompensationClaimRepository compensationClaimRepository;
     @Autowired
     private LeaveBalanceRepository leaveBalanceRepository;
     @Autowired
@@ -51,6 +55,7 @@ public class JobDesignationRepositoryTest {
 
         System.out.println("startup executed");
     }
+
     @Test
     public void testFindByName() {
         Optional<JobDesignation> retrievedJobDesignation = jobDesignationRepository.findByName("ObjectMotherJobDesignation");
