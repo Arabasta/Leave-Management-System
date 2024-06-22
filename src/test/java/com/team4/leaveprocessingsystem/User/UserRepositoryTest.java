@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.team4.leaveprocessingsystem.ObjectMother.*;
@@ -32,12 +33,13 @@ public class UserRepositoryTest {
 
     private Employee testEmployee;
     private User testUser;
+    private JobDesignation testJobDesignation3;
 
     @BeforeEach()
     void init() {
         System.out.println("startup");
 
-        JobDesignation testJobDesignation3 = jobDesignationRepository.save(createJobDesignation("Test"));
+        testJobDesignation3 = jobDesignationRepository.save(createJobDesignation("Test"));
         LeaveBalance testLeaveBalance3 = leaveBalanceRepository.save(createLeaveBalance());
 
         // Set up Employee object
@@ -59,10 +61,6 @@ public class UserRepositoryTest {
         assertThat(retrievedUser).isNotNull();
     }
 
-    /*
-
-
-
      @Test
     public void testFindByEmail() {
         Optional<User> retrievedUser = userRepository.findByEmail("ObjectMotherEmail@Email.com");
@@ -82,10 +80,6 @@ public class UserRepositoryTest {
         assertThat(retrievedUsers.size()).isEqualTo(1);
         assertThat(retrievedUsers.get(0).getRole()).isEqualTo(testUser.getRole());
     }
-
-    */
-
-
 
     /*
     @Query("Select u from User u join u.employee userEmployee where userEmployee.id = :k")
@@ -110,8 +104,9 @@ public class UserRepositoryTest {
     @AfterEach()
     void teardown() {
         System.out.println("teardown");
-        employeeRepository.delete(testEmployee);
         userRepository.delete(testUser);
+        employeeRepository.delete(testEmployee);
+        jobDesignationRepository.delete(testJobDesignation3);
         System.out.println("teardown executed");
     }
 }
