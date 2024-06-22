@@ -7,7 +7,7 @@ public class StringCleaningUtil {
             return input;
         }
         // Replace all unwanted characters that are not a letter, digit, comma, or space, with an empty string.
-        return input.replaceAll("[^a-zA-Z0-9. ](,)","").trim();
+        return input.replaceAll("/[^.,a-zA-Z ]/g","").trim();
     }
 
     public static String forCSV(String input) {
