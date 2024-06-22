@@ -1,9 +1,6 @@
-package com.team4.leaveprocessingsystem;
+package com.team4.leaveprocessingsystem.CompensationClaim;
 
 import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.model.enums.LeaveTypeEnum;
-
-import java.util.List;
 
 public class CompensationClaimObjectMother {
 
