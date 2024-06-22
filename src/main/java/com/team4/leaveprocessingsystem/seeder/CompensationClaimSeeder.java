@@ -50,8 +50,8 @@ public class CompensationClaimSeeder {
         int durationBound = 13;
         for (int i = 0; i < numOfClaims; i++){
             ArrayList<LocalDateTime> claimDates = new ArrayList<>();
-            claimDates.add(LocalDateTime.now().minusWeeks(random.nextInt(1,durationBound)).minusHours(random.nextInt(durationBound)));
-            claimDates.add(claimDates.get(0).plusHours(random.nextInt(4,durationBound)));
+            claimDates.add(LocalDateTime.now().minusWeeks(16).minusHours(random.nextInt(durationBound)));
+            claimDates.add(claimDates.get(0).plusHours(random.nextInt(durationBound)));
             claimDates.add(claimDates.get(1).plusDays(random.nextInt(1)).plusHours(random.nextInt(durationBound)));
             claims.put(i, claimDates);
         }
