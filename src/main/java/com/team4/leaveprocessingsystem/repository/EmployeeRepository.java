@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Optional<Employee> findByName(String name);
-    List<Employee> findByManager(Manager manager);
 
+    List<Employee> findByManager(Manager manager);
 
     @Query("Select emp from Employee as emp where emp.name like CONCAT('%', :k, '%') ")
     List<Employee> findEmployeesByName(@Param("k") String keyword);
@@ -23,11 +23,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query("Select e from Employee e where e.manager.name like CONCAT('%', :k, '%')")
     List<Employee> findEmployeesByManager(@Param("k") String keyword);
-
-    @Query("Select e from Employee e " +
-            "JOIN User u ON e.id = u.employee.id " +
-            "where CAST(u.role as String) like CONCAT('%', :k, '%')")
-    List<Employee> findUsersByRoleType(@Param("k") String keyword);
 
     @Query("Select emp from Employee emp where emp.isDeleted = false")
     List<Employee> findAllExcludeDeleted();
