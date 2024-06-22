@@ -2,6 +2,7 @@ package com.team4.leaveprocessingsystem;
 
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
+import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -12,7 +13,6 @@ import java.time.ZoneId;
  * This class contains base methods to create Entities for testing in the @SpringBootTest classes (e.g., Employee and Manager can be created for CompensationClaim tests).
  */
 public class ObjectMother {
-
     private static final LocalDateTime fixedLocalDateTimeNow = LocalDateTime.now(Clock.fixed(Instant.parse("2023-12-03T10:15:30.00Z"), ZoneId.systemDefault()));
 
     public static JobDesignation createJobDesignation(String name) {
@@ -40,6 +40,14 @@ public class ObjectMother {
                 jobDesignation,
                 null,
                 leaveBalance);
+    }
+
+    public static User createUser(Employee employee) {
+        return new User(RoleEnum.ROLE_EMPLOYEE,
+                "ObjectMotherUserName",
+                "ObjectMotherPassword",
+                "ObjectMotherEmail@Email.com",
+                employee);
     }
 
     public static CompensationClaim createCompensationClaim(Employee claimingEmployee,
