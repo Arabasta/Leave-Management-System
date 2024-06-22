@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -55,6 +56,28 @@ public class CompensationClaim {
     private String comments;
 
     public CompensationClaim() {
+    }
+
+    public CompensationClaim(CompensationClaimStatusEnum claimStatus,
+                             Employee claimingEmployee,
+                             LocalDateTime claimDateTime,
+                             LocalDateTime overtimeStart,
+                             LocalDateTime overtimeEnd,
+                             float overtimeHours,
+                             float compensationLeaveRequested,
+                             Manager approvingManager,
+                             LocalDateTime reviewedDateTime,
+                             String comments) {
+        this.claimStatus = claimStatus;
+        this.claimingEmployee = claimingEmployee;
+        this.claimDateTime = claimDateTime;
+        this.overtimeStart = overtimeStart;
+        this.overtimeEnd = overtimeEnd;
+        this.overtimeHours = overtimeHours;
+        this.compensationLeaveRequested = compensationLeaveRequested;
+        this.approvingManager = approvingManager;
+        this.reviewedDateTime = reviewedDateTime;
+        this.comments = comments;
     }
 
     @Override
