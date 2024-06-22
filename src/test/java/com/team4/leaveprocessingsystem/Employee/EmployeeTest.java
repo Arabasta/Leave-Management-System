@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class EmployeeTest {
     @Test
     public void testGetId() {
@@ -30,6 +29,7 @@ public class EmployeeTest {
     public void testSetJobDesignation() {
         Employee e = new Employee();
         JobDesignation jd = new JobDesignation("test", 1);
+        e.setJobDesignation(jd);
         assertThat(e.getJobDesignation()).isEqualTo(jd);
         assertThat(e.getJobDesignation().getDefaultAnnualLeaves()).isEqualTo(1);
     }
@@ -44,6 +44,7 @@ public class EmployeeTest {
     public void testSetManager() {
         Employee e = new Employee();
         Manager m = new Manager();
+        e.setManager(m);
         assertThat(e.getManager()).isEqualTo(m);
     }
 
