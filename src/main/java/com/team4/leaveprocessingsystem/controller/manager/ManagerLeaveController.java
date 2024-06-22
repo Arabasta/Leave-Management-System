@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.controller;
+package com.team4.leaveprocessingsystem.controller.manager;
 
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
