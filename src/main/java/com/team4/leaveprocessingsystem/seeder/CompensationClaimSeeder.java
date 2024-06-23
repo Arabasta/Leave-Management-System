@@ -59,7 +59,7 @@ public class CompensationClaimSeeder {
         for (Employee employee : employeeList) {
             for (var entry : claims.entrySet()){
                 ArrayList<LocalDateTime> dates = entry.getValue();
-                claimSeed(employee, claimStatusEnum[counter % 5], dates.get(0), dates.get(1), dates.get(2));
+                claimSeed(employee, claimStatusEnum[counter % 6], dates.get(0), dates.get(1), dates.get(2));
                 counter++;
             }
         }
