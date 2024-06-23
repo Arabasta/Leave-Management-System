@@ -4,9 +4,11 @@ import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
 import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.dataTransferObjects.ReportingDTO;
 import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.repo.CompensationClaimService;
 import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
+import com.team4.leaveprocessingsystem.service.repo.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.service.repo.ManagerService;
 import com.team4.leaveprocessingsystem.service.reporting.DataExportService;
 import com.team4.leaveprocessingsystem.service.reporting.ReportingService;
@@ -28,18 +30,22 @@ public class ManagerReportingController {
     private final ManagerService managerService;
     private final EmployeeService employeeService;
     private final ReportingService reportingService;
+    private final LeaveApplicationService leaveApplicationService;
 
     public ManagerReportingController(DataExportService dataExportService,
                                       EmployeeService employeeService,
                                       AuthenticationService authenticationService,
                                       CompensationClaimService compensationClaimService,
-                                      ManagerService managerService, ReportingService reportingService) {
+                                      ManagerService managerService,
+                                      ReportingService reportingService,
+                                      LeaveApplicationService leaveApplicationService) {
         this.dataExportService = dataExportService;
         this.authenticationService = authenticationService;
         this.compensationClaimService = compensationClaimService;
         this.managerService = managerService;
         this.employeeService = employeeService;
         this.reportingService = reportingService;
+        this.leaveApplicationService = leaveApplicationService;
     }
 
     /*
@@ -85,13 +91,21 @@ public class ManagerReportingController {
     */
     @PostMapping("downloadEmployeeLeaveApplicationsCSV")
     public String downloadEmployeeApplicationsCSV(@ModelAttribute("applications") ArrayList<LeaveApplication> applications,
+                                                  @ModelAttribute("managerId") int managerId,
+                                                  @ModelAttribute("keyword") String keyword,
+                                                  @ModelAttribute("searchType") String searchType,
+                                                  @ModelAttribute("startDate") String startDate,
+                                                  @ModelAttribute("endDate") String endDate,
+                                                  @ModelAttribute("leaveStatus") String leaveStatus,
                                             HttpServletResponse response) throws IOException {
         if (applications == null || applications.isEmpty()) {
             return "redirect:/manager/leave/managerView";
         } else {
             response.setContentType("text/csv");
             response.setHeader("Content-Disposition", "attachment; file=export.csv");
-            dataExportService.downloadManagerReportingLeaveApplicationsCSV(response.getWriter(), applications);
+            ReportingDTO reportingDTO = reportingService.setForLeavesReport(applications,
+                            managerId, keyword, searchType, startDate, endDate, leaveStatus);
+            dataExportService.downloadManagerReportingLeaveApplicationsCSV(response.getWriter(), reportingDTO);
         }
         return "manager/leave/managerView";
     }

@@ -26,21 +26,26 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="keyword"><strong>Enter keyword:</strong></label>
-                    <input type="text" id="keyword" name="keyword" class="form-control"/>
+                    <label><strong>Enter keyword:</strong>
+                    <input th:if="${reportingDTO.keyword==null}" type="text" name="keyword" class="form-control"/>
+                    <input th:unless="${reportingDTO.keyword==null}" th:value="${reportingDTO.keyword}" type="text" name="keyword" class="form-control"/>
+                    </label>
                 </div>
                 <div class="form-group">
                     <label><strong>Date Range:</strong></label>
                     <div class="input-group">
-                        <input class="form-control" type="date" name="startDate">
+                        <input th:if="${reportingDTO.startDate==null}" class="form-control" type="date" name="startDate">
+                        <input th:unless="${reportingDTO.startDate==null}" class="form-control" type="date" name="startDate">
                         <div class="input-group-text">To</div>
-                        <input class="form-control" type="date" name="endDate">
+                        <input th:if="${reportingDTO.endDate==null}" class="form-control" type="date" name="endDate">
+                        <input th:unless="${reportingDTO.endDate==null}" class="form-control" type="date" name="endDate">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="applicationStatus"><strong>Leave Status:</strong></label>
                     <select class="form-select" name="leaveStatus" id="applicationStatus">
-                        <option selected>ALL</option>
+                        <option th:if="${reportingDTO.leaveStatus=='ALL'}" selected>ALL</option>
+                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:value="${reportingDTO.leaveStatus}"></option>
                         <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
                                 th:value="${status}" th:text="${status}"></option>
                     </select>
@@ -55,6 +60,12 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Save as CSV</button>
                     <input type="hidden" th:field="${reportingDTO.applications}">
+                    <input type="hidden" th:field="${reportingDTO.managerId}">
+                    <input type="hidden" th:field="${reportingDTO.keyword}">
+                    <input type="hidden" th:field="${reportingDTO.searchType}">
+                    <input type="hidden" th:field="${reportingDTO.startDate}">
+                    <input type="hidden" th:field="${reportingDTO.endDate}">
+                    <input type="hidden" th:field="${reportingDTO.leaveStatus}">
                 </div>
             </form>
         </div>
@@ -127,11 +138,11 @@
             <option th:value="20" th:text="20" th:selected="${page.size == 20}"></option>
             <option th:value="25" th:text="25" th:selected="${page.size == 25}"></option>
         </select>
-        <input type="hidden" name="keyword" th:value="${keyword}"/>
-        <input type="hidden" name="searchType" th:value="${searchType}"/>
-        <input type="hidden" name="startDate" th:value="${startDate}"/>
-        <input type="hidden" name="endDate" th:value="${endDate}"/>
-        <input type="hidden" name="leaveStatus" th:value="${leaveStatus}"/>
+        <input type="hidden" name="keyword" th:value="${reportingDTO.keyword}"/>
+        <input type="hidden" name="searchType" th:value="${reportingDTO.searchType}"/>
+        <input type="hidden" name="startDate" th:value="${reportingDTO.startDate}"/>
+        <input type="hidden" name="endDate" th:value="${reportingDTO.endDate}"/>
+        <input type="hidden" name="leaveStatus" th:value="${reportingDTO.leaveStatus}"/>
     </form>
 </div>
 <!-- Bootstrap JS and dependencies -->
