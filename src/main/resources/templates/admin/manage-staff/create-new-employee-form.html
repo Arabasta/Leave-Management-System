@@ -25,7 +25,6 @@
                     <div class="col-8">
                         <input class="form-control" id="employeeName" th:field="*{name}" type="text"/>
 
-                        <!-- todo: fix bug, error validation msg not showing-->
                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
                               th:class="${#fields.hasErrors('name')}? error"></span>
                     </div>
