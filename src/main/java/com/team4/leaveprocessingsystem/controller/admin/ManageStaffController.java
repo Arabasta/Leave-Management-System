@@ -180,11 +180,13 @@ public class ManageStaffController {
             return "admin/manage-staff/create-new-employee-form";
         }
 
-        LeaveBalance leaveBalance = new LeaveBalance(employee.getJobDesignation().getDefaultAnnualLeaves());
+        JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
+
+        LeaveBalance leaveBalance = new LeaveBalance(jobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(leaveBalance);
 
-        JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
-        Employee newEmployee = new Employee(employee.getName(), jobDesignation, null, leaveBalance);
+        Employee newEmployee = new Employee(employee.getName(),
+                jobDesignation, null, leaveBalance);
 
         employeeService.save(newEmployee);
         model.addAttribute("newEmployee", newEmployee);
