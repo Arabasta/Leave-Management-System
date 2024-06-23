@@ -2,6 +2,8 @@ package com.team4.leaveprocessingsystem.controller.admin;
 
 import com.team4.leaveprocessingsystem.exception.ServiceSaveException;
 import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;
+import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.repo.*;
@@ -48,8 +50,8 @@ public class ManageStaffController {
 
     @GetMapping("/")
     public String searchAll(@RequestParam(value = "query", required = false) String query,
-                         @RequestParam(value = "searchType", required = false) String searchType,
-                         Model model) {
+                            @RequestParam(value = "searchType", required = false) String searchType,
+                            Model model) {
         List<Employee> employees;
         if (query == null || query.isEmpty()) {
             employees = employeeService.findAllExcludeDeleted();
@@ -208,6 +210,26 @@ public class ManageStaffController {
         }
         employeeService.save(employee);
 
+        // Deletes all leave applications associated with the deleted employee
+        List<LeaveApplication> leaveApplicationList = leaveApplicationService.findBySubmittingEmployee(employee);
+        leaveApplicationList
+                .stream()
+                .filter(leave -> leave.getLeaveStatus() == LeaveStatusEnum.APPLIED || leave.getLeaveStatus() == LeaveStatusEnum.UPDATED)
+                .forEach(leave -> {
+                    leave.setLeaveStatus(LeaveStatusEnum.DELETED);
+                    leaveApplicationService.save(leave);
+                });
+
+        // Deletes all compensation claims associated with the deleted employee
+        List<CompensationClaim> compensationClaimList = compensationClaimService.findByEmployee(employee);
+        compensationClaimList
+                .stream()
+                .filter(claim -> claim.getClaimStatus() == CompensationClaimStatusEnum.APPLIED || claim.getClaimStatus() == CompensationClaimStatusEnum.UPDATED)
+                .forEach(claim -> {
+                    claim.setClaimStatus(CompensationClaimStatusEnum.WITHDRAWN);
+                    compensationClaimService.save(claim);
+                });
+
         return "redirect:/admin/manage-staff/";
     }
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
@@ -233,8 +255,8 @@ public class ManageStaffController {
 
     @PostMapping("/create/user")
     public String createNewUser(@Valid @ModelAttribute("user") User user,
-                                    BindingResult bindingResult,
-                                    Model model) {
+                                BindingResult bindingResult,
+                                Model model) {
 
         Employee employee = employeeService.findEmployeeById(user.getEmployee().getId());
 
