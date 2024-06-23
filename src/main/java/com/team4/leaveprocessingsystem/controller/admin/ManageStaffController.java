@@ -254,7 +254,6 @@ public class ManageStaffController {
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
 
     // Logic to Update user account(s) details in Manage User Controller
-
     @GetMapping("/add/user/{employeeId}")
     public String createNewUserForm(@PathVariable(name = "employeeId") Integer employeeId,
                                     Model model) {
