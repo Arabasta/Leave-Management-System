@@ -7,12 +7,14 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.repo.*;
+import com.team4.leaveprocessingsystem.validator.EmployeeValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,13 +32,14 @@ public class ManageStaffController {
     private final LeaveApplicationService leaveApplicationService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final EmployeeValidator employeeValidator;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
                                  ManagerService managerService, LeaveBalanceService leaveBalanceService,
                                  UserService userService, CompensationClaimService compensationClaimService,
                                  LeaveApplicationService leaveApplicationService, AuthenticationService authenticationService,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder, EmployeeValidator employeeValidator) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
@@ -46,6 +49,12 @@ public class ManageStaffController {
         this.leaveApplicationService = leaveApplicationService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
+        this.employeeValidator = employeeValidator;
+    }
+
+    @InitBinder("employee")
+    private void initEmployeeBinder(WebDataBinder binder) {
+        binder.addValidators(employeeValidator);
     }
 
     @GetMapping("/")
@@ -182,7 +191,6 @@ public class ManageStaffController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
-
 
             model.addAttribute("isEditMode", true);
             model.addAttribute("updateSuccess", false);
