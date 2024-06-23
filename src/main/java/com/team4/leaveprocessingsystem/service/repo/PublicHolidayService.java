@@ -37,6 +37,7 @@ public class PublicHolidayService implements IPublicHoliday {
     }
 
     @Override
+    @Transactional
     public List<LocalDate> publicHolidayDateList() {
         List<PublicHoliday> publicHolidayList =  publicHolidayRepository.findAll();
         return publicHolidayList.stream().map(PublicHoliday::getDate).collect(Collectors.toList());
@@ -67,6 +68,7 @@ public class PublicHolidayService implements IPublicHoliday {
     }
 
     @Override
+    @Transactional
     public List<PublicHoliday> findAll(String searchType, String query, String year) {
         if (year != null && !year.isEmpty()) {
             LocalDate startDate = LocalDate.of(Integer.parseInt(year), 1, 1);
@@ -77,11 +79,13 @@ public class PublicHolidayService implements IPublicHoliday {
     }
 
     @Override
+    @Transactional
     public List<PublicHoliday> findAll() {
         return publicHolidayRepository.findAll();
     }
 
     @Override
+    @Transactional
     public List<Integer> findAllYears() {
         return publicHolidayRepository.findDistinctYears();
     }
