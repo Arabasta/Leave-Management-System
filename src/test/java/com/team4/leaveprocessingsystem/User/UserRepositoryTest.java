@@ -110,7 +110,7 @@ public class UserRepositoryTest {
 
     @Test
     public void testFindUsersById() {
-        List<User> retrievedUsers = userRepository.findUsersById(testUser.getId());
+        List<User> retrievedUsers = userRepository.findUsersById();
         assertThat(retrievedUsers.size()).isEqualTo(1);
         assertThat(retrievedUsers.get(0).getId()).isEqualTo(testUser.getId());
     }

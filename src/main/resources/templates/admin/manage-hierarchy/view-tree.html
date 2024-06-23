@@ -57,6 +57,18 @@
     </div>
 </div>
 
+<!--
+<span th:if="${!hasExistingUserAccounts}">
+        <div class="d-flex flex-row-reverse">
+        <div class="p-2">
+            <span class="ms-3">
+                <a class="btn btn-primary text-decoration-none"
+                   th:href="@{/admin/manage-staff/add/user/{id}(id=${employee.id})}">Return to Create User Account</a>
+            </span>
+        </div>
+    </div>
+    </span>
+-->
 <script>
     function setTreeSize(change) {
         const nodes = document.querySelectorAll('.tree li .node');
