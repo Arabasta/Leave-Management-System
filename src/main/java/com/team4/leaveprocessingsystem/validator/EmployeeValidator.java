@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.Objects;
+
 @Component
 public class EmployeeValidator implements Validator {
     @Override
@@ -22,11 +24,20 @@ public class EmployeeValidator implements Validator {
         - a Manager can be saved without being assigned a Manager
         there should be an Option to assign them to an existing Manager or None before saving
         */
+        if (!Objects.equals(employee.getJobDesignation().getName(),"management") &&
+                employee.getManager().getId() == null) {
+            errors.rejectValue("manager",
+                    "invalid.manager",
+                    "Employee needs to be assigned a manager, to be saved.");
+        }
 
+        /*
         if (employee.getJobDesignation().getName() != "management" && employee.getManager() == null) {
             errors.rejectValue("manager",
                     "invalid.manager",
                     "Employee needs to be assigned a manager, to be saved.");
         }
+        */
+
     }
 }

@@ -55,9 +55,9 @@
                                     th:selected="${employee.manager.id}"></option>
                         </select>
                     </div>
-                    <div class="alert alert-danger mt-1" th:errors="*{manager}"
-                         th:if="${#fields.hasErrors('manager')}"></div>
                 </div>
+                <div class="alert alert-danger mt-1" th:errors="*{manager}"
+                     th:if="${#fields.hasErrors('manager')}"></div>
                 <br>
 
                 <div class="d-flex flex-row-reverse">
