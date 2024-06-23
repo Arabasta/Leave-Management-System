@@ -189,7 +189,7 @@ public class ManageStaffController {
                                     Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("employee", new Employee());
+            model.addAttribute("employee", employee);
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
             model.addAttribute("managerList", managerService.findAllManagers());
             model.addAttribute("isEditMode", true);

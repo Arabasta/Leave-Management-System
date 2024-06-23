@@ -24,9 +24,7 @@
                     <label class="col-4 col-form-label" for="employeeName">Name:</label>
                     <div class="col-8">
                         <input class="form-control" id="employeeName" th:field="*{name}" type="text"/>
-
-                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-                              th:class="${#fields.hasErrors('name')}? error"></span>
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:class="${#fields.hasErrors('name')} ? 'error'"></span>
                     </div>
                 </div>
 
