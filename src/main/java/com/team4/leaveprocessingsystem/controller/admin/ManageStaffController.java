@@ -191,7 +191,7 @@ public class ManageStaffController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
-
+            model.addAttribute("managerList", managerService.findAllManagers());
             model.addAttribute("isEditMode", true);
             model.addAttribute("updateSuccess", false);
 
@@ -199,20 +199,22 @@ public class ManageStaffController {
         }
 
         JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
-        Manager assignedManager = managerService.findManagerById(employee.getManager().getId());
-
         LeaveBalance leaveBalance = new LeaveBalance(jobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(leaveBalance);
 
         Employee newEmployee = new Employee(employee.getName(),
-                jobDesignation, assignedManager, leaveBalance);
+                jobDesignation,
+                employee.getManager().getId() == null ? null : managerService.findManagerById(employee.getManager().getId()),
+                leaveBalance);
 
         employeeService.save(newEmployee);
+
+
         model.addAttribute("newEmployee", newEmployee);
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 
-        return "admin/manage-staff/create-new-employee-form";
+        return "redirect:/admin/manage-staff/";
     }
 
     @GetMapping("/delete/{employeeId}")
