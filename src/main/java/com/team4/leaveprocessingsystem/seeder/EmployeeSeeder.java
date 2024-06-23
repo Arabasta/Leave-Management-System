@@ -223,7 +223,7 @@ public class EmployeeSeeder {
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
-        Employee cleaningEmployee1 = new Employee("Andrew Garfield",
+        Employee cleaningEmployee1 = new Employee("Andrew",
                 cleaningJobDesignation,
                 manager1,
                 cleaningLeaveBalance);
