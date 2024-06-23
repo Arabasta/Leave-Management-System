@@ -107,6 +107,7 @@ public class LeaveApplicationService implements ILeaveApplication {
 
         int employeeId = 0;
         String employeeName = null;
+        // include wrapper %'s to employeeName String for Query
         if (Objects.equals(searchType, "name")) {
             employeeName = "%" + StringCleaningUtil.forDatabase(keyword) + "%";
         }

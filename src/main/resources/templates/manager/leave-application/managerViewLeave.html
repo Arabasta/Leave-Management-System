@@ -17,12 +17,15 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <!-- Search Parameter - Name or Id -->
             <form action="#" th:action="@{/manager/leave/managerView}" method="post">
                 <div class="form-group">
                     <label for="searchType"><strong>Search By:</strong></label>
-                    <select id="searchType" name="searchType" class="form-select" th:value="${searchType}">
-                        <option value="name">Name</option>
-                        <option value="id">Employee Id</option>
+                    <select id="searchType" name="searchType" class="form-select" th:value="${reportingDTO.searchType}">
+                        <option th:if="${reportingDTO.searchType==null or reportingDTO.searchType=='name'}" value="name">Name</option>
+                        <option th:if="${reportingDTO.searchType==null or reportingDTO.searchType=='name'}" value="id">Employee Id</option>
+                        <option th:if="${reportingDTO.searchType=='id'}" value="id">Employee Id</option>
+                        <option th:if="${reportingDTO.searchType=='id'}" value="name">Name</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -31,31 +34,36 @@
                     <input th:unless="${reportingDTO.keyword==null}" th:value="${reportingDTO.keyword}" type="text" name="keyword" class="form-control"/>
                     </label>
                 </div>
+                <!-- Search Parameter - Date Range -->
                 <div class="form-group">
                     <label><strong>Date Range:</strong></label>
                     <div class="input-group">
                         <input th:if="${reportingDTO.startDate==null}" class="form-control" type="date" name="startDate">
-                        <input th:unless="${reportingDTO.startDate==null}" class="form-control" type="date" name="startDate">
+                        <input th:unless="${reportingDTO.startDate==null}" th:value="${reportingDTO.startDate}" class="form-control" type="date" name="startDate">
                         <div class="input-group-text">To</div>
                         <input th:if="${reportingDTO.endDate==null}" class="form-control" type="date" name="endDate">
-                        <input th:unless="${reportingDTO.endDate==null}" class="form-control" type="date" name="endDate">
+                        <input th:unless="${reportingDTO.endDate==null}" th:value="${reportingDTO.endDate}" class="form-control" type="date" name="endDate">
                     </div>
                 </div>
+                <!-- Search Parameter - Status -->
                 <div class="form-group">
                     <label for="applicationStatus"><strong>Leave Status:</strong></label>
                     <select class="form-select" name="leaveStatus" id="applicationStatus">
-                        <option th:if="${reportingDTO.leaveStatus=='ALL'}" selected>ALL</option>
-                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:value="${reportingDTO.leaveStatus}"></option>
+                        <option th:if="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'" selected></option>
+                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:text="'Selection: '+${reportingDTO.leaveStatus}" th:value="${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).valueOf(reportingDTO.leaveStatus)}"></option>
+                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'"></option>
                         <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
                                 th:value="${status}" th:text="${status}"></option>
                     </select>
                 </div>
                 <br>
+                <!-- Search Button -->
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-primary">Search</button>
                     <a class="btn btn-secondary" th:href="@{/manager/leave/managerView}">Reset</a>
                 </div>
             </form>
+            <!-- Save as CSV Button -->
             <form class="text-center mt-3" method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeLeaveApplicationsCSV}">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Save as CSV</button>
@@ -102,17 +110,17 @@
     </div>
 </div>
 <br>
-<input type="hidden" name="keyword" th:value="${keyword}"/>
-<input type="hidden" name="searchType" th:value="${searchType}"/>
-<input type="hidden" name="startDate" th:value="${startDate}"/>
-<input type="hidden" name="endDate" th:value="${endDate}"/>
-<input type="hidden" name="leaveStatus" th:value="${leaveStatus}"/>
+<input type="hidden" name="keyword" th:value="${reportingDTO.keyword}"/>
+<input type="hidden" name="searchType" th:value="${reportingDTO.searchType}"/>
+<input type="hidden" name="startDate" th:value="${reportingDTO.startDate}"/>
+<input type="hidden" name="endDate" th:value="${reportingDTO.endDate}"/>
+<input type="hidden" name="leaveStatus" th:value="${reportingDTO.leaveStatus}"/>
 <div th:if="${page.totalPages > 1}">
     <nav aria-label="Pagination">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${keyword}, searchType=${searchType},
-                 startDate=${startDate}, endDate=${endDate}, leaveStatus=${leaveStatus}, pageNo=${page.number - 1},
+                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
+                 startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number - 1},
                   pageSize=${page.size})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -121,8 +129,8 @@
                 <a class="page-link" th:text="${page.number + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${page.number + 1 == page.totalPages} ? 'disabled'">
-                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${keyword}, searchType=${searchType},
-                 startDate=${startDate}, endDate=${endDate}, leaveStatus=${leaveStatus}, pageNo=${page.number + 1},
+                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
+                 startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number + 1},
                   pageSize=${page.size})}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
