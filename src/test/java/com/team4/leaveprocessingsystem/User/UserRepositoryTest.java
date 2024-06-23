@@ -34,14 +34,13 @@ public class UserRepositoryTest {
     private Employee testEmployee;
     private User testUser;
     private JobDesignation testJobDesignation;
-    private LeaveBalance testLeaveBalance;
 
     @BeforeEach()
     void init() {
         System.out.println("startup");
 
         testJobDesignation = jobDesignationRepository.save(createJobDesignation("Test"));
-        testLeaveBalance = leaveBalanceRepository.save(createLeaveBalance());
+        LeaveBalance testLeaveBalance = leaveBalanceRepository.save(createLeaveBalance());
 
         // Set up Employee object
         Employee e = createEmployee(testJobDesignation, testLeaveBalance);
