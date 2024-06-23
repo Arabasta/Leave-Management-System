@@ -11,7 +11,7 @@
 <body>
 <div th:replace="fragments/navbar :: menu"></div>
 
-<div class="container w-50 mt-5 text-center">
+<div class="container mt-5 text-center" style="max-width: 600px;">
     <h1 class="mb-3 mt-3 text-center"
         th:text="${isEditMode} ? 'Create User' : 'View User Details'"></h1>
 

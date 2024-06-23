@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.Manager;
+package com.team4.leaveprocessingsystem.repository.Manager;
 
 import com.team4.leaveprocessingsystem.model.Employee;
 import com.team4.leaveprocessingsystem.model.JobDesignation;

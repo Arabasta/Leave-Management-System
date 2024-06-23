@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.CompensationClaim;
+package com.team4.leaveprocessingsystem.repository.CompensationClaim;
 
 import com.team4.leaveprocessingsystem.model.*;
 import com.team4.leaveprocessingsystem.model.enums.CompensationClaimStatusEnum;

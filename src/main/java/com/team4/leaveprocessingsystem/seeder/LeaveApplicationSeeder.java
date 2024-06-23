@@ -47,26 +47,29 @@ public class LeaveApplicationSeeder {
         if (leaveApplicationService.count() == 0) {
             List<LocalDate> publicHolidays = publicHolidayService.publicHolidayDateList();
             List<LocalDate> dateList = new ArrayList<>();
-            int numOfLeaves = 50; // number of leave applications to be generated per employee
+            int numOfLeaves = 15; // number of leave applications to be generated per employee
             int durationBound = 3; // max duration of leave applications
 
-            LocalDate dateToAdd = getWorkingDay(LocalDate.now(), publicHolidays);
+            LocalDate dateToAdd = getWorkingDay(LocalDate.now().minusMonths(4), publicHolidays);
 
             // Generate a list of start and end dates for the number of leave applications
             dateList.add(dateToAdd);
-            dateList.add(getWorkingDay(dateToAdd.plusDays(random.nextInt(durationBound)), publicHolidays));
+            dateList.add(getWorkingDay(dateToAdd.plusDays(durationBound), publicHolidays));
             for (int i = 0; i < numOfLeaves; i++){
-                LocalDate startDate = getWorkingDay(dateList.get(dateList.size() - 1).plusDays(random.nextInt(durationBound) + 1), publicHolidays);
-                LocalDate endDate = getWorkingDay(startDate.plusDays(random.nextInt(durationBound)), publicHolidays);
+                LocalDate startDate = getWorkingDay(dateList.get(dateList.size() - 1).plusDays(durationBound + 10), publicHolidays);
+                LocalDate endDate = getWorkingDay(startDate.plusDays(durationBound), publicHolidays);
                 dateList.add(startDate);
                 dateList.add(endDate);
             }
 
             // Adds all the generated leave applications to the employee
+            int counter = 0;
             List<Employee> employeeList = employeeService.findAll();
             for (Employee employee : employeeList) {
                 for (int i = 0; i < dateList.size(); i = i + 2){
-                    leaveApplicationSeed(employee, dateList.get(i), dateList.get(i + 1),"test");
+                    leaveApplicationSeed(employee, leaveStatuses[counter % 6], leaveTypes.get(counter % 4),
+                            dateList.get(i), dateList.get(i + 1),"test");
+                    counter++;
                 }
             }
         }
@@ -80,14 +83,15 @@ public class LeaveApplicationSeeder {
         return date;
     }
 
-    private void leaveApplicationSeed(Employee employee, LocalDate startDate, LocalDate endDate, String reason) {
+    private void leaveApplicationSeed(Employee employee, LeaveStatusEnum leaveStatusEnum, LeaveTypeEnum leaveTypeEnum,
+                                      LocalDate startDate, LocalDate endDate, String reason) {
         Manager manager = employee.getManager();
 
         LeaveApplication leaveApplication = new LeaveApplication();
         leaveApplication.setSubmittingEmployee(employee);
         leaveApplication.setReviewingManager(manager);
-        leaveApplication.setLeaveStatus(leaveStatuses[random.nextInt(leaveStatuses.length)]);
-        leaveApplication.setLeaveType(leaveTypes.get(random.nextInt(leaveTypes.size())));
+        leaveApplication.setLeaveStatus(leaveStatusEnum);
+        leaveApplication.setLeaveType(leaveTypeEnum);
         leaveApplication.setStartDate(startDate);
         leaveApplication.setEndDate(endDate);
         leaveApplication.setSubmissionReason(reason);

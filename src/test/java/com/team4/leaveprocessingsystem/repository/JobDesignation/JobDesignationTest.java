@@ -1,4 +1,4 @@
-package com.team4.leaveprocessingsystem.JobDesignation;
+package com.team4.leaveprocessingsystem.repository.JobDesignation;
 
 import com.team4.leaveprocessingsystem.model.JobDesignation;
 import org.junit.jupiter.api.Test;
