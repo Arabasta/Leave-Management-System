@@ -24,9 +24,7 @@
                     <label class="col-4 col-form-label" for="employeeName">Name:</label>
                     <div class="col-8">
                         <input class="form-control" id="employeeName" th:field="*{name}" type="text"/>
-
-                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-                              th:class="${#fields.hasErrors('name')}? error"></span>
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:class="${#fields.hasErrors('name')} ? 'error'"></span>
                     </div>
                 </div>
 
@@ -39,6 +37,25 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="mb-3 row align-items-center">
+                    <label class="col-4 col-form-label" for="employeeManager">Manager:</label>
+                    <div class="col-8">
+                        <select th:field="*{manager.id}" class="form-select" id="employeeManager"
+                                name="managerId">
+                            <option th:selected="${employee.manager == null}"
+                                    th:text="'No Manager'"
+                                    th:value="null"></option>
+                            <option
+                                    th:each="manager : ${managerList}"
+                                    th:text="${manager.name}"
+                                    th:value="${manager.id}"
+                                    th:selected="${employee.manager.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="alert alert-danger mt-1" th:errors="*{manager}"
+                     th:if="${#fields.hasErrors('manager')}"></div>
                 <br>
 
                 <div class="d-flex flex-row-reverse">
@@ -82,7 +99,7 @@
                     <label class="col-4 col-form-label" for="managerName">Assigned Manager:</label>
                     <div class="col-8">
                         <input class="form-control-plaintext" id="managerName" readonly="readonly"
-                               th:value="${newEmployee.manager != null ? existingEmployee.manager.name : 'No Manager'}"
+                               th:value="${newEmployee.manager.name}"
                                type="text"/>
                     </div>
                 </div>
@@ -104,12 +121,7 @@
 
                 <div class="alert alert-primary" role="alert" th:if="${updateSuccess}">
                     Proceed to create new user account?
-                    <span th:if="${!isManagerUser}" >
-                        <a class="alert-link"
-                           th:href="@{/admin/manage-hierarchy/edit/{id}(id=${newEmployee.id})}">
-                        Yes</a>
-                    </span>
-                    <span th:if="${isManagerUser}" >
+                    <span>
                         <a class="alert-link"
                            th:href="@{/admin/manage-staff/add/user/{id}(id=${newEmployee.id})}">
                         Yes</a>

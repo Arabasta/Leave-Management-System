@@ -40,8 +40,44 @@
             </div>
         </div>
 
-        <div>
-            <input class="btn btn-primary float-end" type="submit" value="Update"/>
+        <div class="mb-3 row align-items-center">
+            <label class="col-4 col-form-label" for="employeeManager">Manager:</label>
+            <div class="col-8">
+                <select th:field="*{manager.id}" class="form-select" id="employeeManager"
+                        name="managerId">
+                    <option th:if="${isManager && employee.manager.id == null}"
+                            th:text="'No Manager'"
+                            th:value="null"
+                            th:selected="${employee.manager == null}"></option>
+
+                    <option th:if="${isManager}"
+                            th:each="manager : ${managerList}"
+                            th:text="${manager.name}"
+                            th:value="${manager.id}"
+                            th:selected="${employee.manager.id}"></option>
+
+                    <option th:if="${!isManager}"
+                            th:each="manager : ${managerList}"
+                            th:text="${manager.name}"
+                            th:value="${manager.id}"
+                            th:selected="${employee.manager.id}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                    <span class="ms-3">
+                        <input class="btn btn-primary float-end" type="submit" value="Update"/>
+                    </span>
+            </div>
+
+            <div class="p-2">
+                    <span class="ms-3">
+                        <a class="btn btn-light text-decoration-none"
+                           href="#" onclick="history.go(-1); return false;">Back</a>
+                    </span>
+            </div>
         </div>
     </form>
 

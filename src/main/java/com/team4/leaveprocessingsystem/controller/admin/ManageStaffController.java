@@ -7,12 +7,14 @@ import com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum;
 import com.team4.leaveprocessingsystem.model.enums.RoleEnum;
 import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.repo.*;
+import com.team4.leaveprocessingsystem.validator.EmployeeValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,13 +32,14 @@ public class ManageStaffController {
     private final LeaveApplicationService leaveApplicationService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final EmployeeValidator employeeValidator;
 
     @Autowired
     public ManageStaffController(EmployeeService employeeService, JobDesignationService jobDesignationService,
                                  ManagerService managerService, LeaveBalanceService leaveBalanceService,
                                  UserService userService, CompensationClaimService compensationClaimService,
                                  LeaveApplicationService leaveApplicationService, AuthenticationService authenticationService,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder, EmployeeValidator employeeValidator) {
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.managerService = managerService;
@@ -46,6 +49,12 @@ public class ManageStaffController {
         this.leaveApplicationService = leaveApplicationService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
+        this.employeeValidator = employeeValidator;
+    }
+
+    @InitBinder("employee")
+    private void initEmployeeBinder(WebDataBinder binder) {
+        binder.addValidators(employeeValidator);
     }
 
     @GetMapping("/")
@@ -109,7 +118,11 @@ public class ManageStaffController {
         LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
 
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
-        List<Manager> managerList = managerService.findAllManagers();
+        List<Manager> managerList = managerService.findAllExcept(employeeId);
+
+        List<Manager> managerListWithNoManagerOption = managerService.findAllManagers();
+
+        Manager manager = managerService.findManagerById(employeeId);
 
         List<User> userListForEmployee = userService.findByEmployeeId(employeeId);
 
@@ -117,6 +130,7 @@ public class ManageStaffController {
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("managerList", managerList);
+        model.addAttribute("isManager", manager != null ? true : false);
         model.addAttribute("userListForEmployee", userListForEmployee);
 
         model.addAttribute("isEditMode", true);
@@ -158,8 +172,11 @@ public class ManageStaffController {
     public String createNewEmployeeForm(Model model) {
 
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
+        List<Manager> managerList = managerService.findAllManagers();
+
         model.addAttribute("employee", new Employee());
         model.addAttribute("jobDesignationList", jobDesignationList);
+        model.addAttribute("managerList", managerList);
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
 
@@ -172,8 +189,9 @@ public class ManageStaffController {
                                     Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("employee", new Employee());
+            model.addAttribute("employee", employee);
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
+            model.addAttribute("managerList", managerService.findAllManagers());
             model.addAttribute("isEditMode", true);
             model.addAttribute("updateSuccess", false);
 
@@ -181,20 +199,22 @@ public class ManageStaffController {
         }
 
         JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
-
         LeaveBalance leaveBalance = new LeaveBalance(jobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(leaveBalance);
 
         Employee newEmployee = new Employee(employee.getName(),
-                jobDesignation, null, leaveBalance);
+                jobDesignation,
+                employee.getManager().getId() == null ? null : managerService.findManagerById(employee.getManager().getId()),
+                leaveBalance);
 
         employeeService.save(newEmployee);
+
+
         model.addAttribute("newEmployee", newEmployee);
-        model.addAttribute("isManagerUser", (jobDesignation.getId() == 2) ? true : false);
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 
-        return "admin/manage-staff/create-new-employee-form";
+        return "redirect:/admin/manage-staff/";
     }
 
     @GetMapping("/delete/{employeeId}")

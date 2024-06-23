@@ -10,4 +10,7 @@ public interface IManager {
     Manager findManagerById(Integer id);
     List<Manager> findAllManagers();
     List<Employee> findManagersByName(String name);
+
+    @Transactional
+    List<Manager> findAllExcept(Integer id);
 }
