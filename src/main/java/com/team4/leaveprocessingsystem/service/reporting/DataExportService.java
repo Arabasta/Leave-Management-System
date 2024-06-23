@@ -3,7 +3,11 @@ package com.team4.leaveprocessingsystem.service.reporting;
 import com.team4.leaveprocessingsystem.interfacemethods.IDataExport;
 import com.team4.leaveprocessingsystem.model.CompensationClaim;
 import com.team4.leaveprocessingsystem.model.LeaveApplication;
+import com.team4.leaveprocessingsystem.model.dataTransferObjects.ReportingDTO;
+import com.team4.leaveprocessingsystem.service.repo.LeaveApplicationService;
 import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.PrintWriter;
@@ -13,6 +17,12 @@ import java.util.List;
 
 @Service
 public class DataExportService implements IDataExport {
+
+    private final LeaveApplicationService leaveApplicationService;
+
+    public DataExportService(LeaveApplicationService leaveApplicationService) {
+        this.leaveApplicationService = leaveApplicationService;
+    }
 
     @Override
     public void downloadManagerReportingCompensationClaimsCSV(PrintWriter writer, List<CompensationClaim> list) {
@@ -37,7 +47,10 @@ public class DataExportService implements IDataExport {
     }
 
     @Override
-    public void downloadManagerReportingLeaveApplicationsCSV(PrintWriter writer, ArrayList<LeaveApplication> applications) {
+    public void downloadManagerReportingLeaveApplicationsCSV(PrintWriter writer, ReportingDTO reportingDTO) {
+        Page<LeaveApplication> applications = leaveApplicationService
+                .filterManagerViewSearch(reportingDTO.getManagerId(), reportingDTO.getKeyword(), reportingDTO.getSearchType(),
+                        reportingDTO.getStartDate(), reportingDTO.getEndDate(), reportingDTO.getLeaveStatus(), Pageable.unpaged());
         writer.write("Id,SubmittingEmployee,ReviewingManager,LeaveStatus,LeaveType,StartDate,EndDate," +
                 "SubmissionReason,RejectionReason,WorkDissemination,ContactDetails\n");
         for(LeaveApplication application: applications) {
