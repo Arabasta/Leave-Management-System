@@ -214,7 +214,7 @@ public class ManageStaffController {
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 
-        return "redirect:/admin/manage-staff/";
+        return "admin/manage-staff/create-new-employee-form";
     }
 
     @GetMapping("/delete/{employeeId}")
