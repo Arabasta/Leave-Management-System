@@ -1,7 +1,12 @@
 package com.team4.leaveprocessingsystem.repository.Manager;
 
-import com.team4.leaveprocessingsystem.model.*;
-import com.team4.leaveprocessingsystem.repository.*;
+import com.team4.leaveprocessingsystem.model.Employee;
+import com.team4.leaveprocessingsystem.model.JobDesignation;
+import com.team4.leaveprocessingsystem.model.LeaveBalance;
+import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.repository.JobDesignationRepository;
+import com.team4.leaveprocessingsystem.repository.LeaveBalanceRepository;
+import com.team4.leaveprocessingsystem.repository.ManagerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,21 +23,13 @@ public class ManagerRepositoryTest {
     @Autowired
     private ManagerRepository managerRepository;
     @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private CompensationClaimRepository compensationClaimRepository;
-    @Autowired
     private LeaveBalanceRepository leaveBalanceRepository;
     @Autowired
     private JobDesignationRepository jobDesignationRepository;
 
     private Manager testManager;
-    private Employee testEmployee;
     private JobDesignation testJobDesignation;
     private LeaveBalance testLeaveBalance;
-    private JobDesignation testJobDesignation2;
-    private LeaveBalance testLeaveBalance2;
-    private List<CompensationClaim> testCompensationClaimList;
 
     @BeforeEach()
     void init() {
