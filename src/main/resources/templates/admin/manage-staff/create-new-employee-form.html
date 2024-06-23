@@ -45,6 +45,9 @@
                     <div class="col-8">
                         <select th:field="*{manager.id}" class="form-select" id="employeeManager"
                                 name="managerId">
+                            <option th:text="'No Manager'"
+                                    th:value="null"
+                                    th:selected="${employee.manager == null}"></option>
                             <option
                                     th:each="manager : ${managerList}"
                                     th:text="${manager.name}"
@@ -52,6 +55,7 @@
                                     th:selected="${employee.manager.id}"></option>
                         </select>
                     </div>
+                    <div th:if="${#fields.hasErrors('manager')}" class="alert alert-danger mt-1" th:errors="*{manager}"></div>
                 </div>
                 <br>
 
