@@ -42,12 +42,12 @@ public class LeaveApplicationSeeder {
         this.publicHolidayService = publicHolidayService;
     }
 
-    // Note: doesn't validate available balance against leave that are pending approval
+
     public void seed() {
         if (leaveApplicationService.count() == 0) {
             List<LocalDate> publicHolidays = publicHolidayService.publicHolidayDateList();
             List<LocalDate> dateList = new ArrayList<>();
-            int numOfLeaves = 15; // number of leave applications to be generated per employee
+            int numOfLeaves = 15; // number of leave applications to be generated per employee. Note: doesn't validate available balance against leave that are pending approval, so don't seed too many
             int durationBound = 3; // max duration of leave applications
 
             LocalDate dateToAdd = getWorkingDay(LocalDate.now().minusMonths(4), publicHolidays);

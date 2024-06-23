@@ -42,7 +42,7 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
 
     List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee);
 
-    @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee = :employee")
+    @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee = :employee ORDER BY L.id DESC")
     Page<LeaveApplication> findBySubmittingEmployeeWithPaging(@Param("employee") Employee submittingEmployee, Pageable page);
 
     @Query("SELECT L FROM LeaveApplication L WHERE L.id = :id AND L.submittingEmployee.id = :employeeId")
