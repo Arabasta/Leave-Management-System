@@ -11,4 +11,7 @@ import java.util.List;
 public interface ManagerRepository extends JpaRepository<Manager, Integer> {
     @Query("Select m from Manager as m where m.name like CONCAT('%', :k, '%') ")
     List<Employee> findManagerByName(@Param("k") String keyword);
+
+    @Query("Select m from Manager as m where m.id != :k")
+    List<Manager> findAllExcept(@Param("k") Integer employeeId);
 }

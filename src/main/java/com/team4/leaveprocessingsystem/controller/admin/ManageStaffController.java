@@ -109,7 +109,11 @@ public class ManageStaffController {
         LeaveBalance leaveBalance = leaveBalanceService.findByEmployee(employeeId);
 
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
-        List<Manager> managerList = managerService.findAllManagers();
+        List<Manager> managerList = managerService.findAllExcept(employeeId);
+
+        List<Manager> managerListWithNoManagerOption = managerService.findAllManagers();
+
+        Manager manager = managerService.findManagerById(employeeId);
 
         List<User> userListForEmployee = userService.findByEmployeeId(employeeId);
 
@@ -117,6 +121,7 @@ public class ManageStaffController {
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignationList", jobDesignationList);
         model.addAttribute("managerList", managerList);
+        model.addAttribute("isManager", manager != null ? true : false);
         model.addAttribute("userListForEmployee", userListForEmployee);
 
         model.addAttribute("isEditMode", true);
@@ -158,8 +163,11 @@ public class ManageStaffController {
     public String createNewEmployeeForm(Model model) {
 
         List<JobDesignation> jobDesignationList = jobDesignationService.listAllJobDesignations();
+        List<Manager> managerList = managerService.findAllManagers();
+
         model.addAttribute("employee", new Employee());
         model.addAttribute("jobDesignationList", jobDesignationList);
+        model.addAttribute("managerList", managerList);
         model.addAttribute("isEditMode", true);
         model.addAttribute("updateSuccess", false);
 
@@ -174,6 +182,8 @@ public class ManageStaffController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("employee", new Employee());
             model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
+
+
             model.addAttribute("isEditMode", true);
             model.addAttribute("updateSuccess", false);
 
@@ -181,12 +191,13 @@ public class ManageStaffController {
         }
 
         JobDesignation jobDesignation = jobDesignationService.findByName(employee.getJobDesignation().getName());
+        Manager assignedManager = managerService.findManagerById(employee.getManager().getId());
 
         LeaveBalance leaveBalance = new LeaveBalance(jobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(leaveBalance);
 
         Employee newEmployee = new Employee(employee.getName(),
-                jobDesignation, null, leaveBalance);
+                jobDesignation, assignedManager, leaveBalance);
 
         employeeService.save(newEmployee);
         model.addAttribute("newEmployee", newEmployee);

@@ -40,6 +40,9 @@ public class ManagerService implements IManager {
         return managerRepository.findManagerByName(name);
     }
 
+    @Override
+    @Transactional
+    public List<Manager> findAllExcept(Integer id) { return managerRepository.findAllExcept(id);}
     // TODO: Delete if not required. Also doesn't belong to this service
 //    @Transactional
 //    public Map<Employee, LeaveApplication> findSubordinatesOnLeaveDuring(Manager manager, LocalDate start, LocalDate end) {
