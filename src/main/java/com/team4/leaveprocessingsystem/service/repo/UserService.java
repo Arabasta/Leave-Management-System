@@ -115,6 +115,6 @@ public class UserService implements UserDetailsService, IUser {
         }catch (NullPointerException e){
             userId =0;
         }
-        return userRepository.findUsersById(userId);
+        return userRepository.findUsersById();
     }
 }

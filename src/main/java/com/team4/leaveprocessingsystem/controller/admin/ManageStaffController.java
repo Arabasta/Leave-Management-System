@@ -190,6 +190,7 @@ public class ManageStaffController {
 
         employeeService.save(newEmployee);
         model.addAttribute("newEmployee", newEmployee);
+        model.addAttribute("isManagerUser", (jobDesignation.getId() == 2) ? true : false);
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 

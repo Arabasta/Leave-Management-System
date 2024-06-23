@@ -59,6 +59,7 @@ public class ManageUserController {
             users = switch (searchType) {
                 case "username" -> userService.findUsersByUsername(query);
                 case "userid" -> userService.findUsersById(query);
+                case "employeeid" -> userService.findByEmployeeId(Integer.parseInt(query));
                 case "email" -> userService.findUsersByEmail(query);
                 case "role" -> userService.findUsersByRoleType(query);
                 default -> userService.findAll();

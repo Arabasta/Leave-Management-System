@@ -64,6 +64,8 @@
                             <td>
                                 <a class="btn btn-primary" th:href="@{/admin/manage-staff/edit/{id}(id=${e.id})}">Edit</a>
                                 <a class="btn btn-primary" th:href="@{/admin/manage-staff/delete/{id}(id=${e.id})}">Delete</a>
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <a class="btn btn-light" th:href="@{/admin/manage-user/?searchType=employeeid&query={id}(id=${e.id})}">See User Accounts</a>
                             </td>
                         </tr>
                     </tbody>

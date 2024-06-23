@@ -1,9 +1,7 @@
 package com.team4.leaveprocessingsystem.controller.admin;
 
-import com.team4.leaveprocessingsystem.model.Employee;
-import com.team4.leaveprocessingsystem.model.JobDesignation;
-import com.team4.leaveprocessingsystem.model.LeaveBalance;
-import com.team4.leaveprocessingsystem.model.Manager;
+import com.team4.leaveprocessingsystem.model.*;
+import com.team4.leaveprocessingsystem.repository.UserRepository;
 import com.team4.leaveprocessingsystem.service.repo.EmployeeService;
 import com.team4.leaveprocessingsystem.service.repo.JobDesignationService;
 import com.team4.leaveprocessingsystem.service.repo.LeaveBalanceService;
@@ -31,6 +29,7 @@ public class ManageHierarchyController {
     private final JobDesignationService jobDesignationService;
     private final LeaveBalanceService leaveBalanceService;
     private final HierarchyValidator hierarchyValidator;
+    private final UserRepository userRepository;
 
     @InitBinder("employee")
     protected void initBinder(WebDataBinder binder) {
@@ -40,12 +39,13 @@ public class ManageHierarchyController {
     @Autowired
     public ManageHierarchyController(ManagerService managerService, EmployeeService employeeService,
                                      JobDesignationService jobDesignationService, LeaveBalanceService leaveBalanceService,
-                                     HierarchyValidator hierarchyValidator) {
+                                     HierarchyValidator hierarchyValidator, UserRepository userRepository) {
         this.managerService = managerService;
         this.employeeService = employeeService;
         this.jobDesignationService = jobDesignationService;
         this.leaveBalanceService = leaveBalanceService;
         this.hierarchyValidator = hierarchyValidator;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/list")
@@ -95,6 +95,12 @@ public class ManageHierarchyController {
         model.addAttribute("rootEmployees", rootEmployees);
         model.addAttribute("managerSubordinatesMap", managerSubordinatesMap);
 
+
+        // check if employee has any existing user account, if not redirect to create user account
+        //List<User> existingUserAccounts =userRepository.findByEmployeeId(employeeId);
+        //model.addAttribute("hasExistingUserAccounts", existingUserAccounts.isEmpty() ? false : true);
+
+
         return "admin/manage-hierarchy/view-tree";
     }
 
@@ -112,6 +118,8 @@ public class ManageHierarchyController {
         model.addAttribute("leaveBalance", leaveBalance);
         model.addAttribute("jobDesignation", jobDesignation);
         model.addAttribute("managers", managers);
+
+
 
         return "admin/manage-hierarchy/edit-employee";
     }
@@ -167,6 +175,7 @@ public class ManageHierarchyController {
         currEmployee.setLeaveBalance(leaveBalanceService.findLeaveBalanceById(employee.getLeaveBalance().getId()));
 
         employeeService.save(currEmployee);
+
         return "redirect:/admin/manage-hierarchy/tree";
     }
 }
