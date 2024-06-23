@@ -67,7 +67,7 @@ public class LeaveApplicationSeeder {
             List<Employee> employeeList = employeeService.findAll();
             for (Employee employee : employeeList) {
                 for (int i = 0; i < dateList.size(); i = i + 2){
-                    leaveApplicationSeed(employee, leaveStatuses[counter % 6], leaveTypes.get(counter % 4),
+                    leaveApplicationSeed(employee, leaveStatuses[counter % leaveStatuses.length], leaveTypes.get(counter % leaveTypes.size()),
                             dateList.get(i), dateList.get(i + 1),"test");
                     counter++;
                 }

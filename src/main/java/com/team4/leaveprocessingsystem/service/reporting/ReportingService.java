@@ -18,9 +18,21 @@ public class ReportingService {
         return reportingDTO;
     }
 
-    public ReportingDTO setForLeavesReport(ArrayList<LeaveApplication> applications) {
+    public ReportingDTO setForLeavesReport(ArrayList<LeaveApplication> applications,
+                                           int managerId,
+                                           String keyword,
+                                           String searchType,
+                                           String startDate,
+                                           String endDate,
+                                           String leaveStatus) {
         ReportingDTO reportingDTO = new ReportingDTO();
         reportingDTO.setApplications(applications);
+        reportingDTO.setManagerId(managerId);
+        reportingDTO.setKeyword(keyword);
+        reportingDTO.setSearchType(searchType);
+        reportingDTO.setStartDate(startDate);
+        reportingDTO.setEndDate(endDate);
+        reportingDTO.setLeaveStatus(leaveStatus);
         return reportingDTO;
     }
 

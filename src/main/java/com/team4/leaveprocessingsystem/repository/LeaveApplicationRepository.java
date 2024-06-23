@@ -18,28 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LeaveApplicationRepository extends JpaRepository<LeaveApplication, Integer> {
-    @Query("SELECT L FROM LeaveApplication L WHERE L.reviewingManager.id = :managerId")
-    Page<LeaveApplication> findSubordinatesLeaveApplicationsByReviewingManager_Id(@Param("managerId") int managerId, Pageable pageable);
-
-    @Query("SELECT L FROM LeaveApplication L WHERE L.reviewingManager.id = :managerId AND L.submittingEmployee.name LIKE %:employeeName%")
-    Page<LeaveApplication> findSubordinatesByNameLeaveApplicationsByReviewingManager_Id(@Param("managerId") int managerId,
-                                                                                        @Param("employeeName") String employeeName,
-                                                                                        Pageable pageable);
-
-    @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee.id = :id")
-    Page<LeaveApplication> findBySubmittingEmployeeId(@Param("id") int id, Pageable pageable);
-
-    @Query("SELECT L FROM LeaveApplication L WHERE L.reviewingManager.id = :managerId AND L.startDate >= :startDate AND L.startDate <= :endDate")
-    Page<LeaveApplication> findAllWithinDateRange(@Param("managerId") int managerId,
-                                                  @Param("startDate") LocalDate startDate,
-                                                  @Param("endDate") LocalDate endDate,
-                                                  Pageable pageable);
-
-    @Query("SELECT L FROM LeaveApplication L WHERE L.reviewingManager.id = :managerId AND L.leaveStatus = :leaveStatus")
-    Page<LeaveApplication> findSubordinatesLeaveApplicationsByLeaveStatusByReviewingManager_Id(@Param("managerId") int managerId,
-                                                                                               @Param("leaveStatus") LeaveStatusEnum leaveStatus,
-                                                                                               Pageable pageable);
-
     List<LeaveApplication> findBySubmittingEmployee(Employee submittingEmployee);
 
     @Query("SELECT L FROM LeaveApplication L WHERE L.submittingEmployee = :employee ORDER BY L.id DESC")
@@ -50,4 +28,19 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
 
     @Query("SELECT L FROM LeaveApplication L WHERE YEAR(L.endDate) = :year AND MONTH(L.endDate) = :month AND L.leaveStatus = 'APPROVED'")
     List<LeaveApplication> findApprovedForYearMonth(@Param("year") String year, @Param("month") String month);
+
+    @Query("SELECT L FROM LeaveApplication L " +
+            "WHERE L.reviewingManager.id = :managerId " +
+            "AND (:employeeId = 0 OR L.submittingEmployee.id = :employeeId) " +
+            "AND (:employeeName is NULL OR L.submittingEmployee.name LIKE :employeeName) " +
+            "AND (:startDate is NULL OR L.startDate >= :startDate) " +
+            "AND (:endDate is NULL OR L.endDate <= :endDate) " +
+            "AND (:leaveStatus is NULL OR L.leaveStatus = :leaveStatus) ")
+    Page<LeaveApplication> findByNameOrIdAndDateRangeAndStatus(@Param("managerId") int managerId,
+                                                               @Param("employeeId") int employeeId,
+                                                               @Param("employeeName") String employeeName,
+                                                               @Param("startDate") LocalDate startDate,
+                                                               @Param("endDate") LocalDate endDate,
+                                                               @Param("leaveStatus") LeaveStatusEnum leaveStatus,
+                                                               Pageable pageable);
 }

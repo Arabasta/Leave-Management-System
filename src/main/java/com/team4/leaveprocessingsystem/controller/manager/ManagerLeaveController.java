@@ -61,13 +61,9 @@ public class ManagerLeaveController {
                 .filterManagerViewSearch(managerId, keyword, searchType, startDate, endDate, leaveStatus, pageable);
 
         model.addAttribute("reportingDTO",reportingService
-                .setForLeavesReport(leaveApplicationService.setArrayList(applications.getContent())));
+                .setForLeavesReport(leaveApplicationService.setArrayList(applications.getContent()),
+                        managerId, keyword, searchType, startDate, endDate, leaveStatus));
         model.addAttribute("page", applications);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("searchType", searchType);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-        model.addAttribute("leaveStatus", leaveStatus);
         return "manager/leave-application/managerViewLeave";
     }
 
