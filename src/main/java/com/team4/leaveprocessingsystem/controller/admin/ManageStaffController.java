@@ -232,6 +232,22 @@ public class ManageStaffController {
 
         return "redirect:/admin/manage-staff/";
     }
+
+    @GetMapping("/undelete/{employeeId}")
+    public String undeleteEmployee(@PathVariable(name = "employeeId") Integer employeeId,
+                                 Model model) {
+
+        Employee employee = employeeService.findEmployeeById(employeeId);
+        employee.setDeleted(false);
+        List<User> userList = userService.findByEmployeeId(employeeId);
+        for (User user: userList){
+            user.setRole(RoleEnum.ROLE_EMPLOYEE);
+        }
+        employeeService.save(employee);
+
+        return "redirect:/admin/manage-staff/";
+    }
+
     /* ----------------------------------------- USERS ------------------------------------------------------------*/
 
     // Logic to Update user account(s) details in Manage User Controller
