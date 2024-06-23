@@ -123,12 +123,7 @@
 
                 <div class="alert alert-primary" role="alert" th:if="${updateSuccess}">
                     Proceed to create new user account?
-                    <span th:if="${!isManagerUser}" >
-                        <a class="alert-link"
-                           th:href="@{/admin/manage-hierarchy/edit/{id}(id=${newEmployee.id})}">
-                        Yes</a>
-                    </span>
-                    <span th:if="${isManagerUser}" >
+                    <span>
                         <a class="alert-link"
                            th:href="@{/admin/manage-staff/add/user/{id}(id=${newEmployee.id})}">
                         Yes</a>
