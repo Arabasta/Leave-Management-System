@@ -131,9 +131,20 @@ public class LeaveEntitlementController {
             return editLeaveEntitlementByJob(jobDesignationId, model);
         }
 
+        // update default annual leaves for job designation
         JobDesignation existingJobDesignation = jobDesignationService.findJobDesignationById(jobDesignationId);
         existingJobDesignation.setDefaultAnnualLeaves(jobDesignation.getDefaultAnnualLeaves());
         jobDesignationService.save(existingJobDesignation);
+
+        // update annual leave balances for all employees with job designation
+        List<Employee> employees = employeeService.findEmployeesByJobDesignation(jobDesignation.getName());
+        for (Employee employee : employees) {
+            LeaveBalance leaveBalance = employee.getLeaveBalance();
+            if (leaveBalance != null) {
+                leaveBalance.setAnnualLeave(existingJobDesignation.getDefaultAnnualLeaves());
+                leaveBalanceService.save(leaveBalance);
+            }
+        }
 
         model.addAttribute("jobDesignation", existingJobDesignation);
         model.addAttribute("isEditMode", false);
