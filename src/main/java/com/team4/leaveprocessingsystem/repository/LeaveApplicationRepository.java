@@ -29,7 +29,6 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
     @Query("SELECT L FROM LeaveApplication L WHERE YEAR(L.endDate) = :year AND MONTH(L.endDate) = :month AND L.leaveStatus = 'APPROVED'")
     List<LeaveApplication> findApprovedForYearMonth(@Param("year") String year, @Param("month") String month);
 
-    // TODO: complete all-in-one query for Reporting use case - Manager View Subordinate Leave + Pagination
     @Query("SELECT L FROM LeaveApplication L " +
             "WHERE L.reviewingManager.id = :managerId " +
             "AND (:employeeId = 0 OR L.submittingEmployee.id = :employeeId) " +
