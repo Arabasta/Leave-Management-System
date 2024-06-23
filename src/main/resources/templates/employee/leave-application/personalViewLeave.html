@@ -116,7 +116,7 @@
             <option th:value="20" th:text="20" th:selected="${page.size == 20}"></option>
             <option th:value="25" th:text="25" th:selected="${page.size == 25}"></option>
         </select>
-        <input type="hidden" name="pageNo" th:value="${page.number}"/>
+        <input type="hidden" name="pageNo" th:value="0"/>
     </form>
 </div>
 <!-- Bootstrap JS and dependencies -->

@@ -46,7 +46,6 @@ public class ManagerLeaveController {
         this.reportingService = reportingService;
     }
 
-    // TODO: implement validators for below parameters
     @RequestMapping(value="managerView")
     public String viewLeaveApplications(@RequestParam(value="keyword", required = false) String keyword,
                                         @RequestParam(value="searchType", required = false) String searchType,
