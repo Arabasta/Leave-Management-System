@@ -152,15 +152,6 @@ public class LeaveApplicationApiController {
         return new ResponseEntity<> (leaveApplication, HttpStatus.OK);
     }
 
-
-    @GetMapping("view/{id}")
-    public ResponseEntity<LeaveApplication> viewLeave(@PathVariable int id){
-        Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());
-        LeaveApplication leaveApplication = leaveApplicationService.getLeaveApplicationIfBelongsToEmployee(id, employee.getId());
-
-        return new ResponseEntity<> (leaveApplication, HttpStatus.OK);
-    }
-
     @GetMapping("personalHistory")
     public ResponseEntity<Object> personalHistory() {
         Employee employee = employeeService.findEmployeeById(authenticationService.getLoggedInEmployeeId());

@@ -97,7 +97,7 @@ public class LeaveApplicationValidator implements Validator {
                     errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                 break;
             case COMPASSIONATE:
-                if (LeaveBalance.COMPASSIONATE_LEAVE < (numOfLeaveToBeCounted + (Long) pendingLeaveMap.getOrDefault(leaveType, 0L)))
+                if (LeaveBalance.COMPASSIONATE_LEAVE < (numOfLeaveToBeCounted))
                     errors.rejectValue("endDate", "error.dates", "Duration of leave applied cannot be more than available leave balance including leave days pending approval");
                 break;
             case COMPENSATION:
