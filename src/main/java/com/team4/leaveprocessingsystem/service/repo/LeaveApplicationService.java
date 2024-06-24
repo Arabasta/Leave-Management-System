@@ -12,9 +12,7 @@ import com.team4.leaveprocessingsystem.repository.LeaveApplicationRepository;
 import com.team4.leaveprocessingsystem.util.StringCleaningUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
