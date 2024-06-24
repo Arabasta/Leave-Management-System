@@ -99,7 +99,7 @@ public class EmployeeSeeder {
 
         Manager manager4 = new Manager("Zenitsu",
                 managementJobDesignation,
-                employeeService.findManagerByName("Muzan Kibutsuji"),
+                employeeService.findManagerByName("Mikasa Ackerman"),
                 leaveBalance4);
         employeeService.save(manager4);
 
@@ -126,23 +126,6 @@ public class EmployeeSeeder {
                 "muzan@gmail.com",
                 manager5);
         userService.save(managerUser5);
-
-        // manager 6
-        LeaveBalance leaveBalance6 = new LeaveBalance(managementJobDesignation.getDefaultAnnualLeaves());
-        leaveBalanceService.save(leaveBalance6);
-
-        Manager manager6 = new Manager("Yor",
-                managementJobDesignation,
-                null,
-                leaveBalance6);
-        employeeService.save(manager6);
-
-        User managerUser6 = new User(RoleEnum.ROLE_MANAGER,
-                "manager6",
-                passwordEncoder.encode("manager"),
-                "muzan@gmail.com",
-                manager6);
-        userService.save(managerUser6);
     }
 
     private void seedEmployee() {
@@ -219,7 +202,7 @@ public class EmployeeSeeder {
         JobDesignation cleaningJobDesignation = jobDesignationService.findByName("cleaning");
 
         // cleaning staff 1
-        Manager manager1 = employeeService.findManagerByName("Madara Uchiha");
+        Manager manager1 = employeeService.findManagerByName("Muzan Kibutsuji");
         LeaveBalance cleaningLeaveBalance = new LeaveBalance(cleaningJobDesignation.getDefaultAnnualLeaves());
         leaveBalanceService.save(cleaningLeaveBalance);
 
