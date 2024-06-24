@@ -103,6 +103,7 @@ public class LeaveBalanceService implements ILeaveBalance {
     public void updateCompensationLeave(CompensationClaim claim) {
         LeaveBalance employeeLeaveBalance = claim.getClaimingEmployee().getLeaveBalance();
         employeeLeaveBalance.setCompensationLeave(employeeLeaveBalance.getCompensationLeave() + claim.getCompensationLeaveRequested());
+        employeeLeaveBalance.setCurrentCompensationLeave(employeeLeaveBalance.getCurrentCompensationLeave() + claim.getCompensationLeaveRequested());
         leaveBalanceRepository.save(employeeLeaveBalance);
     }
 
@@ -129,6 +130,7 @@ public class LeaveBalanceService implements ILeaveBalance {
             // rest of leaves reset
             leaveBalance.setCurrentMedicalLeave(leaveBalance.getMedicalLeave());
             leaveBalance.setCompassionateLeaveConsumed(0);
+            leaveBalance.setCompensationLeave(0);
             leaveBalance.setCurrentCompensationLeave(0);
             leaveBalance.setUnpaidLeaveConsumed(0);
             leaveBalanceRepository.save(leaveBalance);
