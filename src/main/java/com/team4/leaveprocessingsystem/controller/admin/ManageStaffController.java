@@ -211,10 +211,11 @@ public class ManageStaffController {
 
 
         model.addAttribute("newEmployee", newEmployee);
+        model.addAttribute("jobDesignationList", jobDesignationService.listAllJobDesignations());
         model.addAttribute("isEditMode", false);
         model.addAttribute("updateSuccess", true);
 
-        return "admin/manage-staff/create-new-employee-form";
+        return "redirect:/admin/manage-staff/";
     }
 
     @GetMapping("/delete/{employeeId}")
