@@ -202,7 +202,6 @@ public class CompensationClaimService implements ICompensationClaim {
         return map;
     }
 
-    //TODO: Delete if not in use
     @Override
     @Transactional
     public List<CompensationClaim> findByApprovingManager(Manager manager) {

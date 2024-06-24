@@ -7,6 +7,7 @@ import com.team4.leaveprocessingsystem.service.api.EmailApiService;
 import com.team4.leaveprocessingsystem.service.auth.AuthenticationService;
 import com.team4.leaveprocessingsystem.service.repo.*;
 import com.team4.leaveprocessingsystem.service.reporting.ReportingService;
+import com.team4.leaveprocessingsystem.util.EmailBuilderUtils;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -134,15 +136,14 @@ public class ManagerLeaveController {
         leaveApplicationService.save(existingLeaveApplication);
         leaveBalanceService.update(existingLeaveApplication);
 
-        // TODO: uncomment before submitting due to limit
         // Send email notification to the employee
-//        try {
-//            String emailAdd = userService.findUserRolesByEmployeeId(existingLeaveApplication.getSubmittingEmployee().getId()).get(0).getEmail();
-//            Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(existingLeaveApplication);
-//            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
-//        } catch (IOException e) {
-//            System.out.println(e.getMessage());
-//        }
+        try {
+            String emailAdd = userService.findUserRolesByEmployeeId(existingLeaveApplication.getSubmittingEmployee().getId()).get(0).getEmail();
+            Map<String, String> email = EmailBuilderUtils.buildNotificationEmail(existingLeaveApplication);
+            emailApiService.sendEmail(emailAdd, email.get("subject"), email.get("text"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         // Redirect to pending leave applications with a success parameter
         return "redirect:/manager/leave/pendingLeaves?updateSuccess=true";

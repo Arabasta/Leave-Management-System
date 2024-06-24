@@ -24,7 +24,7 @@ public class EmailBuilderUtils {
         String reason= leaveApplication.getSubmissionReason();
         String rejectionReason= leaveApplication.getRejectionReason();
         String rejectionReasonStr = "";
-        if (!rejectionReason.isEmpty()){
+        if (rejectionReason != null && !rejectionReason.isEmpty()){
             rejectionReasonStr = "Rejection Reason: " + rejectionReason + "<br>";
         }
         String applicationUrlForEmployee = "http://localhost:8080/employee/leave/view/" + leaveApplication.getId();

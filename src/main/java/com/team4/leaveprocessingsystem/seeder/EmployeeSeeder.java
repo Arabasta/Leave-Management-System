@@ -38,7 +38,6 @@ public class EmployeeSeeder {
         }
     }
 
-    // todo : test maanger's having a manager
     private void seedManagement() {
         JobDesignation managementJobDesignation = jobDesignationService.findByName("management");
 
