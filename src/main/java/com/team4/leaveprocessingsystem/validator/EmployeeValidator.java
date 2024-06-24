@@ -19,10 +19,8 @@ public class EmployeeValidator implements Validator {
         Employee employee = (Employee) target;
 
         /*
-        Ensure
-        - an Employee cannot be saved without being assigned a Manager
-        - a Manager can be saved without being assigned a Manager
-        there should be an Option to assign them to an existing Manager or None before saving
+        Ensure an Employee cannot be saved without being assigned a Manager
+        only a Manager can be saved without being assigned a Manager
         */
         if (!Objects.equals(employee.getJobDesignation().getName(),"management") &&
                 employee.getManager().getId() == null) {
@@ -30,14 +28,5 @@ public class EmployeeValidator implements Validator {
                     "invalid.manager",
                     "Employee needs to be assigned a manager, to be saved.");
         }
-
-        /*
-        if (employee.getJobDesignation().getName() != "management" && employee.getManager() == null) {
-            errors.rejectValue("manager",
-                    "invalid.manager",
-                    "Employee needs to be assigned a manager, to be saved.");
-        }
-        */
-
     }
 }
