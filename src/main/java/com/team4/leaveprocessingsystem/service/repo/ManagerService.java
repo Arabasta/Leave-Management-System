@@ -43,17 +43,4 @@ public class ManagerService implements IManager {
     @Override
     @Transactional
     public List<Manager> findAllExcept(Integer id) { return managerRepository.findAllExcept(id);}
-    // TODO: Delete if not required. Also doesn't belong to this service
-//    @Transactional
-//    public Map<Employee, LeaveApplication> findSubordinatesOnLeaveDuring(Manager manager, LocalDate start, LocalDate end) {
-//        List<LeaveApplication> leaveApplications = leaveApplicationRepository
-//                .findSubordinatesLeaveApplicationsByReviewingManager_Id(manager.getId())
-//                .stream().filter(la -> !la.getStartDate().isBefore(start) && !la.getEndDate().isAfter(end))
-//                .toList();
-//        Map<Employee, LeaveApplication> map = new HashMap<>();
-//        for (LeaveApplication la : leaveApplications) {
-//            map.put(la.getSubmittingEmployee(), la);
-//        }
-//        return map;
-//    }
 }

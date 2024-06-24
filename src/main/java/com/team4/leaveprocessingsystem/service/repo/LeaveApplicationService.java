@@ -140,45 +140,6 @@ public class LeaveApplicationService implements ILeaveApplication {
                                                                             pageable);
     }
 
-//    @Override
-//    @Transactional
-//    public Page<LeaveApplication> filterManagerViewSearch(int managerId,
-//                                                          String keyword,
-//                                                          String searchType,
-//                                                          String startDate,
-//                                                          String endDate,
-//                                                          String leaveStatus,
-//                                                          Pageable pageable) {
-//
-//        Page<LeaveApplication> applications = leaveApplicationRepository.findSubordinatesLeaveApplicationsByReviewingManager_Id(managerId, pageable);
-//
-//        if (Objects.equals(searchType, "name")) {
-//            applications = leaveApplicationRepository.findSubordinatesByNameLeaveApplicationsByReviewingManager_Id(managerId, StringCleaningUtil.forDatabase(keyword), pageable);
-//
-//        }
-//        if (Objects.equals(searchType, "id")) {
-//            try {
-//                int id = Integer.parseInt(keyword);
-//                applications = leaveApplicationRepository.findBySubmittingEmployeeId(id, pageable);
-//            } catch (NumberFormatException e) {
-//                System.out.println(e.getMessage());
-//                applications = new PageImpl<>(Collections.emptyList(), pageable, 0);
-//            }
-//        }
-//        if (startDate != null && endDate != null && !startDate.isBlank() && !endDate.isBlank()) {
-//            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            LocalDate startDateFormatted = LocalDate.parse(startDate, df);
-//            LocalDate endDateFormatted = LocalDate.parse(endDate, df);
-//            applications = leaveApplicationRepository.findAllWithinDateRange(managerId, startDateFormatted, endDateFormatted, pageable);
-//        }
-//        if (!Objects.equals(leaveStatus, "ALL")) {
-////            applications = filterByStringLeaveStatus(applications, leaveStatus);
-//            LeaveStatusEnum leaveStatusEnum = LeaveStatusEnum.valueOf(leaveStatus);
-//            applications = leaveApplicationRepository.findSubordinatesLeaveApplicationsByLeaveStatusByReviewingManager_Id(managerId, leaveStatusEnum, pageable);
-//        }
-//        return applications;
-//    }
-
     public ArrayList<LeaveApplication> setArrayList(List<LeaveApplication> list) {
         ArrayList<LeaveApplication> output = new ArrayList<>();
         try {
