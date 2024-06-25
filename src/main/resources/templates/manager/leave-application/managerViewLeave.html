@@ -18,80 +18,60 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <!-- Search Form -->
-            <form action="#" th:action="@{/manager/leave/managerView}" method="post">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="searchType"><strong>Search By:</strong></label>
-                            <select id="searchType" name="searchType" class="form-select" th:value="${reportingDTO.searchType}">
-                                <option th:if="${reportingDTO.searchType==null or reportingDTO.searchType=='name'}" value="name">Name</option>
-                                <option th:if="${reportingDTO.searchType==null or reportingDTO.searchType=='name'}" value="id">Employee Id</option>
-                                <option th:if="${reportingDTO.searchType=='id'}" value="id">Employee Id</option>
-                                <option th:if="${reportingDTO.searchType=='id'}" value="name">Name</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label><strong>Enter keyword:</strong></label>
-                            <input th:if="${reportingDTO.keyword==null}" type="text" name="keyword" class="form-control"/>
-                            <input th:unless="${reportingDTO.keyword==null}" th:value="${reportingDTO.keyword}" type="text" name="keyword" class="form-control"/>
-                        </div>
-                    </div>
-                    <!-- Search Parameter - Date Range -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label><strong>Date Range:</strong></label>
-                            <div class="input-group">
-                                <input th:if="${reportingDTO.startDate==null}" class="form-control" type="date" name="startDate">
-                                <input th:unless="${reportingDTO.startDate==null}" th:value="${reportingDTO.startDate}" class="form-control" type="date" name="startDate">
-                                <div class="input-group-text">To</div>
-                                <input th:if="${reportingDTO.endDate==null}" class="form-control" type="date" name="endDate">
-                                <input th:unless="${reportingDTO.endDate==null}" th:value="${reportingDTO.endDate}" class="form-control" type="date" name="endDate">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Search Parameter - Status -->
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="applicationStatus"><strong>Leave Status:</strong></label>
-                            <select class="form-select" name="leaveStatus" id="applicationStatus">
-                                <option th:if="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'" selected></option>
-                                <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:text="'Selection: '+${reportingDTO.leaveStatus}" th:value="${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).valueOf(reportingDTO.leaveStatus)}"></option>
-                                <option th:unless="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'"></option>
-                                <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
-                                        th:value="${status}" th:text="${status}"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <!-- Buttons in a single row -->
-                <div class="row mt-3 justify-content-center">
-                    <div class="col-md-2 text-center">
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <a class="btn btn-secondary w-100" th:href="@{/manager/leave/managerView}">Reset</a>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <form method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeLeaveApplicationsCSV}">
-                            <button type="submit" class="btn btn-primary w-100">Save as CSV</button>
-                            <input type="hidden" th:field="${reportingDTO.applications}">
-                            <input type="hidden" th:field="${reportingDTO.managerId}">
-                            <input type="hidden" th:field="${reportingDTO.keyword}">
-                            <input type="hidden" th:field="${reportingDTO.searchType}">
-                            <input type="hidden" th:field="${reportingDTO.startDate}">
-                            <input type="hidden" th:field="${reportingDTO.endDate}">
-                            <input type="hidden" th:field="${reportingDTO.leaveStatus}">
-                        </form>
-                    </div>
+            <form class="form-inline" method="post" th:action="@{/manager/leave/managerView}">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon2">Filter By</span>
+                    <select class="form-select" name="searchType" style="width: 80px;">
+                        <option th:selected="${reportingDTO.searchType == 'name'}" th:value="name">Name</option>
+                        <option th:selected="${reportingDTO.searchType == 'id'}" th:value="id">Employee Id</option>
+                    </select>
+
+
+
+                    <input class="form-control" name="keyword" placeholder="Keyword"
+                           aria-label="Keyword" aria-describedby="keyword-addon"
+                           th:value="${reportingDTO.keyword}" type="search" style="width: 120px;">
+
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                    <span class="input-group-text">Date Range:</span>
+                    <input class="form-control" type="date" name="startDate" th:value="${reportingDTO.startDate}" style="width: 140px;">
+                    <span class="input-group-text">To</span>
+                    <input class="form-control" type="date" name="endDate" th:value="${reportingDTO.endDate}" style="width: 140px;">
+
+                    <span class="input-group-text">Leave Status:</span>
+                    <select class="form-select" name="leaveStatus" id="applicationStatus" style="width: 90px;">
+                        <option th:if="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'" selected></option>
+                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:text="'Selection: '+${reportingDTO.leaveStatus}" th:value="${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).valueOf(reportingDTO.leaveStatus)}"></option>
+                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'"></option>
+                        <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
+                                th:value="${status}" th:text="${status}"></option>
+                    </select>
                 </div>
             </form>
+
+            <div class="row mt-3 justify-content-center">
+                <div class="col-md-2 text-center">
+                    <a class="btn btn-secondary w-100" th:href="@{/manager/leave/managerView}">Reset</a>
+                </div>
+                <div class="col-md-2 text-center">
+                    <form method="POST" th:object="${reportingDTO}" th:action="@{/manager/reporting/downloadEmployeeLeaveApplicationsCSV}">
+                        <button type="submit" class="btn btn-primary w-100">Save as CSV</button>
+                        <input type="hidden" th:field="${reportingDTO.applications}">
+                        <input type="hidden" th:field="${reportingDTO.managerId}">
+                        <input type="hidden" th:field="${reportingDTO.keyword}">
+                        <input type="hidden" th:field="${reportingDTO.searchType}">
+                        <input type="hidden" th:field="${reportingDTO.startDate}">
+                        <input type="hidden" th:field="${reportingDTO.endDate}">
+                        <input type="hidden" th:field="${reportingDTO.leaveStatus}">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row justify-content-center mt-4">
+<div class="container">
+    <div class="row justify-content-center mt-4">
         <div class="col-md-10">
             <table th:if="${not #lists.isEmpty(reportingDTO.applications)}" class="table table-striped table-bordered">
                 <thead>
@@ -122,52 +102,58 @@
         </div>
     </div>
 </div>
-<br>
-<input type="hidden" name="keyword" th:value="${reportingDTO.keyword}"/>
-<input type="hidden" name="searchType" th:value="${reportingDTO.searchType}"/>
-<input type="hidden" name="startDate" th:value="${reportingDTO.startDate}"/>
-<input type="hidden" name="endDate" th:value="${reportingDTO.endDate}"/>
-<input type="hidden" name="leaveStatus" th:value="${reportingDTO.leaveStatus}"/>
-<div th:if="${page.totalPages > 1}">
-    <nav aria-label="Pagination">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
-                 startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number - 1},
-                  pageSize=${page.size})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item active">
-                <a class="page-link" th:text="${page.number + 1}"></a>
-            </li>
-            <li class="page-item" th:classappend="${page.number + 1 == page.totalPages} ? 'disabled'">
-                <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
-                 startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number + 1},
-                  pageSize=${page.size})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div th:if="${page.totalPages > 1}">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
+                             startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number - 1},
+                              pageSize=${page.size})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" th:text="${page.number + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.number + 1 == page.totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/manager/leave/managerView(keyword=${reportingDTO.keyword}, searchType=${reportingDTO.searchType},
+                             startDate=${reportingDTO.startDate}, endDate=${reportingDTO.endDate}, leaveStatus=${reportingDTO.leaveStatus}, pageNo=${page.number + 1},
+                              pageSize=${page.size})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 </div>
-<div style="text-align: center; margin-top: 20px;">
-    <form th:action="@{/manager/leave/managerView}" method="get">
-        <label for="pageSize">Results per page:</label>
-        <select id="pageSize" name="pageSize" onchange="this.form.submit()">
-            <option th:value="10" th:text="10" th:selected="${page.size == 10}"></option>
-            <option th:value="20" th:text="20" th:selected="${page.size == 20}"></option>
-            <option th:value="25" th:text="25" th:selected="${page.size == 25}"></option>
-        </select>
-        <input type="hidden" name="keyword" th:value="${reportingDTO.keyword}"/>
-        <input type="hidden" name="searchType" th:value="${reportingDTO.searchType}"/>
-        <input type="hidden" name="startDate" th:value="${reportingDTO.startDate}"/>
-        <input type="hidden" name="endDate" th:value="${reportingDTO.endDate}"/>
-        <input type="hidden" name="leaveStatus" th:value="${reportingDTO.leaveStatus}"/>
-    </form>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+            <form th:action="@{/manager/leave/managerView}" method="get">
+                <label for="pageSize">Results per page:</label>
+                <select id="pageSize" name="pageSize" onchange="this.form.submit()">
+                    <option th:value="10" th:text="10" th:selected="${page.size == 10}"></option>
+                    <option th:value="20" th:text="20" th:selected="${page.size == 20}"></option>
+                    <option th:value="25" th:text="25" th:selected="${page.size == 25}"></option>
+                </select>
+                <input type="hidden" name="keyword" th:value="${reportingDTO.keyword}"/>
+                <input type="hidden" name="searchType" th:value="${reportingDTO.searchType}"/>
+                <input type="hidden" name="startDate" th:value="${reportingDTO.startDate}"/>
+                <input type="hidden" name="endDate" th:value="${reportingDTO.endDate}"/>
+                <input type="hidden" name="leaveStatus" th:value="${reportingDTO.leaveStatus}"/>
+            </form>
+        </div>
+    </div>
 </div>
+
 <!-- Bootstrap JS and dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2ABjtSj7R8gFqjwkJXYa2yMwD4/Op3ZSffvENxyl5P4wKxqlpF4F2N3y9p" crossorigin="anonymous"></script>
 </body>
-
 </html>
