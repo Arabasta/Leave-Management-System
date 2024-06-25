@@ -21,7 +21,7 @@
             <form class="form-inline" method="post" th:action="@{/manager/leave/managerView}">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon2">Filter By</span>
-                    <select class="form-select" name="searchType" style="width: 80px;">
+                    <select class="form-select" name="searchType" style="width: 85px;">
                         <option th:selected="${reportingDTO.searchType == 'name'}" th:value="name">Name</option>
                         <option th:selected="${reportingDTO.searchType == 'id'}" th:value="id">Employee Id</option>
                     </select>
@@ -34,9 +34,9 @@
 
                     <button type="submit" class="btn btn-outline-primary">Search</button>
                     <span class="input-group-text">Date Range:</span>
-                    <input class="form-control" type="date" name="startDate" th:value="${reportingDTO.startDate}" style="width: 140px;">
+                    <input class="form-control" type="date" name="startDate" th:value="${reportingDTO.startDate}" style="width: 135px;">
                     <span class="input-group-text">To</span>
-                    <input class="form-control" type="date" name="endDate" th:value="${reportingDTO.endDate}" style="width: 140px;">
+                    <input class="form-control" type="date" name="endDate" th:value="${reportingDTO.endDate}" style="width: 135px;">
 
                     <span class="input-group-text">Leave Status:</span>
                     <select class="form-select" name="leaveStatus" id="applicationStatus" style="width: 90px;">
