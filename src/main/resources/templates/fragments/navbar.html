@@ -10,29 +10,32 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+
             <!-- Logo / Home Auto Routed -->
         <a class="navbar-brand ps-2" th:href="@{/home}">
             <img src="/images/team_4_logo.png" height="25" alt="team 4 logo">
         </a>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0">
 
                 <!-- Admin Only -->
                 <li class="nav-item dropdown pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-expanded="false">
                         Employees
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="nav-link" th:href="@{/admin/manage-staff/}">Manage Employees</a>
-                        <a class="nav-link" th:href="@{/admin/manage-user/}">User Accounts</a>
-                        <a class="nav-link" th:href="@{/admin/manage-hierarchy/list}">Manage Hierarchy</a>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/admin/manage-staff/}">Manage Employees</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/manage-user/}">User Accounts</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/manage-hierarchy/list}">Manage Hierarchy</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <a class="nav-link" th:href="@{/admin/leave-entitlement/view-job-designations}">Leave
@@ -41,35 +44,19 @@
                 <li class="nav-item pt-2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                     <a class="nav-link" th:href="@{/admin/manage-ph/}">Public Holidays</a>
                 </li>
-
-                <!-- Manager Only -->
-                <li class="nav-item dropdown pt-2" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink3" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        Manager Tools
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Dropdown
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="nav-link" th:href="@{/manager/leave/pendingLeaves}">Review Leave Applications</a>
-                        <a class="nav-link" th:href="@{/manager/leave/managerView}">View Subordinates Leaves</a>
-                        <a class="nav-link" th:href="@{/manager/compensation-claims/viewPendingApproval}">Approve
-                            Compensation Claims</a>
-                        <a class="nav-link" th:href="@{/manager/reporting/viewCompensationClaims}">View Employee
-                            Compensation Claims</a>
-                    </div>
-                </li>
-
-                <!-- Employee + Manager -->
-                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/employee/leave/create}">Apply Leave</a>
-                </li>
-                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/employee/leave/personalHistory}">My Leave History</a>
-                </li>
-                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/employee/compensation-claims/view}">My Compensation Claims</a>
-                </li>
-                <li class="nav-item pt-2" th:if="${#authorization.expression('hasAnyRole(''EMPLOYEE'', ''MANAGER'')')}">
-                    <a class="nav-link" th:href="@{/employee/movement-register/view}">Movement Register</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
                 </li>
 
             </ul>
@@ -88,6 +75,47 @@
                     </form>
                 </li>
             </ul>
+        </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent2">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
         </div>
     </nav>
 </div>
