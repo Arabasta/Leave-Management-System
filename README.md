@@ -9,14 +9,17 @@ system is integrated with AWS services and RDS MySQL for database management.
 
 <br>
 It allows employees to apply for leave and submit compensation claims, managers to generate reports, approve or reject leave applications and 
-compensation claims, and administrators to manage employees and their job designation, 
-users and their roles, public holidays, and the company hierarchy.
+compensation claims, and administrators to manage employees, job designations, 
+users and their roles, leave balances, public holidays, and the company hierarchy.
 
 <br>
 
 ## Deployed On AWS
 
 - [https://keiapp.me](https://keiapp.me)
+
+\
+![AWS Diagram](/src/main/resources/static/images/aws_system_architecture_diagram.png?raw=true)
 
 ## Login Credentials (username | password)
 
@@ -72,7 +75,7 @@ users and their roles, public holidays, and the company hierarchy.
 
 - **Employee**: Apply, update, and cancel leave,
 - **Manager**: Generate reports and approve or reject leave applications and compensation claims.
-- **Admin**: Manage users, roles, public holidays and approval hierarchy.
+- **Admin**: Manage employees, job designations, users, roles, leave balances, public holidays and approval hierarchy.
 
 ## Technologies
 
