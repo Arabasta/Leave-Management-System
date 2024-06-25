@@ -48,9 +48,10 @@ users and their roles, leave balances, public holidays, and the company hierarch
 
 ## Running Locally
 
-### Recommended IDE
+### IDE
 
-- IntelliJ IDEA Ultimate
+- Recommended: IntelliJ IDEA Ultimate
+- SpringToolSuite4
 
 ### Prerequisites
 
@@ -66,7 +67,7 @@ users and their roles, leave balances, public holidays, and the company hierarch
 ### Steps
 
 1. **Create the Schema**
-   Run the following SQL command to create the schema:
+   Start your MySQL server and Run the following SQL command to create the schema:
    ```sql
    CREATE DATABASE leave_processing_system;
    ```
