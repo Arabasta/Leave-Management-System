@@ -18,36 +18,49 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <!-- Search Form -->
-            <form class="form-inline" method="post" th:action="@{/manager/leave/managerView}">
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon2">Filter By</span>
-                    <select class="form-select" name="searchType" style="width: 85px;">
-                        <option th:selected="${reportingDTO.searchType == 'name'}" th:value="name">Name</option>
-                        <option th:selected="${reportingDTO.searchType == 'id'}" th:value="id">Employee Id</option>
-                    </select>
+            <form method="post" th:action="@{/manager/leave/managerView}">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon2">Filter By</span>
+                            <select class="form-select" name="searchType" style="width:20%;">
+                                <option th:selected="${reportingDTO.searchType == 'name'}" th:value="name">Name</option>
+                                <option th:selected="${reportingDTO.searchType == 'id'}" th:value="id">Employee Id</option>
+                            </select>
+                            <input class="form-control" name="keyword" placeholder="Keyword"
+                                   aria-label="Keyword" aria-describedby="keyword-addon"
+                                   th:value="${reportingDTO.keyword}" type="search" style="width: 60%;">
+                            <button type="submit" class="btn btn-outline-primary" style="background-color: #0056b3; color: white; border: none;">Search</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6" >
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Date Range:</span>
+                            <input class="form-control" type="date" name="startDate" th:value="${reportingDTO.startDate}" >
+                            <span class="input-group-text">To</span>
+                            <input class="form-control" type="date" name="endDate" th:value="${reportingDTO.endDate}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Leave Status:</span>
+                            <select class="form-select" name="leaveStatus" id="applicationStatus" style="width: 50px;">
+                                <option th:if="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'" selected></option>
+                                <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:text="'Selection: '+${reportingDTO.leaveStatus}" th:value="${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).valueOf(reportingDTO.leaveStatus)}"></option>
+                                <option th:unless="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'"></option>
+                                <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
+                                        th:value="${status}" th:text="${status}"></option>
+                            </select>
 
-
-
-                    <input class="form-control" name="keyword" placeholder="Keyword"
-                           aria-label="Keyword" aria-describedby="keyword-addon"
-                           th:value="${reportingDTO.keyword}" type="search" style="width: 120px;">
-
-                    <button type="submit" class="btn btn-outline-primary" style="background-color: #0056b3; color: white; border: none;">Search</button>
-                    <span class="input-group-text">Date Range:</span>
-                    <input class="form-control" type="date" name="startDate" th:value="${reportingDTO.startDate}" style="width: 135px;">
-                    <span class="input-group-text">To</span>
-                    <input class="form-control" type="date" name="endDate" th:value="${reportingDTO.endDate}" style="width: 135px;">
-
-                    <span class="input-group-text">Leave Status:</span>
-                    <select class="form-select" name="leaveStatus" id="applicationStatus" style="width: 90px;">
-                        <option th:if="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'" selected></option>
-                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" selected th:text="'Selection: '+${reportingDTO.leaveStatus}" th:value="${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).valueOf(reportingDTO.leaveStatus)}"></option>
-                        <option th:unless="${reportingDTO.leaveStatus=='ALL'}" th:value="'ALL'" th:text="'ALL'"></option>
-                        <option th:each="status : ${T(com.team4.leaveprocessingsystem.model.enums.LeaveStatusEnum).values()}"
-                                th:value="${status}" th:text="${status}"></option>
-                    </select>
+                        </div>
+                    </div>
                 </div>
+
+
             </form>
+        </div>
+    </div>
+</div>
 
             <div class="row mt-3 justify-content-center">
                 <div class="col-md-2 text-center">
