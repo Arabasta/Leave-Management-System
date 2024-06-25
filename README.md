@@ -14,12 +14,28 @@ users and their roles, leave balances, public holidays, and the company hierarch
 
 <br>
 
+## Technologies
+
+- **Java Spring Boot**
+- **Thymeleaf**
+- **MySQL**
+- **Docker**
+- **Github Actions**
+- **AWS Services (EC2, RDS, CloudFront, Route 53)**
+
 ## Deployed On AWS
 
 - [https://keiapp.me](https://keiapp.me)
 
 \
 ![AWS Diagram](/src/main/resources/static/images/aws_system_architecture_diagram.png?raw=true)
+
+
+## Features
+
+- **Employee**: Apply, update, and cancel leave,
+- **Manager**: Generate reports and approve or reject leave applications and compensation claims.
+- **Admin**: Manage employees, job designations, users, roles, leave balances, public holidays and approval hierarchy.
 
 ## Login Credentials (username | password)
 
@@ -71,20 +87,6 @@ users and their roles, leave balances, public holidays, and the company hierarch
 5. **Access the Application**<br>
    Open your browser and go to [http://localhost:8080](http://localhost:8080).
 
-## Features
-
-- **Employee**: Apply, update, and cancel leave,
-- **Manager**: Generate reports and approve or reject leave applications and compensation claims.
-- **Admin**: Manage employees, job designations, users, roles, leave balances, public holidays and approval hierarchy.
-
-## Technologies
-
-- **Java Spring Boot**
-- **Thymeleaf**
-- **MySQL**
-- **Docker**
-- **Github Actions**
-- **AWS Services (EC2, RDS, CloudFront, Route 53)**
 
 ## Troubleshooting
 
